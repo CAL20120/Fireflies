@@ -1,0 +1,40 @@
+{
+    "version": 3,
+    "configurePresets": [
+        {
+            "name": "default",
+            "description": "VFX FRAMEWORK config",
+            "hidden": false,
+            "generator": "Unix Makefiles",
+            "binaryDir": "${workspaceFolder}/build",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "Custom configure preset",
+            "displayName": "Custom configure preset",
+            "description": "Sets Ninja generator, build and install directory",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}"
+            }
+        },
+        {
+            "name": "VFX_FRAMEWORK",
+            "description": "",
+            "displayName": "",
+            "inherits": []
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "VFX_FRAMEWORK",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "default"
+        }
+    ]
+}
