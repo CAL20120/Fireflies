@@ -1,2 +1,0 @@
-/usr/bin/ar qc libImGui.a CMakeFiles/ImGui.dir/include/third_party/imgui/imgui.cpp.o CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_draw.cpp.o CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_tables.cpp.o CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_widgets.cpp.o CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_glfw.cpp.o CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_opengl3.cpp.o CMakeFiles/ImGui.dir/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp.o
-/usr/bin/ranlib libImGui.a

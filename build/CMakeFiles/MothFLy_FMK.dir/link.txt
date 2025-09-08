@@ -1,1 +1,0 @@
-/usr/bin/c++ -g CMakeFiles/MothFLy_FMK.dir/source/main.cpp.o CMakeFiles/MothFLy_FMK.dir/source/launch_softs.cpp.o -o MothFLy_FMK  libImGui.a /usr/lib64/libglfw.so.3.4 /usr/lib64/libOpenGL.so /usr/lib64/libGLX.so /usr/lib64/libGLU.so 
