@@ -1,0 +1,67 @@
+import os
+import maya.cmds as cmds 
+import maya.mel as mel 
+
+import mayaUsd
+import mayaUsdCacheMayaReference
+from mayaUsdLibRegisterStrings import getMayaUsdLibString
+import mayaUsd.ufe
+import mayaUsdMergeToUsd
+
+import ufe 
+import mayaUsdOptions
+
+from pxr import Usd, Sdf
+
+from functools import partial
+
+
+class maya_to_usd():
+    def __init__(self):
+        super(maya_to_usd, self).__init__()
+    
+    # def find_sel(self):
+    #     sel = cmds.ls(sl=True)
+    #     mesh = sel[0]
+    #     print(mesh)
+    #     return mesh
+
+    def converter(self):
+        self.sel = cmds.ls(sl=True)
+        if self.sel == "":
+            print("No mesh selected")
+            return
+        self.mesh = self.sel[0]
+        # print(self.mesh)
+        anon = Sdf.Layer.CreateAnonymous("test")
+        proxyShape = cmds.createNode('mayaUsdProxyShape', skipSelect=True, name= f"{self.mesh}_asset")
+        # print(cmds.ls(type = "mayaUsdProxyShape"))
+        cmds.select(proxyShape, replace=True)
+        fullPath = cmds.ls(proxyShape, long=True)
+        print(fullPath)
+        
+        stage = Usd.Stage.Open(r'D:\chris\asset_checker\test_scenes\usd_sphere_sample.usda')
+        stage.GetRootLayer().ExportToString()
+        return fullPath[0]
+        # return self.stage
+    
+    def test_anon(self):
+        layer = Sdf.Layer.CreateAnonymous("test")
+
+        stage = Usd.Stage.Open(layer)
+        print(stage.GetRootLater.ExporToString())
+
+        print(layer.identifier())
+
+
+    def test(self):
+    
+        print(self.stage)
+        
+    def main(self):
+        self.converter()
+        self.test()
+
+test = maya_to_usd()
+
+test.test_anon()

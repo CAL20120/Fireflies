@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"C:/Fireflies_Pipeline/build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

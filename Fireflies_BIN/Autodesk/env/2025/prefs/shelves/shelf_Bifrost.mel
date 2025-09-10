@@ -1,0 +1,232 @@
+global proc shelf_Bifrost () {
+    global string $gBuffStr;
+    global string $gBuffStr0;
+    global string $gBuffStr1;
+
+
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Bifrost Graph Editor: Display and edit the contents of a Bifrost graph." 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Bifrost Graph Editor" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "BifrostGraph.png" 
+        -image1 "BifrostGraph.png" 
+        -style "iconOnly" 
+        -marginWidth 0
+        -marginHeight 1
+        -version "2025" 
+        -command "openBifrostGraphEditorFromSelection" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Bifrost Browser: Open library of sample Bifrost graphs" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Bifrost Browser" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "BifrostBrowser.png" 
+        -image1 "BifrostBrowser.png" 
+        -style "iconOnly" 
+        -marginWidth 0
+        -marginHeight 1
+        -version "2025" 
+        -command "bifrostBrowser" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    separator
+        -enable 1
+        -width 34
+        -height 35
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -style "shelf" 
+        -horizontal 0
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Create Rig From Modules: Creates a Maya rig (controls and joints) from Bifrost Rigging Modules" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Create Rig From Modules" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "BifrostRigging_createRigFromModule.png" 
+        -image1 "BifrostRigging_createRigFromModule.png" 
+        -style "iconOnly" 
+        -marginWidth 0
+        -marginHeight 1
+        -version "2025" 
+        -command "bifrostRiggingRtc_CreateRigFromModules" 
+        -sourceType "mel" 
+        -doubleClickCommand "bifrostRiggingRtc_CreateRigFromModulesOptions" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Optimize Modules: Maximize the performance of Bifrost Rigging Modules" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Optimize Modules" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "BifrostRigging_optimizeModules.png" 
+        -image1 "BifrostRigging_optimizeModules.png" 
+        -style "iconOnly" 
+        -marginWidth 0
+        -marginHeight 1
+        -version "2025" 
+        -command "bifrostRiggingRtc_OptimizeModules" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Enable Module Terminals: Activates the terminal D flags of Bifrost Rigging Modules" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Enable Module Terminals" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "BifrostRigging_enableModuleTerminals.png" 
+        -image1 "BifrostRigging_enableModuleTerminals.png" 
+        -style "iconOnly" 
+        -marginWidth 0
+        -marginHeight 1
+        -version "2025" 
+        -command "bifrostRiggingRtc_EnableModuleTerminals" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Disable Module Terminals: Desactivates the terminal D flags of Bifrost Rigging Modules" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Disable Module Terminals" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "BifrostRigging_disableModuleTerminals.png" 
+        -image1 "BifrostRigging_disableModuleTerminals.png" 
+        -style "iconOnly" 
+        -marginWidth 0
+        -marginHeight 1
+        -version "2025" 
+        -command "bifrostRiggingRtc_DisableModuleTerminals" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+
+} 

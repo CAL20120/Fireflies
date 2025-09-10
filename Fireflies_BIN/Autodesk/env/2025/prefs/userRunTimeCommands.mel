@@ -1,0 +1,94 @@
+//Maya Preference 2025 (Release 1)
+//
+//
+
+runTimeCommand
+	-label ""
+	-annotation "Flow Wedging job submit notification before graph export"
+	-longAnnotation ""
+	-category "FlowWedging.Flow Wedging Job"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "mel"
+	-command ("print(\"# Flow Wedging Job submission starting...\\n\")")
+	FlowWedgingSubmitJob;
+
+runTimeCommand
+	-label ""
+	-annotation "Flow Wedging job failed to submit to farm"
+	-longAnnotation ""
+	-category "FlowWedging.Flow Wedging Job"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "mel"
+	-command ("print(\"# Flow Wedging Job failed to submit\\n\")")
+	FlowWedgingSubmitJobFailed;
+
+runTimeCommand
+	-label ""
+	-annotation "Flow Wedging Job submitted to farm successfully"
+	-longAnnotation ""
+	-category "FlowWedging.Flow Wedging Job"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "mel"
+	-command ("print(\"# Flow Wedging Job submitted successfully\\n\")")
+	FlowWedgingSubmitJobSucceeded;
+
+runTimeCommand
+	-label ""
+	-annotation "Flow Wedging Job submitted with wedges to farm successfully"
+	-longAnnotation ""
+	-category "FlowWedging.Flow Wedging Job"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "mel"
+	-command ("print(\"# Flow Wedging Job submitted successfully with wedges\\n\")")
+	FlowWedgingSubmitJobSucceededWithWedging;
+
+runTimeCommand
+	-label ""
+	-annotation "Flow Wedging Job submitted with render preview"
+	-longAnnotation ""
+	-category "FlowWedging.Flow Wedging Job"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "mel"
+	-command ("print(\"# Flow Wedging Job submitted successfully with render preview\\n\")")
+	FlowWedgingSubmitJobSucceededWithRenderPreview;
+
+runTimeCommand
+	-label ""
+	-annotation "Flow Wedging monthly scratch storage limit has been reached"
+	-longAnnotation ""
+	-category "FlowWedging.Flow Wedging Job"
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-helpUrl ""
+	-hotkeyCtx ""
+	-commandLanguage "mel"
+	-command ("print(\"# Flow Wedging monthly scratch storage limit has been reached\\n\")")
+	FlowWedgingMonthlyScratchStorageLimitReached;
+
