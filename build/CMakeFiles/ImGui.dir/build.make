@@ -53,10 +53,10 @@ RM = "C:/Program Files/CMake/bin/cmake.exe" -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk
+CMAKE_SOURCE_DIR = C:/Fireflies/Fireflies/Fireflies_fmk
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = C:/Fireflies_Pipeline/build
+CMAKE_BINARY_DIR = C:/Fireflies/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/ImGui.dir/depend.make
@@ -74,108 +74,108 @@ CMakeFiles/ImGui.dir/codegen:
 
 CMakeFiles/ImGui.dir/include/third_party/imgui/imgui.cpp.obj: CMakeFiles/ImGui.dir/flags.make
 CMakeFiles/ImGui.dir/include/third_party/imgui/imgui.cpp.obj: CMakeFiles/ImGui.dir/includes_CXX.rsp
-CMakeFiles/ImGui.dir/include/third_party/imgui/imgui.cpp.obj: C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui.cpp
+CMakeFiles/ImGui.dir/include/third_party/imgui/imgui.cpp.obj: C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui.cpp
 CMakeFiles/ImGui.dir/include/third_party/imgui/imgui.cpp.obj: CMakeFiles/ImGui.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:/Fireflies_Pipeline/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/ImGui.dir/include/third_party/imgui/imgui.cpp.obj"
-	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ImGui.dir/include/third_party/imgui/imgui.cpp.obj -MF CMakeFiles/ImGui.dir/include/third_party/imgui/imgui.cpp.obj.d -o CMakeFiles/ImGui.dir/include/third_party/imgui/imgui.cpp.obj -c C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:/Fireflies/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/ImGui.dir/include/third_party/imgui/imgui.cpp.obj"
+	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ImGui.dir/include/third_party/imgui/imgui.cpp.obj -MF CMakeFiles/ImGui.dir/include/third_party/imgui/imgui.cpp.obj.d -o CMakeFiles/ImGui.dir/include/third_party/imgui/imgui.cpp.obj -c C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui.cpp
 
 CMakeFiles/ImGui.dir/include/third_party/imgui/imgui.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/ImGui.dir/include/third_party/imgui/imgui.cpp.i"
-	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui.cpp > CMakeFiles/ImGui.dir/include/third_party/imgui/imgui.cpp.i
+	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui.cpp > CMakeFiles/ImGui.dir/include/third_party/imgui/imgui.cpp.i
 
 CMakeFiles/ImGui.dir/include/third_party/imgui/imgui.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/ImGui.dir/include/third_party/imgui/imgui.cpp.s"
-	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui.cpp -o CMakeFiles/ImGui.dir/include/third_party/imgui/imgui.cpp.s
+	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui.cpp -o CMakeFiles/ImGui.dir/include/third_party/imgui/imgui.cpp.s
 
 CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_draw.cpp.obj: CMakeFiles/ImGui.dir/flags.make
 CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_draw.cpp.obj: CMakeFiles/ImGui.dir/includes_CXX.rsp
-CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_draw.cpp.obj: C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui_draw.cpp
+CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_draw.cpp.obj: C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui_draw.cpp
 CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_draw.cpp.obj: CMakeFiles/ImGui.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:/Fireflies_Pipeline/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_draw.cpp.obj"
-	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_draw.cpp.obj -MF CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_draw.cpp.obj.d -o CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_draw.cpp.obj -c C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui_draw.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:/Fireflies/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_draw.cpp.obj"
+	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_draw.cpp.obj -MF CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_draw.cpp.obj.d -o CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_draw.cpp.obj -c C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui_draw.cpp
 
 CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_draw.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_draw.cpp.i"
-	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui_draw.cpp > CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_draw.cpp.i
+	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui_draw.cpp > CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_draw.cpp.i
 
 CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_draw.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_draw.cpp.s"
-	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui_draw.cpp -o CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_draw.cpp.s
+	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui_draw.cpp -o CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_draw.cpp.s
 
 CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_tables.cpp.obj: CMakeFiles/ImGui.dir/flags.make
 CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_tables.cpp.obj: CMakeFiles/ImGui.dir/includes_CXX.rsp
-CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_tables.cpp.obj: C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui_tables.cpp
+CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_tables.cpp.obj: C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui_tables.cpp
 CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_tables.cpp.obj: CMakeFiles/ImGui.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:/Fireflies_Pipeline/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_tables.cpp.obj"
-	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_tables.cpp.obj -MF CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_tables.cpp.obj.d -o CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_tables.cpp.obj -c C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui_tables.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:/Fireflies/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_tables.cpp.obj"
+	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_tables.cpp.obj -MF CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_tables.cpp.obj.d -o CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_tables.cpp.obj -c C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui_tables.cpp
 
 CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_tables.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_tables.cpp.i"
-	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui_tables.cpp > CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_tables.cpp.i
+	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui_tables.cpp > CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_tables.cpp.i
 
 CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_tables.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_tables.cpp.s"
-	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui_tables.cpp -o CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_tables.cpp.s
+	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui_tables.cpp -o CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_tables.cpp.s
 
 CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_widgets.cpp.obj: CMakeFiles/ImGui.dir/flags.make
 CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_widgets.cpp.obj: CMakeFiles/ImGui.dir/includes_CXX.rsp
-CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_widgets.cpp.obj: C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui_widgets.cpp
+CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_widgets.cpp.obj: C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui_widgets.cpp
 CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_widgets.cpp.obj: CMakeFiles/ImGui.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:/Fireflies_Pipeline/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_widgets.cpp.obj"
-	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_widgets.cpp.obj -MF CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_widgets.cpp.obj.d -o CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_widgets.cpp.obj -c C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui_widgets.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:/Fireflies/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_widgets.cpp.obj"
+	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_widgets.cpp.obj -MF CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_widgets.cpp.obj.d -o CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_widgets.cpp.obj -c C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui_widgets.cpp
 
 CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_widgets.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_widgets.cpp.i"
-	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui_widgets.cpp > CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_widgets.cpp.i
+	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui_widgets.cpp > CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_widgets.cpp.i
 
 CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_widgets.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_widgets.cpp.s"
-	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui_widgets.cpp -o CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_widgets.cpp.s
+	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui_widgets.cpp -o CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_widgets.cpp.s
 
 CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_glfw.cpp.obj: CMakeFiles/ImGui.dir/flags.make
 CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_glfw.cpp.obj: CMakeFiles/ImGui.dir/includes_CXX.rsp
-CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_glfw.cpp.obj: C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/include/third_party/imgui/backends/imgui_impl_glfw.cpp
+CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_glfw.cpp.obj: C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/backends/imgui_impl_glfw.cpp
 CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_glfw.cpp.obj: CMakeFiles/ImGui.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:/Fireflies_Pipeline/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_glfw.cpp.obj"
-	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_glfw.cpp.obj -MF CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_glfw.cpp.obj.d -o CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_glfw.cpp.obj -c C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/include/third_party/imgui/backends/imgui_impl_glfw.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:/Fireflies/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_glfw.cpp.obj"
+	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_glfw.cpp.obj -MF CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_glfw.cpp.obj.d -o CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_glfw.cpp.obj -c C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/backends/imgui_impl_glfw.cpp
 
 CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_glfw.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_glfw.cpp.i"
-	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/include/third_party/imgui/backends/imgui_impl_glfw.cpp > CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_glfw.cpp.i
+	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/backends/imgui_impl_glfw.cpp > CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_glfw.cpp.i
 
 CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_glfw.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_glfw.cpp.s"
-	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/include/third_party/imgui/backends/imgui_impl_glfw.cpp -o CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_glfw.cpp.s
+	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/backends/imgui_impl_glfw.cpp -o CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_glfw.cpp.s
 
 CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_opengl3.cpp.obj: CMakeFiles/ImGui.dir/flags.make
 CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_opengl3.cpp.obj: CMakeFiles/ImGui.dir/includes_CXX.rsp
-CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_opengl3.cpp.obj: C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/include/third_party/imgui/backends/imgui_impl_opengl3.cpp
+CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_opengl3.cpp.obj: C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/backends/imgui_impl_opengl3.cpp
 CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_opengl3.cpp.obj: CMakeFiles/ImGui.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:/Fireflies_Pipeline/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_opengl3.cpp.obj"
-	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_opengl3.cpp.obj -MF CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_opengl3.cpp.obj.d -o CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_opengl3.cpp.obj -c C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/include/third_party/imgui/backends/imgui_impl_opengl3.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:/Fireflies/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_opengl3.cpp.obj"
+	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_opengl3.cpp.obj -MF CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_opengl3.cpp.obj.d -o CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_opengl3.cpp.obj -c C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/backends/imgui_impl_opengl3.cpp
 
 CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_opengl3.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_opengl3.cpp.i"
-	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/include/third_party/imgui/backends/imgui_impl_opengl3.cpp > CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_opengl3.cpp.i
+	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/backends/imgui_impl_opengl3.cpp > CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_opengl3.cpp.i
 
 CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_opengl3.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_opengl3.cpp.s"
-	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/include/third_party/imgui/backends/imgui_impl_opengl3.cpp -o CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_opengl3.cpp.s
+	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/backends/imgui_impl_opengl3.cpp -o CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_opengl3.cpp.s
 
 CMakeFiles/ImGui.dir/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp.obj: CMakeFiles/ImGui.dir/flags.make
 CMakeFiles/ImGui.dir/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp.obj: CMakeFiles/ImGui.dir/includes_CXX.rsp
-CMakeFiles/ImGui.dir/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp.obj: C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp
+CMakeFiles/ImGui.dir/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp.obj: C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp
 CMakeFiles/ImGui.dir/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp.obj: CMakeFiles/ImGui.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:/Fireflies_Pipeline/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/ImGui.dir/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp.obj"
-	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ImGui.dir/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp.obj -MF CMakeFiles/ImGui.dir/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp.obj.d -o CMakeFiles/ImGui.dir/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp.obj -c C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:/Fireflies/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/ImGui.dir/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp.obj"
+	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ImGui.dir/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp.obj -MF CMakeFiles/ImGui.dir/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp.obj.d -o CMakeFiles/ImGui.dir/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp.obj -c C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp
 
 CMakeFiles/ImGui.dir/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/ImGui.dir/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp.i"
-	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp > CMakeFiles/ImGui.dir/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp.i
+	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp > CMakeFiles/ImGui.dir/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp.i
 
 CMakeFiles/ImGui.dir/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/ImGui.dir/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp.s"
-	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp -o CMakeFiles/ImGui.dir/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp.s
+	C:/Strawberry/c/bin/c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp -o CMakeFiles/ImGui.dir/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp.s
 
 # Object files for target ImGui
 ImGui_OBJECTS = \
@@ -199,7 +199,7 @@ libImGui.a: CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_o
 libImGui.a: CMakeFiles/ImGui.dir/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp.obj
 libImGui.a: CMakeFiles/ImGui.dir/build.make
 libImGui.a: CMakeFiles/ImGui.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=C:/Fireflies_Pipeline/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Linking CXX static library libImGui.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=C:/Fireflies/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Linking CXX static library libImGui.a"
 	$(CMAKE_COMMAND) -P CMakeFiles/ImGui.dir/cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/ImGui.dir/link.txt --verbose=$(VERBOSE)
 
@@ -212,6 +212,6 @@ CMakeFiles/ImGui.dir/clean:
 .PHONY : CMakeFiles/ImGui.dir/clean
 
 CMakeFiles/ImGui.dir/depend:
-	$(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk C:/Fireflies_Pipeline/build C:/Fireflies_Pipeline/build C:/Fireflies_Pipeline/build/CMakeFiles/ImGui.dir/DependInfo.cmake "--color=$(COLOR)"
+	$(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" C:/Fireflies/Fireflies/Fireflies_fmk C:/Fireflies/Fireflies/Fireflies_fmk C:/Fireflies/build C:/Fireflies/build C:/Fireflies/build/CMakeFiles/ImGui.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/ImGui.dir/depend
 

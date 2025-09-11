@@ -53,10 +53,10 @@ RM = "C:/Program Files/CMake/bin/cmake.exe" -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk
+CMAKE_SOURCE_DIR = C:/Fireflies/Fireflies/Fireflies_fmk
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = C:/Fireflies_Pipeline/build
+CMAKE_BINARY_DIR = C:/Fireflies/build
 
 # Utility rule file for ContinuousCoverage.
 
@@ -85,6 +85,6 @@ CMakeFiles/ContinuousCoverage.dir/clean:
 .PHONY : CMakeFiles/ContinuousCoverage.dir/clean
 
 CMakeFiles/ContinuousCoverage.dir/depend:
-	$(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk C:/Fireflies_Pipeline/build C:/Fireflies_Pipeline/build C:/Fireflies_Pipeline/build/CMakeFiles/ContinuousCoverage.dir/DependInfo.cmake "--color=$(COLOR)"
+	$(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" C:/Fireflies/Fireflies/Fireflies_fmk C:/Fireflies/Fireflies/Fireflies_fmk C:/Fireflies/build C:/Fireflies/build C:/Fireflies/build/CMakeFiles/ContinuousCoverage.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/ContinuousCoverage.dir/depend
 

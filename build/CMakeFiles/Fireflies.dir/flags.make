@@ -11,7 +11,7 @@ CXX_FLAGS = -g
 
 RC_DEFINES = 
 
-RC_INCLUDES = -I C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/dependencies/glfw3/glfw-3.4.bin.WIN64/include -I C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/include/third_party/imgui -I C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/include/third_party/imgui/backends -I C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/include/headers -I C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/include/ImGuiFileDialog -I C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk/include/third_party/ImGuiFileDialog
+RC_INCLUDES = -I C:/Fireflies/Fireflies/Fireflies_fmk/dependencies/glfw3/glfw-3.4.bin.WIN64/include -I C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui -I C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/backends -I C:/Fireflies/Fireflies/Fireflies_fmk/include/headers -I C:/Fireflies/Fireflies/Fireflies_fmk/include/ImGuiFileDialog -I C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/ImGuiFileDialog
 
 RC_FLAGS = 
 

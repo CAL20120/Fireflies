@@ -5,8 +5,8 @@
 cmake_minimum_required(VERSION 4.1.0-rc1)
 
 # CTest Start Step
-set(CTEST_SOURCE_DIRECTORY "C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk")
-set(CTEST_BINARY_DIRECTORY "C:/Fireflies_Pipeline/build")
+set(CTEST_SOURCE_DIRECTORY "C:/Fireflies/Fireflies/Fireflies_fmk")
+set(CTEST_BINARY_DIRECTORY "C:/Fireflies/build")
 
 # CTest Update Step
 set(CTEST_UPDATE_COMMAND "C:/Program Files/Git/cmd/git.exe")

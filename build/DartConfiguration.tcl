@@ -4,8 +4,8 @@
 
 
 # Configuration directories and files
-SourceDirectory: C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk
-BuildDirectory: C:/Fireflies_Pipeline/build
+SourceDirectory: C:/Fireflies/Fireflies/Fireflies_fmk
+BuildDirectory: C:/Fireflies/build
 
 # Where to place the cost data store
 CostDataFile: 
@@ -27,7 +27,7 @@ SubmitInactivityTimeout:
 NightlyStartTime: 00:00:00 EDT
 
 # Commands for the build/test/submit cycle
-ConfigureCommand: "C:/Program Files/CMake/bin/cmake.exe" "C:/Fireflies_Pipeline/Fireflies/Fireflies_fmk"
+ConfigureCommand: "C:/Program Files/CMake/bin/cmake.exe" "C:/Fireflies/Fireflies/Fireflies_fmk"
 MakeCommand: C:/Program\ Files/CMake/bin/cmake.exe --build . --config "${CTEST_CONFIGURATION_TYPE}"
 DefaultCTestConfigurationType: Release
 
