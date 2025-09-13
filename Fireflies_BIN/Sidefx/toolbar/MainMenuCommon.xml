@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mainMenu>
+    <menuBar>
+        <menu name="Fireflies_custom" label="Fireflies">
+            <scriptItem  id="test" label="test_label" scriptType="python">
+                print("test")
+            </scriptItem>
+        </menu>
+    </menuBar>
+</mainMenu>

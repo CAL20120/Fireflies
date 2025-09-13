@@ -16,6 +16,6 @@ windowPref -topLeftCorner 250 200 -widthHeight 700 400 -maximized true -parentMa
 windowPref -topLeftCorner 250 200 -widthHeight 550 562 -maximized true -parentMain true blindDataEditor1Window;
 windowPref -topLeftCorner 150 200 -widthHeight 1120 640 -maximized true -parentMain true polyTexturePlacementPanel1Window;
 windowPref -topLeftCorner 235 230 -widthHeight 1000 495 -maximized true -parentMain true contentBrowserPanel1Window;
-windowPref -topLeftCorner 23 0 -widthHeight 3440 1369 -maximized true -parentMain true MayaWindow;
+windowPref -topLeftCorner 31 0 -widthHeight 1280 1024 -maximized true -parentMain false MayaWindow;
 windowPref -topLeftCorner 166 977 -widthHeight 943 1080 -maximized false -parentMain true shelfEditor;
 windowPref -topLeftCorner 495 1146 -widthHeight 440 160 -maximized false -parentMain true commandSearchAndReplaceWnd;
