@@ -1,0 +1,4 @@
+from fireflies.context import context_window
+
+x = context_window.context_window()
+x.show()

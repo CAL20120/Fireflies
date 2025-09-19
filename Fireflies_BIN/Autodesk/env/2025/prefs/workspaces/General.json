@@ -352,8 +352,8 @@
     "closedControls": [
         {
             "objectName": "scriptEditorPanel1Window",
-            "posX": 2171,
-            "posY": 334,
+            "posX": 1779,
+            "posY": 245,
             "controlHeight": 885,
             "controlWidth": 926,
             "widthProperty": "free",

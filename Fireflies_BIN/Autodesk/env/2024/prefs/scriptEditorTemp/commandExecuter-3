@@ -1,0 +1,3 @@
+import os 
+path = r"R:\\Christopher_LUCAS"
+print(os.listdir(path))

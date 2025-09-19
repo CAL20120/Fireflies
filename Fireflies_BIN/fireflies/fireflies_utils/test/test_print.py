@@ -6,3 +6,7 @@ class test:
         print("coucou")
 
 
+from fireflies.fireflies_utils.test.test_print import test
+
+x = test()
+x.test_print()

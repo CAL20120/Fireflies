@@ -1,1 +1,3 @@
-print("test")
+from fireflies.maya.maya_to_usd_converter_qt import usd_export_window
+x = usd_export_window()
+x.show()

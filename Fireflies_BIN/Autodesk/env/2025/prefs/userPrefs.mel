@@ -197,8 +197,8 @@ optionVar -cat "Security"
 
 // Shelves
 optionVar -cat "Shelves"
- -iv "numShelves" 17
- -iv "selectedShelf" 14
+ -iv "numShelves" 18
+ -iv "selectedShelf" 17
  -sv "shelfAlign1" "left"
  -sv "shelfAlign10" "left"
  -sv "shelfAlign11" "left"
@@ -208,6 +208,7 @@ optionVar -cat "Shelves"
  -sv "shelfAlign15" "left"
  -sv "shelfAlign16" "left"
  -sv "shelfAlign17" "left"
+ -sv "shelfAlign18" "left"
  -sv "shelfAlign2" "left"
  -sv "shelfAlign3" "left"
  -sv "shelfAlign4" "left"
@@ -221,10 +222,11 @@ optionVar -cat "Shelves"
  -sv "shelfFile11" "shelf_Custom"
  -sv "shelfFile12" "shelf_Arnold"
  -sv "shelfFile13" "shelf_Bifrost"
- -sv "shelfFile14" "shelf_Fireflies_dev"
- -sv "shelfFile15" "shelf_MotionGraphics"
- -sv "shelfFile16" "shelf_XGen"
- -sv "shelfFile17" "shelf_MASH"
+ -sv "shelfFile14" "shelf_MotionGraphics"
+ -sv "shelfFile15" "shelf_XGen"
+ -sv "shelfFile16" "shelf_MASH"
+ -sv "shelfFile17" "shelf_Fireflies_dev"
+ -sv "shelfFile18" "shelf_Fireflies"
  -sv "shelfFile2" "shelf_Surfaces"
  -sv "shelfFile3" "shelf_Polygons"
  -sv "shelfFile4" "shelf_Sculpting"
@@ -241,6 +243,7 @@ optionVar -cat "Shelves"
  -iv "shelfLoad15" 1
  -iv "shelfLoad16" 1
  -iv "shelfLoad17" 1
+ -iv "shelfLoad18" 1
  -iv "shelfLoad3" 1
  -iv "shelfLoad4" 0
  -iv "shelfLoad5" 0
@@ -253,10 +256,11 @@ optionVar -cat "Shelves"
  -sv "shelfName11" "Custom"
  -sv "shelfName12" "Arnold"
  -sv "shelfName13" "Bifrost"
- -sv "shelfName14" "Fireflies_dev"
- -sv "shelfName15" "MotionGraphics"
- -sv "shelfName16" "XGen"
- -sv "shelfName17" "MASH"
+ -sv "shelfName14" "MotionGraphics"
+ -sv "shelfName15" "XGen"
+ -sv "shelfName16" "MASH"
+ -sv "shelfName17" "Fireflies_dev"
+ -sv "shelfName18" "Fireflies"
  -sv "shelfName2" "Surfaces"
  -sv "shelfName3" "Polygons"
  -sv "shelfName4" "Sculpting"
