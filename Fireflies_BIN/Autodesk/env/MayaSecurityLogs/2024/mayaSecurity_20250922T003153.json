@@ -1,0 +1,45 @@
+{
+    "desc": "Initializing SafeModeController..."
+}{
+    "desc": "Disabling Security Preference",
+    "options": "SafeModeOption",
+    "choice": "accept",
+    "action": "Allow",
+    "states": ""
+}{
+    "desc": "Disabling Security Preference",
+    "options": "TrustCenterPathOption",
+    "choice": "accept",
+    "action": "Allow",
+    "states": ""
+}{
+    "desc": "Disabling Security Preference",
+    "options": "SafeModeGlobalPy",
+    "choice": "accept",
+    "action": "Allow",
+    "states": ""
+}{
+    "desc": "Disabling Security Preference",
+    "options": "SafeModeBuiltInCheck",
+    "choice": "accept",
+    "action": "Allow",
+    "states": ""
+}{
+    "desc": "Disabling Security Preference",
+    "options": "SafeModeImportOption",
+    "choice": "accept",
+    "action": "Allow",
+    "states": ""
+}{
+    "desc": "Disabling Security Preference",
+    "options": "SafeModeUserSetupHashOption",
+    "choice": "accept",
+    "action": "Allow",
+    "states": ""
+}{
+    "desc": "Disabling Security Preference",
+    "options": "SafeModeAllowGlobalProc",
+    "choice": "accept",
+    "action": "Allow",
+    "states": ""
+}
