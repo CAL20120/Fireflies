@@ -8,3 +8,6 @@ echo installing publish requirements
 "C:\Fireflies\Common\Maya_vars\Maya2024\Maya2024\bin\mayapy.exe" -m pip install git+https://github.com/pyblish/pyblish-maya.git
 "C:\Fireflies\Common\Maya_vars\Maya2024\Maya2024\bin\mayapy.exe" -m pip install git+https://github.com/pyblish/pyblish-rpc.git
 "C:\Fireflies\Common\Maya_vars\Maya2024\Maya2024\bin\mayapy.exe" -m pip install git+https://github.com/pyblish/pyblish-lite.git
+
+echo setting up python env var 
+setx PYTHONPATH "C:\Fireflies\Fireflies_BIN\"
