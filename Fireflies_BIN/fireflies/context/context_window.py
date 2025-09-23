@@ -4,6 +4,7 @@ from PySide2 import QtGui
 
 import os
 import sys
+import pathlib
 
 import maya.cmds as cmds 
 import maya.OpenMayaUI as omui
@@ -33,6 +34,7 @@ class context_window(QtWidgets.QDialog):
 
     def get_flds(self):
         target_flds = os.listdir(self.path)
+        # target_flds = [path for path in self.path.iterdir() if path.is_dir()]
         return target_flds
     
 
@@ -138,9 +140,12 @@ class context_window(QtWidgets.QDialog):
 
     def build_scene_path(self):
         self.fullPath = f"{self.tasks_path}\\{self.tasks_combo.currentText()}"
-        self.scene_name = f"{self.prod_name}_{self.sq_name}_{self.shot_name}_{self.tasks_name}.mb"
+        self.scene_name = f"{self.prod_name}_{self.sq_name}_{self.shot_name}_{self.tasks_combo.currentText()}.mb"
         self.export_path = f"{self.fullPath}\\{self.scene_name}"
 
+    def refresh_scene_ath(self):
+        self.scenes_on_disk = os.listdir(self.fullPath)
+        pass
 
     def export_context_scene(self):
         self.build_scene_path()
