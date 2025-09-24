@@ -62,6 +62,7 @@ class context_window(QtWidgets.QDialog):
         self.context_info.setColumnWidth(1, 175)
         self.context_info.setColumnWidth(2, 175)
         self.context_info.setHorizontalHeaderLabels(["Scene", "Modified", "User"])
+        self.refresh_btn = QtWidgets.QPushButton("Refresh")
         header_view = self.context_info.horizontalHeader()
         header_view.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
 
@@ -88,6 +89,7 @@ class context_window(QtWidgets.QDialog):
         self.main_layout = QtWidgets.QVBoxLayout(self)
         self.main_layout.addLayout(self.set_shots_layout)
         self.main_layout.addWidget(self.context_info)
+        self.main_layout.addWidget(self.refresh_btn)
 
 
         self.main_layout.addStretch()
@@ -101,6 +103,8 @@ class context_window(QtWidgets.QDialog):
         self.prod_combo.currentIndexChanged.connect(self.update_sequence)
         self.sequence_combo.currentIndexChanged.connect(self.update_shots)
         self.shots_combo.currentIndexChanged.connect(self.update_tasks)
+
+        self.refresh_btn.clicked.connect(self.refresh_scene_ath)
 
         self.debug_btn.clicked.connect(self.test)
         self.start_shot_btn.clicked.connect(self.export_context_scene)
@@ -142,10 +146,23 @@ class context_window(QtWidgets.QDialog):
         self.fullPath = f"{self.tasks_path}\\{self.tasks_combo.currentText()}"
         self.scene_name = f"{self.prod_name}_{self.sq_name}_{self.shot_name}_{self.tasks_combo.currentText()}.mb"
         self.export_path = f"{self.fullPath}\\{self.scene_name}"
+        return self.fullPath
 
     def refresh_scene_ath(self):
-        self.scenes_on_disk = os.listdir(self.fullPath)
-        pass
+        # self.scenes_on_disk = os.listdir(self.build_scene_path[0])
+        test_path = f"{self.tasks_path}\\{self.tasks_combo.currentText()}"
+        target_scenes = [f for  f in os.listdir(test_path) if f.endswith("mb") or f.endswith("ma")]
+        self.context_info.setRowCount(0)
+
+        for x in range(len(target_scenes)):
+            for index, scenes in enumerate(target_scenes):
+                print(index, scenes)
+                self.context_info.insertRow(x)
+            self.add_item_context_info(x, 0, scenes)
+
+    def add_item_context_info(self, row, column, text):
+        item = QtWidgets.QTableWidgetItem(text)
+        self.context_info.setItem(row, column, item)   
 
     def export_context_scene(self):
         self.build_scene_path()
