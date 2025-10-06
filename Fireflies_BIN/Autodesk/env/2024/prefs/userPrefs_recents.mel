@@ -1,0 +1,16 @@
+//Maya Preference 2024 (Release 1)
+//
+//
+
+optionVar -version 3;
+
+// RecentFiles
+optionVar -cat "RecentFiles"
+ -sa "RecentFilesList"
+ -sva "RecentFilesList" "R:/Christopher_LUCAS/TEST_CONTEXT/001/01-01/model/TEST_CONTEXT_TEST_CONTEXT_001_01-01.mb"
+ -sva "RecentFilesList" "R:/Christopher_LUCAS/PRODS/test_dev/001/01/model/test_test_dev_001_model.0001.mb"
+ -sa "RecentFilesTypeList"
+ -sva "RecentFilesTypeList" "mayaBinary"
+ -sva "RecentFilesTypeList" "mayaBinary"
+ ;
+

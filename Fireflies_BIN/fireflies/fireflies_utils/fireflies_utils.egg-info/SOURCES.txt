@@ -1,0 +1,5 @@
+setup.py
+fireflies_utils.egg-info/PKG-INFO
+fireflies_utils.egg-info/SOURCES.txt
+fireflies_utils.egg-info/dependency_links.txt
+fireflies_utils.egg-info/top_level.txt

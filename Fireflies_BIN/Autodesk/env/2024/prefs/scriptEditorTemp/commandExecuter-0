@@ -1,0 +1,4 @@
+from fireflies.maya.usd_import_export_maya.script import maya_usd_import
+
+x = maya_usd_import.usd_import_window()
+x.show()

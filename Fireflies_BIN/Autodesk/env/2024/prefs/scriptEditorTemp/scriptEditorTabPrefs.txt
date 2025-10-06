@@ -1,0 +1,3 @@
+ScriptEditorSelectedTabIndex: 5
+ScriptEditorTabTypes: mel, python, python, python, python
+ScriptEditorTabLabels: MEL, Python, Python, Python, C:/Fireflies/Fireflies_BIN/fireflies/context/context_window.py

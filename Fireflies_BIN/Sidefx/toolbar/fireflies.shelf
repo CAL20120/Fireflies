@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shelfDocument>
+  <!-- This file contains definitions of shelves, toolbars, and tools.
+ It should not be hand-edited when it is being used by the application.
+ Note, that two definitions of the same element are not allowed in
+ a single file. -->
+
+  <toolshelf name="Fireflies" label="fireflies"/>
+
+  <toolshelf name="fireflies" label="Fireflies">
+    <memberTool name="context"/>
+  </toolshelf>
+
+  <tool name="context" label="Context" icon="C:/Fireflies/Fireflies_BIN/fireflies/logos/set_context.png">
+    <script scriptType="python"><![CDATA[from fireflies.context import context_window_hou]]></script>
+  </tool>
+</shelfDocument>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mainMenu>
+    <menuBar>
+        <subMenu id="Context">
+            <label>Context02</label>
+                <scriptItem id="setContext">
+                    <label>Context_opts</label>
+                    <script language="python">
+                    <![CDATA[
+print("bonjour")
+]]></script>
+            </scriptItem>
+        </subMenu>
+    </menuBar>
+</mainMenu>
