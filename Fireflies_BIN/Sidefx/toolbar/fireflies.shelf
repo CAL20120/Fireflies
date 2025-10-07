@@ -12,6 +12,10 @@
   </toolshelf>
 
   <tool name="context" label="Context" icon="C:/Fireflies/Fireflies_BIN/fireflies/logos/set_context.png">
-    <script scriptType="python"><![CDATA[from fireflies.context import context_window_hou]]></script>
+    <script scriptType="python"><![CDATA[from fireflies.context import context_window_hou
+import hou
+
+hou.session.dialog = context_window_hou.context_window()
+hou.session.dialog.show()]]></script>
   </tool>
 </shelfDocument>
