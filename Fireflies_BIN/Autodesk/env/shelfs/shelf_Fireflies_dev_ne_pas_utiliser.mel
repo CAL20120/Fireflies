@@ -1,4 +1,4 @@
-global proc shelf_Fireflies_dev () {
+global proc shelf_Fireflies_dev_ne_pas_utiliser () {
     global string $gBuffStr;
     global string $gBuffStr0;
     global string $gBuffStr1;
@@ -169,7 +169,7 @@ global proc shelf_Fireflies_dev () {
         -style "iconOnly" 
         -marginWidth 0
         -marginHeight 1
-        -command "import pyblish\nimport pyblish.api\n\n#import pyblish_maya\n#pyblish_maya.setup()\n\npyblish.api.register_host(\"maya\")\n\npyblish.api.register_plugin_path(r\"C:\\Fireflies\\Fireflies_BIN\\fireflies\\publish_usd\\collector\")\npyblish.api.register_plugin_path(r\"C:\\Fireflies\\Fireflies_BIN\\fireflies\\publish_usd\\validator\")\n\nimport pyblish_lite\npyblish_lite.show()\n" 
+        -command "import pyblish\nimport pyblish.api\nimport pyblish_lite\n\nimport pyblish_maya\npyblish_maya.setup()\n\npyblish.api.register_plugin_path(r\"C:\\Fireflies\\Fireflies_BIN\\fireflies\\publish_usd\\collector\")\npyblish.api.register_plugin_path(r\"C:\\Fireflies\\Fireflies_BIN\\fireflies\\publish_usd\\validator\")\npyblish.api.register_plugin_path(r\"C:\\Fireflies\\Fireflies_BIN\\fireflies\\publish_usd\\extractor\")\n\npyblish_lite.settings.WindowTitle = \"Usd Asset Publishing\"\npyblish_lite.settings.InitialTab = \"overview\"\npyblish_lite.settings.UsdLabel = True\n\n\npyblish_lite.show()\n\nprint(pyblish.api.discover())" 
         -sourceType "python" 
         -commandRepeatable 1
         -flat 1

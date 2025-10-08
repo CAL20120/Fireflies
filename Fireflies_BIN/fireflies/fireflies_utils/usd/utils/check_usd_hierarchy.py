@@ -3,7 +3,6 @@ import maya.cmds as cmds
 import maya.mel as mel 
 
 from pxr import Usd, Sdf, UsdGeom
-import pyblish.api
 
 class usd_check_hierarchy():
 
@@ -17,8 +16,10 @@ class usd_check_hierarchy():
         # asset_name = self.instance.append("asset_name")
         # print(asset_name)
 
-        self.shot_path = cmds.file(q=True, sn=True).rsplit("/", 2)[0]
+        self.shot_path = cmds.file(q=True, sn=True).rsplit("/", 1)[0]
         self.export_path = f"{self.shot_path}/tmp_check/{asset_name}.usda"
+        if not os.path.exists("{self.shot_path}/tmp_check/"):
+            os.makedirs("{self.shot_path}/tmp_check/")
         self.final_sel = cmds.listRelatives(asset_name, fullPath=True)
         # selection = cmds.select(asset_name) 
         # asset_name = asset_name
@@ -63,7 +64,7 @@ class usd_check_hierarchy():
         #debug export
         stage.GetRootLayer().Save()
         output = str(stage.GetRootLayer().ExportToString())
-        with open(f"{self.shot_path}/tmp/test_edit.usda", "w") as f:
+        with open(self.export_path, "w") as f:
             f.write(output)
 
 
@@ -171,8 +172,10 @@ class usd_check_hierarchy():
             print("Elements missing")
             return False
         if sorted(list1) == sorted(list2):
+            os.remove(self.export_path)
             return True
         else: 
+            os.remove(self.export_path)
             return False
         
 

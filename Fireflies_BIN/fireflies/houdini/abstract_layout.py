@@ -1,30 +1,30 @@
 import hou 
 from pxr import UsdUtils, Sdf, Usd, UsdGeom, Vt, Gf
 
+def create_vt_array(primvar_value):
+    if primvar_value is None:
+        return None
+    
+    if primvar_value and isinstance(primvar_value, (list, tuple)):
+        primv = primvar_value[0]
+
+        if isinstance(primv, float):
+            return Vt.FloatArray(primvar_value)
+        elif isinstance(primv, int):
+            return Vt.IntArray(primvar_value)
+        elif isinstance(primv, (list, tuple)) and len(primv) >= 3:
+            return Vt.Vec3fArray([Gf.Vec3(*v) for v in primvar_value])
+        elif isinstance(primv, (list, tuple)) and len(primv) == 2:
+            return Vt.Vec2fArray([Gf.Vec2f(*v) for v in primvar_value])
+
+    return primvar_value
+
 def create_proxy():
     node = hou.pwd()
     stage = node.editableStage()
 
-    def create_vt_array(primvar_value):
-        if primvar_value is None:
-            return None
-        
-        if primvar_value and isinstance(primvar_value, (list, tuple)):
-            primv = primvar_value[0]
-
-            if isinstance(primv, float):
-                return Vt.FloatArray(primvar_value)
-            elif isinstance(primv, int):
-                return Vt.IntArray(primvar_value)
-            elif isinstance(primv, (list, tuple)) and len(primv) >= 3:
-                return Vt.Vec3fArray([Gf.Vec3(*v) for v in primvar_value])
-            elif isinstance(primv, (list, tuple)) and len(primv) == 2:
-                return Vt.Vec2fArray([Gf.Vec2f(*v) for v in primvar_value])
-
-        return primvar_value
-
     for prim in stage.Traverse():
-        if prim.GetName() == "geo":
+        if prim.GetName() == "render":
             geo_path = prim.GetPath()
             geo_prim = stage.GetPrimAtPath(geo_path)
             geo_children = geo_prim.GetChildren()
@@ -82,3 +82,6 @@ def create_proxy():
                 children_geom.GetPurposeAttr().Set("render")
                 new_childen_geom.GetPurposeAttr().Set("proxy")
                 new_childen.SetActive(True)
+
+def publish_layout():
+    pass

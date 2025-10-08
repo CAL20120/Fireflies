@@ -108,9 +108,6 @@ class create_usd_asset_window(QtWidgets.QDialog):
             cmds.parent(self.active_sel, self.geo_xform_render)
             print("//Geo parented to hierarchy !")
 
-
-        cube = cmds.polyCube(name="Asset")
-        cmds.parent(cube, self.geo_xform_render)
         print("usd hierarchy created")
 
     # def add_sel_hierarchy(self):
