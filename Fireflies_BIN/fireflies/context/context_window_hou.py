@@ -271,5 +271,4 @@ class context_window(QtWidgets.QDialog):
     #         self.preview_layout.addWidget(label)
 
 # if __name__ == "__main__":
-x = context_window()
-x.show()
+
