@@ -1,4 +1,4 @@
-from fireflies.maya.usd_import_export_maya.script import maya_usd_import
+from fireflies.fireflies_utils.usd import usd_asset_importer
 
-x = maya_usd_import.usd_import_window()
+x = usd_asset_importer.importer_window()
 x.show()

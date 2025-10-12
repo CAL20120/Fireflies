@@ -6,16 +6,10 @@ optionVar -version 3;
 
 // Animation
 optionVar -cat "Animation"
- -fv "playbackMax" 200
  -fv "playbackMaxDefault" 120
  -fv "playbackMaxRangeDefault" 200
  -fv "playbackMinDefault" 1
  -fv "playbackMinRangeDefault" 1
- ;
-
-// Animation.Playback.Playblast
-optionVar -cat "Animation.Playback.Playblast"
- -sv "playblastFile" "test_dev_001_01_model"
  ;
 
 // Attribute Editor

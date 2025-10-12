@@ -3,6 +3,44 @@
     "selectedShelf": "Fireflies_dev_ne_pas_utiliser",
     "panels": [
         {
+            "mainWindowPanel": false,
+            "posX": 2008,
+            "posY": 40,
+            "splitter": {
+                "orientation": "horizontal",
+                "children": [
+                    {
+                        "tabWidget": {
+                            "selectedIndex": 0,
+                            "controlWidth": 1207,
+                            "controlHeight": 1356,
+                            "collapsed": false,
+                            "controls": [
+                                {
+                                    "objectName": "scriptEditorPanel1Window",
+                                    "title": "Script Editor",
+                                    "uiScript": "if(!`panel -q -exists scriptEditorPanel1`) {\n\tint $menusOkayInPanels = `optionVar -q allowMenusInPanels`;\n\tstring $panelName = \"scriptEditorPanel1\";\n\tscriptedPanel -unParent  -type \"scriptEditorPanel\" -l (localizedPanelLabel(\"Script Editor\")) -mbv $menusOkayInPanels  scriptEditorPanel1;\n} else {\n\tscriptedPanel -e -unParent scriptEditorPanel1;\n}\nscriptedPanel -e -parent scriptEditorPanel1Window scriptEditorPanel1;\n",
+                                    "retain": false,
+                                    "deleteLater": true,
+                                    "loadImmediately": false,
+                                    "checkPlugins": false,
+                                    "actLikeMayaUIElement": false,
+                                    "layoutDirectionCallback": "",
+                                    "layoutDirection": "horizontal",
+                                    "tabDirection": 0,
+                                    "closed": false,
+                                    "widthProperty": "free",
+                                    "heightProperty": "free",
+                                    "controlWidth": 1207,
+                                    "controlHeight": 1356
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
             "mainWindowPanel": true,
             "splitter": {
                 "orientation": "vertical",
@@ -341,44 +379,6 @@
                                             }
                                         ]
                                     }
-                                }
-                            ]
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "mainWindowPanel": false,
-            "posX": 1994,
-            "posY": 438,
-            "splitter": {
-                "orientation": "horizontal",
-                "children": [
-                    {
-                        "tabWidget": {
-                            "selectedIndex": 0,
-                            "controlWidth": 1207,
-                            "controlHeight": 1356,
-                            "collapsed": false,
-                            "controls": [
-                                {
-                                    "objectName": "scriptEditorPanel1Window",
-                                    "title": "Script Editor",
-                                    "uiScript": "if(!`panel -q -exists scriptEditorPanel1`) {\n\tint $menusOkayInPanels = `optionVar -q allowMenusInPanels`;\n\tstring $panelName = \"scriptEditorPanel1\";\n\tscriptedPanel -unParent  -type \"scriptEditorPanel\" -l (localizedPanelLabel(\"Script Editor\")) -mbv $menusOkayInPanels  scriptEditorPanel1;\n} else {\n\tscriptedPanel -e -unParent scriptEditorPanel1;\n}\nscriptedPanel -e -parent scriptEditorPanel1Window scriptEditorPanel1;\n",
-                                    "retain": false,
-                                    "deleteLater": true,
-                                    "loadImmediately": false,
-                                    "checkPlugins": false,
-                                    "actLikeMayaUIElement": false,
-                                    "layoutDirectionCallback": "",
-                                    "layoutDirection": "horizontal",
-                                    "tabDirection": 0,
-                                    "closed": false,
-                                    "widthProperty": "free",
-                                    "heightProperty": "free",
-                                    "controlWidth": 1207,
-                                    "controlHeight": 1356
                                 }
                             ]
                         }
