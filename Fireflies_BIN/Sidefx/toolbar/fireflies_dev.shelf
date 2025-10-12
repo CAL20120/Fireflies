@@ -5,9 +5,8 @@
  Note, that two definitions of the same element are not allowed in
  a single file. -->
 
-  <toolshelf name="Fireflies" label="fireflies"/>
-
-  <toolshelf name="fireflies" label="Fireflies">
+  <toolshelf name="fireflies_dev" label="Fireflies DEV">
+    <memberTool name="test"/>
     <memberTool name="context"/>
     <memberTool name="prod_importer_hou"/>
   </toolshelf>
@@ -26,4 +25,5 @@ hou.session.dialog.show()]]></script>
 hou.session.dialog = usd_asset_importer.importer_window()
 hou.session.dialog.show()]]></script>
   </tool>
+
 </shelfDocument>
