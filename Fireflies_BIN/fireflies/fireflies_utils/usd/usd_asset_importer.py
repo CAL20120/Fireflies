@@ -54,12 +54,12 @@ class importer_window(QtWidgets.QDialog):
 
 
         # self.refresh_btn = QtWidgets.QPushButton("Refresh")
-        self.asset_info_table = QtWidgets.QTableWidget()
-        self.asset_info_table.setColumnCount(4)
-        self.vertical_header = self.asset_info_table.verticalHeader()
-        self.asset_info_table.setHorizontalHeaderLabels(["Asset", "test", "4", "8"])
+        # self.asset_info_table = QtWidgets.QTableWidget()
+        # self.asset_info_table.setColumnCount(4)
+        # self.vertical_header = self.asset_info_table.verticalHeader()
+        # self.asset_info_table.setHorizontalHeaderLabels(["Asset", "test", "4", "8"])
 
-        self.debug_btn = QtWidgets.QPushButton("debug")
+        # self.debug_btn = QtWidgets.QPushButton("debug")
         self.import_btn = QtWidgets.QPushButton("Import")
         self.close_btn = QtWidgets.QPushButton("Close")
 
@@ -69,12 +69,12 @@ class importer_window(QtWidgets.QDialog):
         # self.table_layout.addWidget(self.refresh_btn)
 
         self.asset_info_layout = QtWidgets.QHBoxLayout()
-        self.asset_info_layout.addWidget(self.asset_info_table)
+        # self.asset_info_layout.addWidget(self.asset_info_table)
 
         self.bottom_btn_layout = QtWidgets.QHBoxLayout()
         self.bottom_btn_layout.addWidget(self.import_btn)
         self.bottom_btn_layout.addWidget(self.close_btn)
-        self.bottom_btn_layout.addWidget(self.debug_btn)
+        # self.bottom_btn_layout.addWidget(self.debug_btn)
             
         self.main_layout = QtWidgets.QVBoxLayout(self)
         self.main_layout.addLayout(self.table_layout)
@@ -85,7 +85,7 @@ class importer_window(QtWidgets.QDialog):
 
     def create_connections(self):
         self.close_btn.clicked.connect(self.close)
-        self.debug_btn.clicked.connect(import_usd_asset.find_asset)
+        # self.debug_btn.clicked.connect(import_usd_asset.find_asset)
         # self.refresh_btn.clicked.connect(self.refresh_asset_table)
         self.import_btn.clicked.connect(self.import_asset)       
 
@@ -161,6 +161,6 @@ class import_usd_asset():
 
 
 
-# if __name__ == "__main__":
-#     x = importer_window()
-#     x.show()
+if __name__ == "__main__":
+    x = importer_window()
+    x.show()
