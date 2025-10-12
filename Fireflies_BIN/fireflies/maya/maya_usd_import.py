@@ -116,7 +116,7 @@ class usd_import_window(QtWidgets.QDialog):
     def open_sel_dialog(self):
         file_path, self.selected_filter = QtWidgets.QFileDialog.getOpenFileName(
             self, "Select USD file", "", self.file_filters, self.selected_filter
-        )
+        ) 
         
         if file_path:
             self.file_path_edit.setText(file_path)
@@ -138,7 +138,6 @@ class usd_import_window(QtWidgets.QDialog):
         print("working")
 
 
-
-test = usd_import_window()
-
-test.show()
+if __name__ == "__main__":
+    test = usd_import_window()
+    test.show()
