@@ -131,6 +131,17 @@ class importer_window(QtWidgets.QDialog):
             hou_utils.hou_usd.import_prod_usd_asset(self, asset_path=self.paths[target_index[1]])
             pass
 
+class server_import():
+    def __init__(self):
+        self.request_https()
+
+    def request_https(self):
+        import requests
+        result = requests.get("https://chrisnasmacro.synology.me:3485/")
+        print(result.json())
+
+        #TODO: check how to query nas volume from https requests module
+        pass
 
 class import_usd_asset():
     def __init__(self):

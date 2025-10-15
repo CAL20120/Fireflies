@@ -1,6 +1,14 @@
 import hou 
 from pxr import UsdUtils, Sdf, Usd, UsdGeom, Vt, Gf
 
+import subprocess
+import random
+from datetime import datetime
+
+import os 
+
+print("coucou")
+
 def create_vt_array(primvar_value):
     if primvar_value is None:
         return None
@@ -19,7 +27,7 @@ def create_vt_array(primvar_value):
 
     return primvar_value
 
-def create_proxy():
+def create_proxy() -> Usd:
     node = hou.pwd()
     stage = node.editableStage()
 
@@ -83,5 +91,73 @@ def create_proxy():
                 new_childen_geom.GetPurposeAttr().Set("proxy")
                 new_childen.SetActive(True)
 
-def publish_layout():
-    pass
+
+
+
+
+class fireflies_layout():
+    def __init__(self):
+        self.hython_path = r"C:\Fireflies\Common\Houdini_vars\houdini_205445\Houdini20.5.445\bin\hython.exe"
+        self.backup_path = hou.hipFile.path()
+        self.scene_path = hou.hipFile.path().rsplit("/", 1)[0]
+        self.scene_name = self.scene_path.rsplit("/")[-1]
+
+    def quick_previz(self) -> hou:
+        print("creating previz")
+        current_date = datetime.now()
+        export_date = f"{current_date.hour}_{current_date.minute}_{current_date.day}_{current_date.month}_{current_date.year}"
+        export_path = f"{self.scene_path}/quick_preview/preview_{self.scene_name}/{export_date}"
+    
+        if not os.path.exists(export_path):
+            os.makedirs(export_path)
+
+        #tmp export
+        #we need to save either a regular hip of nc
+        export_name = f"{export_path}/{self.scene_name}_quick_previz.hipnc"
+        hou.hipFile.save(file_name=export_name)
+        
+        #we load back into the original scene to let the script run in background
+        #and let the artist work on their scene
+        hou.hipFile.load(file_name=self.backup_path, ignore_load_warnings=True)
+        
+        
+        #we want to launch a background hython job
+        subprocess.run(
+            '"C:\\Fireflies\\Common\\Houdini_vars\\houdini_205445\\Houdini20.5.445\\bin\\hython.exe" "C:\\Fireflies\\Fireflies_BIN\\fireflies\\fireflies_utils\\usd\\\quick_previz.py" -asset_path {}'.format(export_name), 
+            shell=True, stdout=subprocess.PIPE
+        )
+
+
+class publish_layout():
+    def __init__(self):
+        self.scene_path = hou.hipFile.path().rsplit("/", 1)[0]
+        self.export_path = f"{self.scene_path}/usd_published"
+        self.scene_name = self.scene_path.rsplit("/")[-1]
+
+    def publish_layout(self):
+        #we need  to find the current top of the hda.
+        if not os.path.exists(self.export_path):
+            os.makedirs(self.export_path)
+        
+        current_node = hou.pwd()
+        # print(kwargs)
+        current_path = current_node.path()
+
+        target_rop = "{}/publish_layout".format(current_path)
+        node_export = hou.node(target_rop)
+
+        custom_name = current_node.evalParm('custom_input')
+
+        if custom_name != "":
+            target_export = f"{self.export_path}/{self.scene_name}_{custom_name}_layout.usd"
+        else:
+            target_export = f"{self.export_path}/{self.scene_name}_layout.usd"
+
+        node_export.parm('lopoutput').set(target_export)
+        
+        node_export.parm('trange').set(1)
+
+        target = None
+        if True:
+            node_export.parm('execute').pressButton()
+
