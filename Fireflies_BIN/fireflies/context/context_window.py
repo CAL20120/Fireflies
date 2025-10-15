@@ -32,8 +32,6 @@ class context_window(QtWidgets.QDialog):
         self.create_connections()
 
 
-
-
     def get_flds(self):
         target_flds = os.listdir(self.path)
         # target_flds = [path for path in self.path.iterdir() if path.is_dir()]

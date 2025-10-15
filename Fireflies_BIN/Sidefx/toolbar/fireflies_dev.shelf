@@ -9,6 +9,7 @@
     <memberTool name="test"/>
     <memberTool name="context"/>
     <memberTool name="prod_importer_hou"/>
+    <memberTool name="quick_preview"/>
   </toolshelf>
 
   <tool name="context" label="Context" icon="C:/Fireflies/Fireflies_BIN/fireflies/logos/set_context.png">
@@ -26,4 +27,10 @@ hou.session.dialog = usd_asset_importer.importer_window()
 hou.session.dialog.show()]]></script>
   </tool>
 
+  <tool name="quick_preview" label="Quick Preview" icon="C:/Fireflies/Fireflies/softs_logo/quick_previz.png">
+    <script scriptType="python"><![CDATA[from fireflies.houdini import abstract_layout
+
+x = abstract_layout.fireflies_layout()
+x.quick_previz()]]></script>
+  </tool>
 </shelfDocument>

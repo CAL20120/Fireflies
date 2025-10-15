@@ -67,6 +67,8 @@ class context_window(QtWidgets.QDialog):
         self.close_btn = QtWidgets.QPushButton("Close")
         self.debug_btn = QtWidgets.QPushButton("Debug")
 
+        #TODO: add commentary and preview of the featured asset
+
     def create_layout(self):
         self.set_shots_layout = QtWidgets.QHBoxLayout()
         self.set_shots_layout.addWidget(self.prod_combo)
@@ -218,6 +220,7 @@ class context_window(QtWidgets.QDialog):
         print(self.export_path)
         # cmds.file(rename=self.export_path)
         hou.hipFile.save(file_name=self.export_path)
+
         # cmds.file(save=True)
         # self.export_preview()
         self.close()
