@@ -1,11 +1,12 @@
 #This file contains all the classes and methods often used when interacting with houdini hou module in usd
-
+import hou
+import os
 class hou_usd():
     def __init__(self):
-        pass
+        self.scene_path = hou.hipFile.path().rsplit("/", 1)[0]
+        self.scene_name = self.scene_path.rsplit("/")[-1]
 
     def import_prod_usd_asset(self, asset_path):
-        import hou
 
         asset_name = asset_path.rsplit("/", 1)[-1].split(".", 1)[0]
 
@@ -20,3 +21,12 @@ class hou_usd():
 
         node_path.parm('filepath').set(asset_path)
 
+    def build_render_path(self):
+        
+        export_dir = f"{self.scene_path}/render_test"
+        export_path = f"{export_dir}/render_$F4.exr"
+
+        if not os.path.exists(export_dir):
+            os.makedirs(export_dir)
+
+        return export_path
