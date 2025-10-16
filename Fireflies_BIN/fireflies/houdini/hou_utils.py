@@ -5,6 +5,7 @@ class hou_usd():
     def __init__(self):
         self.scene_path = hou.hipFile.path().rsplit("/", 1)[0]
         self.scene_name = self.scene_path.rsplit("/")[-1]
+        self.prod_name = hou.hipFile.path().rsplit("/")[-5]
 
     def import_prod_usd_asset(self, asset_path):
 
@@ -21,10 +22,10 @@ class hou_usd():
 
         node_path.parm('filepath').set(asset_path)
 
-    def build_render_path(self):
+    def build_render_path(self, version):
         
-        export_dir = f"{self.scene_path}/render_test"
-        export_path = f"{export_dir}/render_$F4.exr"
+        export_dir = f"{self.scene_path}/render_{self.prod_name}/{self.prod_name}_{version}"
+        export_path = f"{export_dir}/{self.prod_name}_{version}_render_$F4.exr"
 
         if not os.path.exists(export_dir):
             os.makedirs(export_dir)
