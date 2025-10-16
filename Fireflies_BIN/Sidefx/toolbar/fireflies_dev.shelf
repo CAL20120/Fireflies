@@ -10,6 +10,7 @@
     <memberTool name="context"/>
     <memberTool name="prod_importer_hou"/>
     <memberTool name="quick_preview"/>
+    <memberTool name="pyblish_houdini"/>
   </toolshelf>
 
   <tool name="context" label="Context" icon="C:/Fireflies/Fireflies_BIN/fireflies/logos/set_context.png">
