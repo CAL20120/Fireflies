@@ -57,8 +57,8 @@ class create_usd_asset_window(QtWidgets.QDialog):
         self.line_layout = QtWidgets.QFormLayout()
         self.line_layout.addRow("Asset name :", self.input_name)
         self.line_layout.addRow("", self.import_active_chk)
-        self.line_layout.addRow("", self.check_btn)
-        self.line_layout.addWidget(self.debug_btn)
+        # self.line_layout.addRow("", self.check_btn)
+        # self.line_layout.addWidget(self.debug_btn)
         # self.line_layout.addRow("", self.debug_btn)
 
         self.button_layout = QtWidgets.QHBoxLayout()
@@ -78,8 +78,8 @@ class create_usd_asset_window(QtWidgets.QDialog):
         self.create_btn.clicked.connect(self.create_usd_hierarchy)
         self.import_active_chk.stateChanged.connect(self.update_sel)
 
-        self.debug_btn.clicked.connect(self.debug)
-        self.check_btn.clicked.connect(self.check)
+        # self.debug_btn.clicked.connect(self.debug)
+        # self.check_btn.clicked.connect(self.check)
 
 
     def update_sel(self):
