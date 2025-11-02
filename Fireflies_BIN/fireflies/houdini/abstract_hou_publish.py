@@ -55,3 +55,7 @@ class hou_publish():
 
         with open(comment_path, "w") as f:
             f.write(text)
+
+
+    def export_preview(self):
+        pass
