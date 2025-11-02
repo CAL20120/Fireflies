@@ -186,7 +186,7 @@ class context_window(QtWidgets.QDialog):
         # self.scenes_on_disk = os.listdir(self.build_scene_path[0])
 
         test_path = f"{self.tasks_path}\\{self.tasks_combo.currentText()}"
-        target_scenes = [f for  f in os.listdir(test_path) if f.endswith(".hip") or f.endswith("hipnc")]
+        target_scenes = [f for  f in os.listdir(test_path) if f.endswith(".hip") or f.endswith("hipnc") or f.endswith("hiplc")]
         self.context_info.setRowCount(0)
 
         for x in range(len(target_scenes)):
