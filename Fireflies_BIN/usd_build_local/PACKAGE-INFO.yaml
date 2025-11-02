@@ -1,0 +1,12 @@
+Package: usd
+Version: 0.25.02-gl.10223+v25.02.ba8aaf1f
+Description: Universal Scene Description (USD) is an efficient, scalable system for
+  authoring, reading, and streaming time-sampled scene description for interchange
+  between graphics applications.
+SWIPAT NvBug: 
+Repository: 
+License Type: Modified Apache 2.0
+License Path: PACKAGE-LICENSES/usd-license.txt
+Builder Name: shedwards-wintest
+Packman Version: 7.24.3
+Packagemaker Version: 1.57.12
