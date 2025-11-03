@@ -121,3 +121,23 @@ class hou_usd():
 
         else: 
             print("asset path does not exist")
+
+
+    def create_playblast(self):
+        desktop = hou.ui.curDesktop()
+        target_pane = desktop.paneTabOfType(hou.paneTabType.SceneViewer)
+
+        viewport = target_pane.curViewport()
+
+        output = f"{self.scene_path}/quick_preview/{0}/{self.scene_name}.png"
+        # f_start, f_end = hou.playbar.playbackRange()
+
+        fbk_settings = target_pane.flipbookSettings().stash()
+        fbk_settings.frameRange((hou.frame(), hou.frame()))
+        fbk_settings.useResolution(True)
+        fbk_settings.useResolution(2560, 1140)
+        fbk_settings.output(output)
+
+        target_pane.flipbook(viewport, fbk_settings)
+
+        print("preview exporter to: {}".format(output))
