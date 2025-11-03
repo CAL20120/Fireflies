@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Pixar Type Visualization for Visual Studio and VSCode
+-->
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+  <!--
+    TfPointerAndBits is used throughout USD to pack a few bits of data in the low bits of each pointer.
+    This of course confuses the heck out of Visual Studio, so here we teach VS what the actual pointer value is.
+    This lets you use anything derived from TfPointerAndBits as if it were a normal pointer in the Watch window.
+    Additionally, we automatically expand it as if it were a normal pointer and add a fake [bits] field at the end in
+    case you care what those bits are.
+  -->
+  <Type Name="pxrInternal_v0_23__pxrReserved__::TfPointerAndBits&lt;*&gt;">
+    <SmartPointer Usage="Full">
+      ($T1*)((ULONGLONG)_ptrAndBits &amp; ~7)
+    </SmartPointer>
+    <Expand HideRawView="true">
+      <ExpandedItem Condition="_ptrAndBits > 7">
+        ($T1*)((ULONGLONG)_ptrAndBits &amp; ~7)
+      </ExpandedItem>
+      <Item Name="[bits]">
+        (UCHAR)((UCHAR)(_ptrAndBits) &amp; 7)
+      </Item>
+    </Expand>
+  </Type>
+
+  <!--
+    TfToken displays the token string as its value
+  -->
+  <Type Name="pxrInternal_v0_23__pxrReserved__::TfToken">
+    <DisplayString>{((pxrInternal_v0_23__pxrReserved__::TfToken::_Rep*)((ULONGLONG)_rep._ptrAndBits &amp; ~7))->_cstr,s}</DisplayString>
+  </Type>
+
+  <Type Name="pxrInternal_v0_23__pxrReserved__::SdfValueTypeName">
+    <DisplayString>{((sdf.dll!pxrInternal_v0_23__pxrReserved__::Sdf_ValueTypeImpl*)_impl)-&gt;name}[{((sdf.dll!pxrInternal_v0_23__pxrReserved__::Sdf_ValueTypePrivate::CoreType*)((sdf.dll!pxrInternal_v0_23__pxrReserved__::Sdf_ValueTypeImpl*)_impl)-&gt;type)-&gt;type}]</DisplayString>
+  </Type>
+
+  <Type Name="pxrInternal_v0_23__pxrReserved__::Sdf_ValueTypeImpl">
+    <DisplayString>{((sdf.dll!pxrInternal_v0_23__pxrReserved__::Sdf_ValueTypeImpl*)this)-&gt;name}[{((sdf.dll!pxrInternal_v0_23__pxrReserved__::Sdf_ValueTypePrivate::CoreType*)((sdf.dll!pxrInternal_v0_23__pxrReserved__::Sdf_ValueTypeImpl*)this)-&gt;type)-&gt;type}]</DisplayString>
+    <Expand>
+      <Item Name="[name]">((sdf.dll!pxrInternal_v0_23__pxrReserved__::Sdf_ValueTypeImpl*)this)-&gt;name</Item>
+      <Item Name="[type]">(sdf.dll!pxrInternal_v0_23__pxrReserved__::Sdf_ValueTypePrivate::CoreType*)((sdf.dll!pxrInternal_v0_23__pxrReserved__::Sdf_ValueTypeImpl*)this)-&gt;type</Item>
+      <Item Name="[scalar]">((sdf.dll!pxrInternal_v0_23__pxrReserved__::Sdf_ValueTypeImpl*)this)-&gt;scalar</Item>
+      <Item Name="[array]">((sdf.dll!pxrInternal_v0_23__pxrReserved__::Sdf_ValueTypeImpl*)this)-&gt;array</Item>
+    </Expand>
+  </Type>
+
+  <!--
+    Display the property name for UsdAttribute
+    We ought to add the attribute value too, but it might not be easy; the code that gets that is super complicated
+  -->
+  <Type Name="pxrInternal_v0_23__pxrReserved__::UsdObject">
+    <DisplayString Condition="_propName._rep != nullptr">{_prim}:{_propName,sb}</DisplayString>
+    <DisplayString Condition="_propName._rep == nullptr">{_prim}</DisplayString>
+  </Type>
+
+  <!--
+    Display the path and type of Usd_PrimData
+  -->
+  <Type Name="pxrInternal_v0_23__pxrReserved__::Usd_PrimData">
+    <DisplayString>[{*_primTypeInfo,sb}]{_path}</DisplayString>
+  </Type>
+
+  <!--
+    Usd_PrimDataHandle holds a boost intrusive_ptr, which holds a pointer to the actual Usd_PrimData
+  -->
+  <Type Name="pxrInternal_v0_23__pxrReserved__::Usd_PrimDataHandle">
+    <SmartPointer Usage="Full">
+      _p.px
+    </SmartPointer>
+  </Type>
+
+  <!--
+    Expand GfVec3d so that you can see its values with one less click
+  -->
+  <Type Name="pxrInternal_v0_23__pxrReserved__::GfVec3d">
+    <Expand>
+      <ExpandedItem>_data</ExpandedItem>
+    </Expand>
+  </Type>
+
+  <!--
+    TfRefPtr smart pointer
+    There are a few specializations so we mark it optional just in case this doesn't parse
+  -->
+  <Type Name="pxrInternal_v0_23__pxrReserved__::TfRefPtr&lt;*&gt;">
+    <SmartPointer Usage="Full" Optional="true">
+      _refBase
+    </SmartPointer>
+  </Type>
+
+  <!--
+    SdfLayer show identifier
+  -->
+  <Type Name="pxrInternal_v0_23__pxrReserved__::SdfLayer">
+    <DisplayString Condition="_assetInfo._Mypair._Myval2->identifier._Mypair._Myval2._Myres &lt; _assetInfo._Mypair._Myval2->identifier._Mypair._Myval2._BUF_SIZE">id: {_assetInfo._Mypair._Myval2->identifier._Mypair._Myval2._Bx._Buf,na}</DisplayString>
+    <DisplayString Condition="_assetInfo._Mypair._Myval2->identifier._Mypair._Myval2._Myres &gt;= _assetInfo._Mypair._Myval2->identifier._Mypair._Myval2._BUF_SIZE">id: {_assetInfo._Mypair._Myval2->identifier._Mypair._Myval2._Bx._Ptr,na}</DisplayString>
+  </Type>
+
+  <!--
+    UsdStage show root name to help identify a stage
+  -->
+  <Type Name="pxrInternal_v0_23__pxrReserved__::UsdStage">
+    <DisplayString>root {*_rootLayer}</DisplayString>
+  </Type>
+
+  <!--
+    TfType and related
+  -->
+  <Type Name="pxrInternal_v0_23__pxrReserved__::TfType::_TypeInfo">
+    <!-- _TypeInfo is unfortunately opaque to VisualStudio, offset to find typename string member -->
+    <DisplayString>{*((std::string*)(((char*)this) + sizeof(pxrInternal_v0_23__pxrReserved__::TfType))),sb}</DisplayString>
+  </Type>
+  <Type Name="pxrInternal_v0_23__pxrReserved__::TfType">
+    <DisplayString>{_info,na}</DisplayString>
+  </Type>
+  <Type Name="pxrInternal_v0_23__pxrReserved__::UsdPrimTypeInfo">
+    <DisplayString>{_typeId.primTypeName,na}</DisplayString>
+  </Type>
+
+  <!--
+    UsdPrim show prim type and path
+  -->
+  <Type Name="pxrInternal_v0_23__pxrReserved__::UsdPrim">
+    <DisplayString>{_prim-&gt;_path}</DisplayString>
+  </Type>
+
+  <!--
+    UsdSchemaBase for typed prims
+  -->
+  <Type Name="pxrInternal_v0_23__pxrReserved__::UsdSchemaBase">
+    <DisplayString>{_primData}</DisplayString>
+  </Type>
+
+  <!--
+    Following types are for SdfPath display
+  -->
+  <Type Name="pxrInternal_v0_23__pxrReserved__::Sdf_PathNodeHandleImpl&lt;*&gt;">
+    <DisplayString>{_poolHandle}</DisplayString>
+  </Type>
+
+  <Type Name="pxrInternal_v0_23__pxrReserved__::Sdf_PathNode">
+    <DisplayString Condition="(pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::NodeType)_nodeType == pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::RootNode">/</DisplayString>
+    <DisplayString Condition="(pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::NodeType)_nodeType == pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::PrimNode &amp;&amp; _parent.px == nullptr">{(pxrInternal_v0_23__pxrReserved__::Sdf_PrimPathNode*)this,na}</DisplayString>
+    <DisplayString Condition="(pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::NodeType)_nodeType == pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::PrimNode &amp;&amp; _parent.px != nullptr &amp;&amp; _parent.px-&gt;_nodeType == 0">/{(pxrInternal_v0_23__pxrReserved__::Sdf_PrimPathNode*)this,na}</DisplayString>
+    <DisplayString Condition="(pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::NodeType)_nodeType == pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::PrimNode &amp;&amp; _parent.px != nullptr &amp;&amp; _parent.px-&gt;_nodeType != 0">{_parent.px}/{(pxrInternal_v0_23__pxrReserved__::Sdf_PrimPathNode*)this,na}</DisplayString>
+    <DisplayString Condition="(pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::NodeType)_nodeType == pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::PrimVariantSelectionNode">{_parent.px}/{(pxrInternal_v0_23__pxrReserved__::Sdf_PrimVariantSelectionNode*)this,na}</DisplayString>
+    <DisplayString Condition="(pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::NodeType)_nodeType == pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::PrimPropertyNode">{(pxrInternal_v0_23__pxrReserved__::Sdf_PrimPropertyPathNode*)this,na}</DisplayString>
+    <DisplayString Condition="(pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::NodeType)_nodeType == pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::TargetNode">{(pxrInternal_v0_23__pxrReserved__::Sdf_TargetPathNode*)this,na}</DisplayString>
+    <DisplayString Condition="(pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::NodeType)_nodeType == pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::RelationalAttributeNode">{(pxrInternal_v0_23__pxrReserved__::Sdf_RelationalAttributePathNode*)this,na}</DisplayString>
+    <DisplayString Condition="(pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::NodeType)_nodeType == pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::MapperNode">{(pxrInternal_v0_23__pxrReserved__::Sdf_MapperPathNode*)this,na}</DisplayString>
+    <DisplayString Condition="(pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::NodeType)_nodeType == pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::MapperArgNode">{(pxrInternal_v0_23__pxrReserved__::Sdf_MapperArgPathNode*)this,na}</DisplayString>
+    <DisplayString Condition="(pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::NodeType)_nodeType == pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::ExpressionNode">{(pxrInternal_v0_23__pxrReserved__::Sdf_ExpressionPathNode*)this,na}</DisplayString>
+    <Expand>
+      <Item Name="downcast" Condition="(pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::NodeType)_nodeType == pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::RootNode">(pxrInternal_v0_23__pxrReserved__::Sdf_RootPathNode*)this</Item>
+      <Item Name="downcast" Condition="(pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::NodeType)_nodeType == pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::PrimNode">(pxrInternal_v0_23__pxrReserved__::Sdf_PrimPathNode*)this</Item>
+      <Item Name="downcast" Condition="(pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::NodeType)_nodeType == pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::PrimPropertyNode">(pxrInternal_v0_23__pxrReserved__::Sdf_PrimPropertyPathNode*)this</Item>
+      <Item Name="downcast" Condition="(pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::NodeType)_nodeType == pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::PrimVariantSelectionNode">(pxrInternal_v0_23__pxrReserved__::Sdf_PrimVariantSelectionNode*)this</Item>
+      <Item Name="downcast" Condition="(pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::NodeType)_nodeType == pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::TargetNode">(pxrInternal_v0_23__pxrReserved__::Sdf_TargetPathNode*)this</Item>
+      <Item Name="downcast" Condition="(pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::NodeType)_nodeType == pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::RelationalAttributeNode">(pxrInternal_v0_23__pxrReserved__::Sdf_RelationalAttributePathNode*)this</Item>
+      <Item Name="downcast" Condition="(pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::NodeType)_nodeType == pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::MapperNode">(pxrInternal_v0_23__pxrReserved__::Sdf_MapperPathNode*)this</Item>
+      <Item Name="downcast" Condition="(pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::NodeType)_nodeType == pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::MapperArgNode">(pxrInternal_v0_23__pxrReserved__::Sdf_MapperArgPathNode*)this</Item>
+      <Item Name="downcast" Condition="(pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::NodeType)_nodeType == pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::ExpressionNode">(pxrInternal_v0_23__pxrReserved__::Sdf_ExpressionPathNode*)this</Item>
+      <Item Name="_parent" Condition="_parent.px != nullptr">_parent.px</Item>
+      <Item Name="_parent" Condition="_parent.px == nullptr">"null"</Item>
+      <Item Name="_nodeType">(pxrInternal_v0_23__pxrReserved__::Sdf_PathNode::NodeType)_nodeType</Item>
+      <Item Name="_refCount">_refCount.my_storage.my_value</Item>
+      <Item Name="_elementCount">_elementCount</Item>
+      <Item Name="_isAbsolute">_isAbsolute</Item>
+      <Item Name="_containsPrimVariantSelection">_containsPrimVariantSelection</Item>
+      <Item Name="_containsTargetPath">_containsTargetPath</Item>
+      <Item Name="_hasToken">_hasToken</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="pxrInternal_v0_23__pxrReserved__::Sdf_PrimPartPathNode">
+  </Type>
+
+  <Type Name="pxrInternal_v0_23__pxrReserved__::Sdf_PropPartPathNode">
+  </Type>
+
+  <Type Name="pxrInternal_v0_23__pxrReserved__::RootNode">
+    <DisplayString>/</DisplayString>
+  </Type>
+
+  <Type Name="pxrInternal_v0_23__pxrReserved__::Sdf_PrimPathNode">
+    <DisplayString>{_name,sb}</DisplayString>
+  </Type>
+
+  <Type Name="pxrInternal_v0_23__pxrReserved__::Sdf_PrimPropertyPathNode">
+    <DisplayString>{_name,sb}</DisplayString>
+  </Type>
+
+  <Type Name="pxrInternal_v0_23__pxrReserved__::Sdf_PrimVariantSelectionNode">
+    <DisplayString>{{{_variantSelection._Mypair._Myval2-&gt;first,sb}:{_variantSelection._Mypair._Myval2-&gt;second,sb}}}</DisplayString>
+  </Type>
+
+  <Type Name="pxrInternal_v0_23__pxrReserved__::Sdf_TargetPathNode">
+    <DisplayString>{_targetPath}</DisplayString>
+  </Type>
+
+  <Type Name="pxrInternal_v0_23__pxrReserved__::Sdf_RelationalAttributePathNode">
+    <DisplayString>{_name}</DisplayString>
+  </Type>
+
+  <Type Name="pxrInternal_v0_23__pxrReserved__::Sdf_MapperPathNode">
+    <DisplayString>{_targetPath}</DisplayString>
+  </Type>
+
+  <Type Name="pxrInternal_v0_23__pxrReserved__::Sdf_MapperArgPathNode">
+    <DisplayString>{_name}</DisplayString>
+  </Type>
+
+  <Type Name="pxrInternal_v0_23__pxrReserved__::Sdf_ExpressionPathNode">
+    <DisplayString>[Expr]</DisplayString>
+  </Type>
+
+  <Type Name="pxrInternal_v0_23__pxrReserved__::Sdf_Pool&lt;*,*,*,*&gt;::Handle">
+    <Intrinsic Name="GetRegionMask" Expression="(1 &lt;&lt; $T3) - 1"/>
+    <Intrinsic Name="GetRegion" Expression="value &amp; GetRegionMask()"/>
+    <Intrinsic Name="GetIndex" Expression="value &gt;&gt; $T3"/>
+    <Intrinsic Name="GetPtr" Expression="sdf.dll!pxrInternal_v0_23__pxrReserved__::Sdf_Pool&lt;$T1,$T2,$T3,$T4&gt;::_regionStarts[GetRegion()] + (GetIndex() * $T2)"/>
+    <Intrinsic Name="GetPathNode" Expression="(pxrInternal_v0_23__pxrReserved__::Sdf_PathNode*)GetPtr()"/>
+    <DisplayString>{GetPathNode(),na}</DisplayString>
+    <Expand>
+      <Item Name="node" Condition="GetPtr()">GetPathNode()</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="pxrInternal_v0_23__pxrReserved__::SdfPath">
+    <DisplayString Condition="_propPart._poolHandle.value != 0">{_primPart}.{_propPart}</DisplayString>
+    <DisplayString Condition="_propPart._poolHandle.value == 0">{_primPart}</DisplayString>
+  </Type>
+
+  <Type Name="pxrInternal_v0_23__pxrReserved__::TfSmallVector&lt;*&gt;">
+    <DisplayString Condition="_capacity &lt;= $T2">{_size} items are in stack storage</DisplayString>
+    <DisplayString Condition="_capacity &gt; $T2">{_size} items are in heap storage</DisplayString>
+    <Expand>
+      <ArrayItems>
+        <Size>_size</Size>
+        <ValuePointer Condition="_capacity &lt;= $T2">(($T1*)_data._local)</ValuePointer>
+        <ValuePointer Condition="_capacity &gt; $T2">(($T1*)_data._remote)</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <!--
+        Boost intrusive_ptr, maybe it doesn't belong here but USD uses it
+        Commented out for now, probably better to use one of the boost packages from VS Marketplace
+      -->
+  <!--
+        <Type Name="boost::intrusive_ptr&lt;*&gt;">
+    <SmartPointer Usage="Full">
+      px
+    </SmartPointer>
+  </Type>
+  -->
+
+</AutoVisualizer>
