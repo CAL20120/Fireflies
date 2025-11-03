@@ -25,6 +25,42 @@ hou.session.dialog.show()]]></script>
   <toolshelf name="fireflies" label="Fireflies">
     <memberTool name="context"/>
     <memberTool name="prod_importer_hou"/>
+    <memberTool name="quick_preview0"/>
     <memberTool name="pyblish_houdini"/>
   </toolshelf>
+
+  <tool name="quick_preview" label="Quick Preview" icon="C:/Fireflies/Fireflies/softs_logo/quick_previz.png">
+    <script scriptType="python"><![CDATA[from fireflies.fireflies_utils.usd import quick_previz
+
+hou.session.dialog = quick_previz.quick_previz()
+hou.session.dialog.show()]]></script>
+  </tool>
+
+  <tool name="pyblish_houdini" label="Publish" icon="C:/Fireflies/Fireflies_BIN/fireflies/logos/publish_logo.png">
+    <script scriptType="python"><![CDATA[import pyblish 
+import pyblish.api 
+import pyblish_lite
+import pyblish_houdini 
+import pyblish.util
+
+pyblish_houdini.setup()
+
+pyblish.api.register_plugin_path("C:\\Fireflies\\Fireflies_BIN\\fireflies\\publish_hou\\collector")
+pyblish.api.register_plugin_path("C:\\Fireflies\\Fireflies_BIN\\fireflies\\publish_hou\\extractor")
+
+pyblish_lite.settings.WindowTitle = "Usd Publishing"
+pyblish_lite.settings.InitialTab = "artist"
+pyblish_lite.settings.UsdLabel = True
+
+pyblish.api.discover()
+
+pyblish_lite.show()]]></script>
+  </tool>
+
+  <tool name="quick_preview0" label="Quick Preview" icon="C:/Fireflies/Fireflies/softs_logo/quick_previz.png">
+    <script scriptType="python"><![CDATA[from fireflies.fireflies_utils.usd import quick_previz
+
+hou.session.dialog = quick_previz.quick_previz()
+hou.session.dialog.show()]]></script>
+  </tool>
 </shelfDocument>

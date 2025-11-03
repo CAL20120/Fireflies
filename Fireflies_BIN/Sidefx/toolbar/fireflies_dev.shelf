@@ -34,4 +34,29 @@ hou.session.dialog.show()]]></script>
 x = abstract_layout.fireflies_layout()
 x.quick_previz()]]></script>
   </tool>
+
+  <tool name="pyblish_houdini_dev" label="Publish" icon="C:/Fireflies/Fireflies_BIN/fireflies/logos/publish_logo.png">
+    <script scriptType="python"><![CDATA[import pyblish 
+import pyblish.api 
+import pyblish_lite
+import pyblish_houdini 
+import pyblish.util
+
+pyblish_houdini.setup()
+
+pyblish.api.register_plugin_path("C:\\Fireflies\\Fireflies_BIN\\fireflies\\publish_hou\\collector")
+pyblish.api.register_plugin_path("C:\\Fireflies\\Fireflies_BIN\\fireflies\\publish_hou\\extractor")
+
+pyblish_lite.settings.WindowTitle = "Usd Publishing"
+pyblish_lite.settings.InitialTab = "artist"
+pyblish_lite.settings.UsdLabel = True
+
+pyblish.api.discover()
+
+pyblish_lite.show()]]></script>
+  </tool>
+
+  <tool name="lib_assets" label="LIB Asset" icon="C:/Fireflies/Fireflies_BIN/fireflies/logos/lib_asset.png">
+    <script scriptType="python"><![CDATA[]]></script>
+  </tool>
 </shelfDocument>
