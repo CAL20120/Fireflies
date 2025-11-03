@@ -122,6 +122,6 @@ class quick_previz(QtWidgets.QDialog):
 #     scene.flipbook(scene.curViewport(), flip_options)
 
 
-
-x = quick_previz()
-x.show()
+if __name__ == "__main__":
+    x = quick_previz()
+    x.show()
