@@ -7,11 +7,6 @@
 
   <toolshelf name="Fireflies" label="fireflies"/>
 
-  <toolshelf name="fireflies" label="Fireflies">
-    <memberTool name="context"/>
-    <memberTool name="prod_importer_hou"/>
-  </toolshelf>
-
   <tool name="context" label="Context" icon="C:/Fireflies/Fireflies_BIN/fireflies/logos/set_context.png">
     <script scriptType="python"><![CDATA[from fireflies.context import context_window_hou
 import hou
@@ -26,4 +21,10 @@ hou.session.dialog.show()]]></script>
 hou.session.dialog = usd_asset_importer.importer_window()
 hou.session.dialog.show()]]></script>
   </tool>
+
+  <toolshelf name="fireflies" label="Fireflies">
+    <memberTool name="context"/>
+    <memberTool name="prod_importer_hou"/>
+    <memberTool name="pyblish_houdini"/>
+  </toolshelf>
 </shelfDocument>

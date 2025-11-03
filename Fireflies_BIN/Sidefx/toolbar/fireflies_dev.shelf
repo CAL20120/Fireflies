@@ -6,11 +6,11 @@
  a single file. -->
 
   <toolshelf name="fireflies_dev" label="Fireflies DEV">
-    <memberTool name="test"/>
     <memberTool name="context"/>
     <memberTool name="prod_importer_hou"/>
+    <memberTool name="lib_assets"/>
     <memberTool name="quick_preview"/>
-    <memberTool name="pyblish_houdini"/>
+    <memberTool name="pyblish_houdini_dev"/>
   </toolshelf>
 
   <tool name="context" label="Context" icon="C:/Fireflies/Fireflies_BIN/fireflies/logos/set_context.png">
@@ -22,9 +22,9 @@ hou.session.dialog.show()]]></script>
   </tool>
 
   <tool name="prod_importer_hou" label="PROD Asset" icon="C:/Fireflies/Fireflies_BIN/fireflies/logos/asset_importer.png">
-    <script scriptType="python"><![CDATA[from fireflies.fireflies_utils.usd import usd_asset_importer
+    <script scriptType="python"><![CDATA[from fireflies.fireflies_utils.usd import usd_asset_importer_hou
 
-hou.session.dialog = usd_asset_importer.importer_window()
+hou.session.dialog = usd_asset_importer_hou.importer_window()
 hou.session.dialog.show()]]></script>
   </tool>
 
