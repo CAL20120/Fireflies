@@ -2,6 +2,8 @@ from PySide2 import QtCore
 from PySide2 import QtWidgets
 from PySide2 import QtGui
 
+from datetime import datetime
+
 import os
 import sys
 import pathlib
@@ -20,6 +22,7 @@ class context_window(QtWidgets.QDialog):
         self.path = os.path.normpath(self.f.read())
 
         self.create_widgets()
+
         self.update_prods()
         self.update_sequence()
         self.create_layout()
@@ -33,7 +36,6 @@ class context_window(QtWidgets.QDialog):
     
 
     def create_widgets(self):
-
         self.prod_combo = QtWidgets.QComboBox()
         # self.prod_combo.addItem("Prod")
 
@@ -52,11 +54,11 @@ class context_window(QtWidgets.QDialog):
 
         ##########
         self.context_info = QtWidgets.QTableWidget()
-        self.context_info.setColumnCount(3)
+        self.context_info.setColumnCount(2)
         # self.context_info.setColumnWidth(0, 200)
         self.context_info.setColumnWidth(0, 326)
         self.context_info.setColumnWidth(1, 175)
-        self.context_info.setColumnWidth(2, 175)
+        # self.context_info.setColumnWidth(2, 175)
         self.context_info.setHorizontalHeaderLabels(["Scene", "Modified", "User"])
         # self.refresh_btn = QtWidgets.QPushButton("Refresh")
         header_view = self.context_info.horizontalHeader()
@@ -67,7 +69,6 @@ class context_window(QtWidgets.QDialog):
         self.close_btn = QtWidgets.QPushButton("Close")
         self.debug_btn = QtWidgets.QPushButton("Debug")
 
-        #TODO: add commentary and preview of the featured asset
 
     def create_layout(self):
         self.set_shots_layout = QtWidgets.QHBoxLayout()
@@ -99,7 +100,6 @@ class context_window(QtWidgets.QDialog):
         self.main_layout.addLayout(self.bottom_btn_layout)
 
     def create_connections(self):
-
         self.close_btn.clicked.connect(self.close)
 
         # self.prod_combo.currentIndexChanged.connect(self.update_prods)
@@ -112,7 +112,7 @@ class context_window(QtWidgets.QDialog):
 
         # self.refresh_btn.clicked.connect(self.refresh_scene_ath)
 
-        self.debug_btn.clicked.connect(self.update_tasks)
+        self.debug_btn.clicked.connect(self.test)
         self.start_shot_btn.clicked.connect(self.export_context_scene)
         self.open_btn.clicked.connect(self.open_scene)
         self.context_info.selectionModel().selectionChanged.connect(self.sel_changed)
@@ -123,6 +123,7 @@ class context_window(QtWidgets.QDialog):
 
         self.start_shot_btn.clicked.connect(self.export_context_scene)
 
+
     def update_all(self):
         self.update_prods()
         self.update_sequence()
@@ -130,15 +131,18 @@ class context_window(QtWidgets.QDialog):
         self.update_tasks()
         pass
 
+
     def test_print(self):
         self.build_scene_path()
         print(self.scene_name)
+
 
     def update_prods(self):
         for fld in self.get_flds():
             self.prod_combo.addItem(fld)
         self.prod_name = self.prod_combo.currentText()
         return
+
 
     def update_sequence(self):
         self.sequence_combo.clear()
@@ -147,6 +151,7 @@ class context_window(QtWidgets.QDialog):
         self.target_sequences = os.listdir(self.seq_path)
         for fld in self.target_sequences:
             self.sequence_combo.addItem(fld)
+
 
     def update_shots(self):
         self.shots_combo.clear()
@@ -157,6 +162,7 @@ class context_window(QtWidgets.QDialog):
         for fld in target_shots:
             self.shots_combo.addItem(fld)
     
+
     def update_tasks(self):
         self.tasks_combo.clear()
         self.tasks_name = self.shots_combo.currentText()
@@ -182,23 +188,44 @@ class context_window(QtWidgets.QDialog):
         self.export_path = f"{self.fullPath}\\{self.scene_name}"
         return self.fullPath
 
+
     def refresh_scene_ath(self):
         # self.scenes_on_disk = os.listdir(self.build_scene_path[0])
+        self.scenes_time = []
 
         test_path = f"{self.tasks_path}\\{self.tasks_combo.currentText()}"
-        target_scenes = [f for  f in os.listdir(test_path) if f.endswith(".hip") or f.endswith("hipnc") or f.endswith("hiplc")]
+        self.target_scenes = [f for  f in os.listdir(test_path) if f.endswith(".hip") or f.endswith("hipnc") or f.endswith("hiplc")]
+
+        target_base = self.build_scene_path()
+
+        for path in self.target_scenes:
+            valid_path = os.path.join(target_base, path)
+            # print(valid_path)
+            time_map = os.path.getmtime(valid_path)
+            modified_time = datetime.fromtimestamp(time_map)
+
+            self.scenes_time.append(str(modified_time))
+
+
         self.context_info.setRowCount(0)
 
-        for x in range(len(target_scenes)):
+        for x in range(len(self.target_scenes)):
             self.context_info.insertRow(x)
-            self.add_item_context_info(x, 0, target_scenes[x])
-        self.export_preview()
-        return target_scenes
+            self.add_item_context_info(x, 0, self.target_scenes[x])
+            
+            # if x < len(self.scenes_time):
+            #     self.add_item_context_info(x, 1, self.scenes_time[x])
+            self.add_item_context_info(x, 1, self.scenes_time[x])
+
+        # self.export_preview()
+
+        return self.target_scenes
 
 
     def add_item_context_info(self, row, column, text):
         item = QtWidgets.QTableWidgetItem(text)
         self.context_info.setItem(row, column, item)
+
 
     def sel_changed(self):
         try:
@@ -209,11 +236,13 @@ class context_window(QtWidgets.QDialog):
         except:
             return        
 
+
     def open_scene(self):
         open_path = f"{self.build_scene_path()}/{self.sel_changed()}"
         print(open_path)
         hou.hipFile.load(open_path.replace("\\", "/"))
         self.close()
+
 
     def export_context_scene(self):
         self.build_scene_path()
@@ -226,10 +255,15 @@ class context_window(QtWidgets.QDialog):
         self.close()
 
 
-
     def test(self):
-        self.build_scene_path()
-        print(self.export_path)
+        target_base = self.build_scene_path()
+        # print(target_base)
+        test_path = f"{self.tasks_path}\\{self.tasks_combo.currentText()}"
+        self.target_scene = [f for  f in os.listdir(test_path) if f.endswith(".hip") or f.endswith("hipnc") or f.endswith("hiplc")]
+
+        for path in self.target_scene:
+            valid_path = os.path.join(target_base, path)
+            print(valid_path)
 
     # def export_preview(self):
     #     self.build_scene_path()
@@ -273,5 +307,6 @@ class context_window(QtWidgets.QDialog):
     #         label.setPixmap(texture.scaled(640, 360, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation))
     #         self.preview_layout.addWidget(label)
 
-# if __name__ == "__main__":
-
+if __name__ == "__main__":
+    x = context_window()
+    x.show()
