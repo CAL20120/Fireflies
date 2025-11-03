@@ -1,0 +1,20 @@
+{
+    "Plugins": [
+        {
+            "Type": "library",
+            "Name": "TestUsdResolverChangedResolver",
+            "Root": "..",
+            "LibraryPath": "../../../lib/TestUsdResolverChangedResolver.dll",
+            "ResourcePath": "Resources",
+            "Info": {
+                "Types": {
+                    "_TestResolver": {
+                        "bases": ["ArResolver"],
+                        "implementsContexts": true
+                    },
+                    "_TestResolverPluginInterface": { }
+                }
+            }
+        }
+    ]
+}

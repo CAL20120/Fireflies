@@ -1,0 +1,21 @@
+{
+    "Plugins": [
+        {
+            "Type": "library",
+            "Name": "TestArAdvancedAPI",
+            "Root": "..",
+            "LibraryPath": "../../../lib/TestArAdvancedAPI.dll",
+            "ResourcePath": "Resources",
+            "Info": {
+                "Types": {
+                    "_TestResolver1": {
+                        "bases": ["ArDefaultResolver"]
+                    },
+                    "_TestResolver2": {
+                        "bases": ["ArDefaultResolver"]
+                    }
+                }
+            }
+        }
+    ]
+}

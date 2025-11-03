@@ -1,0 +1,27 @@
+{
+    "Plugins": [
+        {
+            "Info": {
+                "Types": {
+                    "TestSdfExceptionHandlingFileFormat": {
+                        "bases": [
+                            "SdfTextFileFormat"
+                        ],
+                        "displayName": "File format that throws exceptions when opened",
+                        "extensions": [
+                            "testexception"
+                        ],
+                        "formatId": "TestSdfExceptionHandlingFileFormatPlugin",
+                        "primary": true,
+                        "target": "sdf"
+                    }
+                }
+            },
+            "LibraryPath": "../../../lib/TestSdfLayerExceptionHandling.dll",
+            "Name": "TestSdfExceptionHandlingFileFormatPlugin",
+            "ResourcePath": "Resources",
+            "Root": "..",
+            "Type": "library"
+        }
+    ]
+}

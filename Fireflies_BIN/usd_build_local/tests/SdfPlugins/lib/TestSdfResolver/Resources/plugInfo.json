@@ -1,0 +1,21 @@
+{
+    "Plugins": [
+        {
+            "Info": {
+                "Types": {
+                    "Sdf_TestResolver": {
+                        "bases": [
+                            "ArDefaultResolver"
+                        ],
+                        "primary": true
+                    }
+                }
+            },
+            "LibraryPath": "../../../lib/TestSdfResolver.dll",
+            "Name": "TestSdfResolver",
+            "ResourcePath": "Resources",
+            "Root": "..",
+            "Type": "library"
+        }
+    ]
+}

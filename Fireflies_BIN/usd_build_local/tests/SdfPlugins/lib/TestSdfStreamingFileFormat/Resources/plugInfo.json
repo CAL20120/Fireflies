@@ -1,0 +1,25 @@
+{
+    "Plugins": [
+        {
+            "Info": {
+                "Types": {
+                    "TestSdfStreamingFileFormat": {
+                        "bases": [
+                            "SdfFileFormat"
+                        ],
+                        "extensions": [
+                            "test_streaming_format"
+                        ],
+                        "formatId": "test_streaming_format",
+                        "primary": true
+                    }
+                }
+            },
+            "LibraryPath": "../../../lib/TestSdfStreamingFileFormat.dll",
+            "Name": "TestSdfStreamingFileFormat",
+            "ResourcePath": "Resources",
+            "Root": "..",
+            "Type": "library"
+        }
+    ]
+}

@@ -1,0 +1,9 @@
+Package: python
+Version: 3.10.15+nv2-windows-x86_64
+Description: Python distribution
+Repository: 
+Builder Name: shedwards-wintest
+Packman Version: 7.8.2
+Packagemaker Version: 1.15.0
+Platform: windows-x86_64
+CI Build Number: 3.10.15+nv2

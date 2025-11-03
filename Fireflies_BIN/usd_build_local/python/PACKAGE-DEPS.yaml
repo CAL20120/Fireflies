@@ -1,0 +1,44 @@
+libffi:
+  licenseFile: libffi-LICENSE.txt
+  packageName: libffi
+  packageType: packman
+  source:
+    branch: merge-request
+    change: 674dacf685767330a9d0e9c32c5814cd3e651862
+    path: 
+    scm: git
+  swipat: 
+  version: 3.4.2+nv1-windows-x86_64
+openssl:
+  licenseFile: openssl-LICENSE.txt
+  packageName: openssl
+  packageType: packman
+  source:
+    branch: main
+    change: 5a1152dba2e52cf4b2f87870ffa4805a39fb6d9d
+    path: 
+    scm: git
+  swipat: '2820294'
+  version: 3.0.15-0-windows-x86_64-static-release
+pip:
+  licenseFile: pip-LICENSE.txt
+  packageName: pip
+  packageType: packman
+  source:
+    branch: merge-request
+    change: 709f91b46bce2821dc872443efddfa2b267fbc2e
+    path: 
+    scm: git
+  swipat: '4614357'
+  version: 24.0+nv1
+xz:
+  licenseFile: xz-LICENSE.txt
+  packageName: xz
+  packageType: packman
+  source:
+    branch: merge-request
+    change: 9ad0a8f941ebe0e6610bf8a761cd9de4d459a92b
+    path: 
+    scm: git
+  swipat: '3381177'
+  version: 5.4.6+nv1-windows-x86_64

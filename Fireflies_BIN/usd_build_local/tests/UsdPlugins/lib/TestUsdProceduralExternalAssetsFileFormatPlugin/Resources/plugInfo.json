@@ -1,0 +1,27 @@
+{
+    "Plugins": [
+        {
+            "Info": {
+                "Types": {
+                    "Test_UsdProceduralExternalAssetsFileFormatPlugin_FileFormat": {
+                        "bases": [
+                            "SdfFileFormat"
+                        ],
+                        "displayName": "TestUsdProceduralExternalAssets",
+                        "extensions": [
+                            "test_usd_pea"
+                        ],
+                        "formatId": "Test_UsdProceduralExternalAssetsFileFormatPlugin",
+                        "primary": true,
+                        "target": "usd"
+                    }
+                }
+            },
+            "LibraryPath": "../../../lib/TestUsdProceduralExternalAssetsFileFormatPlugin.dll",
+            "Name": "Test_UsdProceduralExternalAssetsFileFormatPlugin",
+            "ResourcePath": "Resources",
+            "Root": "..",
+            "Type": "library"
+        }
+    ]
+}

@@ -1,0 +1,18 @@
+{
+    "Plugins": [
+        {
+            "Type": "library",
+            "Name": "TestPlugDso1",
+            "Root": "..",
+            "LibraryPath": "../../../lib/TestPlugDso1.dll",
+            "ResourcePath": "Resources",
+            "Info": {
+                "Types": {
+                    "TestPlugDerived1": {
+                        "bases": ["_TestPlugBase<1>"]
+                    }
+                }
+            }
+        }
+    ]
+}

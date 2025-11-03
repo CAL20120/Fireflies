@@ -1,0 +1,19 @@
+{
+    "Plugins": [
+        {
+            "Type": "library",
+            "Name": "TestArPackageResolver",
+            "Root": "..",
+            "LibraryPath": "../../../lib/TestArPackageResolver.dll",
+            "ResourcePath": "Resources",
+            "Info": {
+                "Types": {
+                    "_TestPackageResolver": {
+                        "bases": ["ArPackageResolver"],
+                        "extensions": ["package"]
+                    }
+                }
+            }
+        }
+    ]
+}

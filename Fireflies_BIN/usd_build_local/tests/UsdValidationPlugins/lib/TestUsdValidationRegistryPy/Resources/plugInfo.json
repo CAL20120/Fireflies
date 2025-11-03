@@ -1,0 +1,20 @@
+{
+    "Plugins": [
+        {
+            "Type": "library",
+            "Name": "testValidationRegistryPyPlugin",
+            "Root": "..",
+            "ResourcePath": "Resources",
+            "LibraryPath": "../../../lib/TestUsdValidationRegistryPy.dll",
+            "Info": {
+                "Validators": {
+                    "PlaceholderValidator": {
+                        "doc": "Placeholder to initialize plugin.",
+                        "keywords": ["PlaceHolderValidator"],
+                        "isSuite": false
+                    }
+                }
+            }
+        }
+    ]
+}
