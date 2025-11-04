@@ -7,6 +7,8 @@ import os
 import sys
 import subprocess
 
+import argparse
+
 print(sys.executable)
 print(sys.path)
 
@@ -23,12 +25,12 @@ app = QtWidgets.QApplication.instance()
 if app is None:
     app = QtWidgets.QApplication(sys.argv)
 
-class Usd_Viewer_hou(QtWidgets.QWidget):
+class Usd_Viewer_hou(QtWidgets.QDialog):
     def __init__(self, stage=None, asset_path=None):
 
         super(Usd_Viewer_hou, self).__init__()
         self.setWindowTitle("Usd Viewer Fireflies")
-        self.setMinimumSize(642, 642)
+        self.setMinimumSize(256, 256)
         
         self.model = StageView.DefaultDataModel()
         self.view = StageView(dataModel=self.model)
@@ -76,4 +78,13 @@ def launch_app(asset_path):
 # asset_path = "R:\\Christopher_LUCAS\\PRODS\\test_dev\\001\\01\\model\\usd_published\\test_ASSET.usd"
 # subprocess.Popen([script_path, asset_path])
 
-launch_app(asset_path="R:\\Christopher_LUCAS\\PRODS\\test_dev\\001\\01\\model\\usd_published\\test_ASSET.usd")
+# launch_app(asset_path="R:\\Christopher_LUCAS\\PRODS\\test_dev\\001\\01\\model\\usd_published\\test_ASSET.usd")
+
+def test():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-asset_path')
+    args = parser.parse_args()
+
+    launch_app(args.asset_path)
+    
+test()
