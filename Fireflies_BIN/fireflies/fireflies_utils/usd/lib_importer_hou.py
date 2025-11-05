@@ -159,9 +159,6 @@ class lib_importer_window(QtWidgets.QDialog):
         self.refresh_table()
 
 
-
-x = lib_importer_window()
-x.show()
-
 if __name__ == "__main__":
-    pass
+    x = lib_importer_window()
+    x.show()

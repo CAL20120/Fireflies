@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Site BuildName="Win32-gmake"
-	BuildStamp="20250911-0416-Experimental"
+	BuildStamp="20251027-0432-Experimental"
 	Name="CHRIS"
 	Generator="ctest-4.1.0-rc1"
 	CompilerName="C:/Strawberry/c/bin/c++.exe"
@@ -19,17 +19,17 @@
 	ProcessorCacheSize="-1"
 	NumberOfLogicalCPU="24"
 	NumberOfPhysicalCPU="16"
-	TotalVirtualMemory="65018"
+	TotalVirtualMemory="51965"
 	TotalPhysicalMemory="32509"
 	LogicalProcessorsPerPhysical="1"
 	ProcessorClockFrequency="3400"
 	>
 	<Testing>
-		<StartDateTime>Sep 22 21:39 Paris, Madrid (heure d[NON-UTF-8-BYTE-0x92][NON-UTF-8-BYTE-0xE9]t[NON-UTF-8-BYTE-0xE9])</StartDateTime>
-		<StartTestTime>1758569964</StartTestTime>
+		<StartDateTime>Nov 05 12:34 Paris, Madrid</StartDateTime>
+		<StartTestTime>1762342462</StartTestTime>
 		<TestList/>
-		<EndDateTime>Sep 22 21:39 Paris, Madrid (heure d[NON-UTF-8-BYTE-0x92][NON-UTF-8-BYTE-0xE9]t[NON-UTF-8-BYTE-0xE9])</EndDateTime>
-		<EndTestTime>1758569964</EndTestTime>
+		<EndDateTime>Nov 05 12:34 Paris, Madrid</EndDateTime>
+		<EndTestTime>1762342462</EndTestTime>
 		<ElapsedMinutes>0</ElapsedMinutes>
 	</Testing>
 </Site>
