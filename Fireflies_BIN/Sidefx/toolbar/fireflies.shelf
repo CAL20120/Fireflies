@@ -25,7 +25,9 @@ hou.session.dialog.show()]]></script>
   <toolshelf name="fireflies" label="Fireflies">
     <memberTool name="context"/>
     <memberTool name="prod_importer_hou"/>
+    <memberTool name="lib_assets0"/>
     <memberTool name="quick_preview0"/>
+    <memberTool name="texture_linker"/>
     <memberTool name="pyblish_houdini"/>
   </toolshelf>
 
@@ -61,6 +63,20 @@ pyblish_lite.show()]]></script>
     <script scriptType="python"><![CDATA[from fireflies.fireflies_utils.usd import quick_previz
 
 hou.session.dialog = quick_previz.quick_previz()
+hou.session.dialog.show()]]></script>
+  </tool>
+
+  <tool name="lib_assets0" label="LIB Asset" icon="C:/Fireflies/Fireflies_BIN/fireflies/logos/lib_asset.png">
+    <script scriptType="python"><![CDATA[from fireflies.fireflies_utils.usd import lib_importer_hou
+
+hou.session.dialog = lib_importer_hou.lib_importer_window()
+hou.session.dialog.show()]]></script>
+  </tool>
+
+  <tool name="texture_linker" label="Texture linker" icon="C:/Fireflies/Fireflies_BIN/fireflies/logos/texture_linker.png">
+    <script scriptType="python"><![CDATA[from fireflies.houdini import texture_linker
+
+hou.session.dialog = texture_linker.texture_linker_window()
 hou.session.dialog.show()]]></script>
   </tool>
 </shelfDocument>
