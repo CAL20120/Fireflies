@@ -61,7 +61,7 @@ class quick_previz(QtWidgets.QDialog):
         viewport = target_pane.curViewport()
 
         time_output = f"{current_time.year}_{current_time.month}_{current_time.day}_{current_time.hour}_{current_time.minute}"
-        output = f"{self.scene_path}/quick_preview/{time_output}/{self.scene_name}_$F4.png"
+        output = f"{self.scene_path}/quick_preview/{time_output}/{self.scene_name}_$F4.jpg"
 
         output_dir = f"{self.scene_path}/quick_preview/{time_output}"
         if not os.path.exists(output_dir):
