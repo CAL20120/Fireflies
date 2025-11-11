@@ -9,7 +9,7 @@ set(CTEST_SOURCE_DIRECTORY "C:/Fireflies/Fireflies/Fireflies_fmk")
 set(CTEST_BINARY_DIRECTORY "C:/Fireflies/build")
 
 # CTest Update Step
-set(CTEST_UPDATE_COMMAND "C:/Program Files/Git/cmd/git.exe")
+set(CTEST_UPDATE_COMMAND "")
 set(CTEST_UPDATE_OPTIONS "")
 set(CTEST_UPDATE_VERSION_ONLY "")
 set(CTEST_NIGHTLY_START_TIME "00:00:00 EDT")
