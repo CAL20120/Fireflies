@@ -38,10 +38,21 @@ class hou_usd():
         pane = desktop.paneTabOfType(hou.paneTabType.NetworkEditor)
         curr_context = pane.pwd()
 
-        asset_node = curr_context.createNode("assetreference", asset_name)
-        node_path = hou.node(asset_node.path())
+        if curr_context.type().name() == 'lopnet':
+            asset_node = curr_context.createNode("assetreference", asset_name)
 
-        node_path.parm('filepath').set(asset_path)
+        else: 
+            asset_node = curr_context.createNode("usdimport", asset_name)
+            unpack_node = curr_context.createNode("unpackusd", "unpack_usd")
+
+            unpack_node.setInput(0, asset_node)
+
+        try:
+            asset_node.parm('filepath').set(asset_path)
+        except:
+            asset_node.parm('filepath1').set(asset_path)
+            unpack_node.parm('output').set(1)
+
 
 
     def import_prod_layout(self):
