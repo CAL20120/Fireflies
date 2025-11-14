@@ -234,8 +234,12 @@ class create_hou_matlib():
                 if not hasattr(self, 'sss_node'):
                     self.link_textures(tex_name="sss", texture_path=tex, input_value="subsurfaceColor")
                     self.pxr_layer.parm('enableSubsurface').set(1)
-                    setattr(self, 'sss_node', tex)            
+                    setattr(self, 'sss_node')            
 
+            if "SPECULAR" in tex:
+                if not hasattr(self, 'spec_node'):
+                    self.link_textures(tex_name="specular", texture_path=tex, input_value="specularRoughness")
+                    setattr(self, 'spec_node')
 
             if "OPACITY" in tex:
                 if not hasattr(self, 'presence_node'):
