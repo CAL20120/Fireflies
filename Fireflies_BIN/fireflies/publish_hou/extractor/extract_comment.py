@@ -7,7 +7,9 @@ from fireflies.houdini import abstract_hou_publish
 class Extract_Commentary(pyblish.api.InstancePlugin):
     """Extract comment on publish """
 
-    order = pyblish.api.ExtractorOrder
+    # order = pyblish.api.ExtractorOrder
+    order = 1.2
+
     optional=True
     label="Export comment"
 
