@@ -99,7 +99,7 @@ class importer_window(QtWidgets.QDialog):
         self.import_btn.clicked.connect(self.import_asset)       
 
         self.asset_table.selectionModel().selectionChanged.connect(self.sel_changed)
-        # self.asset_table.selectionModel().selectionChanged.connect(self.import_comment)
+        self.asset_table.selectionModel().selectionChanged.connect(self.import_comment)
 
         self.preview_btn.clicked.connect(self.show_preview)
         
@@ -168,7 +168,6 @@ class importer_window(QtWidgets.QDialog):
 
 
 
-
     def add_item(self, row, column, text) -> QtWidgets:
         item = QtWidgets.QTableWidgetItem(str(text))
         self.asset_table.setItem(row, column, item)
@@ -185,10 +184,8 @@ class importer_window(QtWidgets.QDialog):
         return sel_name, item_index
 
 
-    def import_asset(self):
-        print("importing usd asset: {}".format(self.sel_changed()[0]))
-        # print(self.sel_changed()[1])
-        sel_name, target_index = self.sel_changed()
+    def get_asset_path(self):
+        _, target_index = self.sel_changed()
 
         target_combo = self.asset_table.cellWidget(target_index, 1)
         target_version = target_combo.currentIndex()
@@ -200,39 +197,49 @@ class importer_window(QtWidgets.QDialog):
 
         path = self.assets_vars[asset][version]
 
+        return path
+
+    def import_asset(self):
+        print("importing usd asset: {}".format(self.sel_changed()[0]))
+        # print(self.sel_changed()[1])
+        path = self.get_asset_path()
+
         hou_utils.hou_usd.import_prod_usd_asset(self, asset_path=path)
 
     
-    # def import_comment(self):
-    #     children = []
-    #     for x in range(self.comment_layout.count()):
-    #         child = self.comment_layout.itemAt(x).widget()
-    #         if child:
-    #             children.append(child)
-    #     for child in children:
-    #         child.deleteLater()
+    def import_comment(self):
+        children = []
+        for x in range(self.comment_layout.count()):
+            child = self.comment_layout.itemAt(x).widget()
+            if child:
+                children.append(child)
+        for child in children:
+            child.deleteLater()
+
+        name, _  = self.sel_changed()
+
+        self.text_edit_comment = QtWidgets.QTextEdit()
+        self.text_edit_comment.setReadOnly(True)
+
+        asset_path = self.get_asset_path()
+        path = os.path.dirname(asset_path)
+
+        target_file = f"{path}/metadata/commentary/{name}_comment.txt"
+
+        with open(target_file, "r") as f:
+            comment = f.read()
+        self.text_edit_comment.setPlainText(comment)
+
+        self.comment_layout.addWidget(self.text_edit_comment)
+
+
+    def show_preview(self):
+        _, index = self.sel_changed()
+        self.x = hou_utils.hou_usd()
         
-    #     self.text_edit_comment = QtWidgets.QTextEdit()
-    #     self.text_edit_comment.setReadOnly(True)
-
-    #     name, index  = self.sel_changed()
-    #     asset_path = self.paths[index].rsplit("/", 1)[0]
-        
-    #     target_file = f"{asset_path}/metadata/commentary/{name}_comment.txt"
-
-    #     with open(target_file, "r") as f:
-    #         comment = f.read()
-    #     self.text_edit_comment.setPlainText(comment)
-
-    #     self.comment_layout.addWidget(self.text_edit_comment)
-
-    # def show_preview(self):
-    #     _, index = self.sel_changed()
-    #     self.x = hou_utils.hou_usd()
-        
-    #     target_path = self.paths[index]
-    #     print(target_path)
-    #     self.x.show_preview(asset_path=target_path)
+        target_path = self.paths[index]
+        print(target_path)
+        self.x.show_preview(asset_path=target_path)
 
 
 
@@ -338,7 +345,7 @@ class import_usd_asset():
 
         return list(self.assets_vars.keys()), self.assets_vars
 
-
-x = importer_window()
-x.show()
+if __name__ == "__main":
+    x = importer_window()
+    x.show()
 
