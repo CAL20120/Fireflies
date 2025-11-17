@@ -3,9 +3,8 @@ import hou
 
 import os
 from datetime import datetime
-import threading
-
 import subprocess
+import re
 
 class hou_usd():
     def __init__(self):
@@ -13,7 +12,7 @@ class hou_usd():
         self.scene_name = self.scene_path.rsplit("/")[-1]
         self.prod_name = hou.hipFile.path().rsplit("/")[-5]
         self.prod_path = hou.hipFile.path().rsplit("/", 4)[0].replace("/", "\\")
-    
+        self.curr_context = self.get_current_context()
 
     def return_paths(self) -> str:
         return self.prod_path
@@ -24,7 +23,7 @@ class hou_usd():
         pane = desktop.paneTabOfType(hou.paneTabType.NetworkEditor)
         curr_context = pane.pwd()
 
-        curr_path = curr_context.path()
+        # curr_path = curr_context.path()
 
         return curr_context
 
@@ -37,6 +36,7 @@ class hou_usd():
         desktop = hou.ui.curDesktop()
         pane = desktop.paneTabOfType(hou.paneTabType.NetworkEditor)
         curr_context = pane.pwd()
+
 
         if curr_context.type().name() == 'lopnet':
             asset_node = curr_context.createNode("assetreference", asset_name)
@@ -54,9 +54,23 @@ class hou_usd():
             unpack_node.parm('output').set(1)
 
 
+    def import_usd_sequence(self, asset_path):
+        curr_context = self.get_current_context()
+        asset_name = asset_path.rsplit("/", 1)[-1].split(".", 1)[0]
 
-    def import_prod_layout(self):
-        pass
+        target_path = re.search(r'(.+?)_(\d+)\.usd$', asset_path)
+
+        if not target_path:
+            print("no sequence file detected")
+            return
+        
+        udim_num = str(target_path.group(2))
+        path = target_path.group().replace(udim_num, '$F4')
+
+        if curr_context.type().name() == 'lopnet':
+            sublayer_node = curr_context.createNode("sublayer", asset_name.rsplit('_', 1)[0])
+            sublayer_node.parm('filepath1').set(path)
+
 
 
     def import_light(self, asset_path, asset_name):

@@ -19,10 +19,10 @@ from fireflies.houdini import hou_utils
 
 
 class importer_window(QtWidgets.QDialog):
-    def __init__(self):
-        super(importer_window, self).__init__()
+    def __init__(self, parent=hou.qt.mainWindow()):
+        super(importer_window, self).__init__(parent)
         self.setWindowTitle("Import USD Asset")
-        self.setMinimumSize(600, 700)
+        self.setMinimumSize(750, 700)
 
         self.create_widgets()
         self.create_layout()
@@ -34,8 +34,8 @@ class importer_window(QtWidgets.QDialog):
     def get_asset_paths(self):
         self.prod_path = hou.hipFile.path().rsplit("/", 4)[0].replace("/", "\\")
 
-        test = import_usd_asset()
-        self.assets_name, self.assets_vars = test.find_asset()
+        x = import_usd_asset()
+        self.assets_name, self.assets_vars = x.find_asset()
 
         # self.assets_time = []
         # for path in self.paths:
@@ -49,13 +49,13 @@ class importer_window(QtWidgets.QDialog):
 
     def create_widgets(self):
         self.asset_table = QtWidgets.QTableWidget()
-        self.asset_table.setColumnCount(4)
+        self.asset_table.setColumnCount(5)
         
         self.header = self.asset_table.horizontalHeader()
-        self.asset_table.setHorizontalHeaderLabels(["Asset", "Version", "Local Path", "Date"])
+        self.asset_table.setHorizontalHeaderLabels(["Asset", "Version", "Type", "Local Path", "Date"])
         self.header.setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
         
-        self.preview_btn = QtWidgets.QPushButton("Preview Asset")
+        # self.preview_btn = QtWidgets.QPushButton("Preview Asset")
         
         # self.refresh_btn = QtWidgets.QPushButton("Refresh")
         # self.asset_info_table = QtWidgets.QTableWidget()
@@ -71,7 +71,7 @@ class importer_window(QtWidgets.QDialog):
     def create_layout(self):
         self.table_layout = QtWidgets.QVBoxLayout()
         self.table_layout.addWidget(self.asset_table)
-        self.table_layout.addWidget(self.preview_btn)
+        # self.table_layout.addWidget(self.preview_btn)
         # self.table_layout.addWidget(self.refresh_btn)
 
         self.asset_info_layout = QtWidgets.QHBoxLayout()
@@ -101,8 +101,9 @@ class importer_window(QtWidgets.QDialog):
         self.asset_table.selectionModel().selectionChanged.connect(self.sel_changed)
         self.asset_table.selectionModel().selectionChanged.connect(self.import_comment)
 
-        self.preview_btn.clicked.connect(self.show_preview)
+        # self.preview_btn.clicked.connect(self.show_preview)
         
+
 
     def refresh_asset_table(self):
 
@@ -122,12 +123,23 @@ class importer_window(QtWidgets.QDialog):
             self.asset_table.setCellWidget(x, 1, self.version_combo)
 
             target_version = asset_versions[0]
-            asset_path = self.assets_vars[asset][target_version]
-            self.add_item(x, 2, asset_path)
+
+            target_asset = self.assets_vars[asset][target_version]
+            target_type = target_asset['type']
+
+            if target_type == "asset":
+                asset_path = target_asset['path']
+
+            elif target_type == "sequence":
+                asset_path = target_asset['frames'][0]['path']
+
+            self.add_item(x, 2, target_type)
+
+            self.add_item(x, 3, asset_path)
 
             time_map = os.path.getmtime(asset_path)
             modified_time = datetime.fromtimestamp(time_map)
-            self.add_item(x, 3, modified_time)
+            self.add_item(x, 4, modified_time)
 
 
         # for x in range(len(self.assets)):
@@ -158,13 +170,23 @@ class importer_window(QtWidgets.QDialog):
 
         target_version = asset_versions[index]
 
-        path = self.assets_vars[asset][target_version]
+        target_asset = self.assets_vars[asset][target_version]
+        target_type = target_asset['type']
 
-        self.asset_table.item(target_row, 2).setText(path)
+        if target_type == "asset":
+            asset_path = target_asset['path']
 
-        time_map = os.path.getmtime(path)
+        elif target_type == "sequence":
+            asset_path = target_asset['frames'][0]['path']
+
+
+        self.asset_table.item(target_row, 2).setText(target_type)
+        self.asset_table.item(target_row, 3).setText(asset_path)
+
+
+        time_map = os.path.getmtime(asset_path)
         modified_time = datetime.fromtimestamp(time_map)
-        self.asset_table.setItem(target_row, 3, QtWidgets.QTableWidgetItem(str(modified_time)))
+        self.asset_table.setItem(target_row, 4, QtWidgets.QTableWidgetItem(str(modified_time)))
 
 
 
@@ -184,27 +206,50 @@ class importer_window(QtWidgets.QDialog):
         return sel_name, item_index
 
 
-    def get_asset_path(self):
-        _, target_index = self.sel_changed()
+    def get_asset_data(self) -> str:
+        name, index  = self.sel_changed()
 
-        target_combo = self.asset_table.cellWidget(target_index, 1)
-        target_version = target_combo.currentIndex()
-
-        asset = self.asset_table.item(target_index, 0).text()
+        asset = self.asset_table.item(index, 0).text()
 
         asset_versions = sorted(self.assets_vars[asset].keys())
-        version = asset_versions[target_version]
+        target_combo = self.asset_table.cellWidget(index, 1)
 
-        path = self.assets_vars[asset][version]
+        index = target_combo.currentIndex()
 
-        return path
+        target_version = asset_versions[index]
+
+        target_asset = self.assets_vars[asset][target_version]
+        target_type = target_asset['type']
+
+        if target_type == "asset":
+            asset_path = target_asset['path']
+
+        elif target_type == "sequence":
+            asset_path = target_asset['frames'][0]['path']
+
+
+        return asset_path, target_type
 
     def import_asset(self):
         print("importing usd asset: {}".format(self.sel_changed()[0]))
         # print(self.sel_changed()[1])
-        path = self.get_asset_path()
 
-        hou_utils.hou_usd.import_prod_usd_asset(self, asset_path=path)
+        asset_path, asset_type = self.get_asset_data()
+
+        # print(type(asset_path))
+        # print(asset_path)
+        
+        # print(type(asset_type))
+        # print(asset_type)
+
+        if asset_type == "asset":
+            hou_utils.hou_usd.import_prod_usd_asset(self, asset_path=asset_path)
+
+        elif asset_type == "sequence":
+            x = hou_utils.hou_usd()
+            x.import_usd_sequence(asset_path=asset_path)
+
+
 
     
     def import_comment(self):
@@ -216,15 +261,19 @@ class importer_window(QtWidgets.QDialog):
         for child in children:
             child.deleteLater()
 
-        name, _  = self.sel_changed()
+        name, index  = self.sel_changed()
 
         self.text_edit_comment = QtWidgets.QTextEdit()
         self.text_edit_comment.setReadOnly(True)
 
-        asset_path = self.get_asset_path()
-        path = os.path.dirname(asset_path)
+        # asset_path = self.get_asset_path()
+        # path = os.path.dirname(asset_path)
 
-        target_file = f"{path}/metadata/commentary/{name}_comment.txt"
+        asset_path, _ = self.get_asset_data()
+
+        version_path = os.path.dirname(asset_path)
+        target_file = f"{version_path}/metadata/commentary/{name}_comment.txt"
+        print(target_file)
 
         with open(target_file, "r") as f:
             comment = f.read()
@@ -257,9 +306,10 @@ class importer_window(QtWidgets.QDialog):
 class import_usd_asset():
     def __init__(self):
         super(import_usd_asset, self).__init__()
+        self.prod_path = hou.hipFile.path().rsplit("/", 4)[0].replace("/", "\\")
 
 
-    def find_asset(self):
+    def find_asset(self) -> str | collections.defaultdict:
         #the purpose here is to build a dict with each assets and its version to 
         #make the asset versions tracking easier 
         self.assets_vars = collections.defaultdict(dict)
@@ -268,8 +318,6 @@ class import_usd_asset():
         # self.result_dirs = []
         # self.result_published = []
         # self.result_usd_path = []
-
-        self.prod_path = hou.hipFile.path().rsplit("/", 4)[0].replace("/", "\\")
         
 
         self.usd_publied_dir = []
@@ -288,11 +336,21 @@ class import_usd_asset():
 
         self.asset_versions = []
         for asset_dir in self.assets:
+            asset_name = os.path.basename(asset_dir)
+
             for version in os.listdir(asset_dir):
                 version_dir = os.path.join(asset_dir, version)
 
-                if os.path.isdir(version_dir):
-                    self.asset_versions.append(version_dir)
+                if not os.path.isdir(asset_dir):
+                    continue
+
+                #we do not want to get the metadata folder otherwise in the dict 
+                #we get keys related to the metadata
+                target = re.match(rf"{asset_name}_(\d+)$", version)
+                if not target:
+                    continue
+
+                self.asset_versions.append(version_dir)
 
 
         self.asset_file = []
@@ -305,27 +363,57 @@ class import_usd_asset():
 
         #time to build the dict
 
-        target_pattern = re.compile(r'(.*)\.usd$')
+
+
         for asset in self.asset_file:
             file = os.path.basename(asset)
 
-            target = target_pattern.match(file)
-            if not target:
-                continue
-
-            name = target.group(1)
-
             version_fld = os.path.basename(os.path.dirname(asset))
-
             target_version = re.search(r'(\d+)$', version_fld)
+
             if not target_version:
                 continue
 
-            version = target_version.group(1)
-            version_path = f"{int(version):03d}"
+            version_path = f"{int(target_version.group()):03d}"
 
-            self.assets_vars[name][version_path] = asset
+            asset_pattern = re.compile(r'(.*)\.usd$')
+            anim_pattern = re.compile(r'(.+?)_(\d+)\.usd$')
 
+            asset_target = asset_pattern.match(file)
+            anim_target = anim_pattern.match(file)
+
+
+            if asset_target and not anim_target:
+                name = asset_target.group(1)
+                
+                self.assets_vars[name][version_path] = {
+                    "type": "asset", 
+                    "path": asset
+                }
+                
+                continue
+
+
+            if anim_target:
+                name = anim_target.group(1)
+                frame = int(anim_target.group(2))
+
+                #important to use setdefault to create a value for each frame
+                target = self.assets_vars[name].setdefault(
+                    version_path, 
+                    {
+                        "type": "sequence",
+                        "frames": []
+                    }
+                )
+
+                target['frames'].append(
+                    {
+                        "frame": frame, 
+                        "path": asset
+                    }
+                )
+                continue
 
         # for dir, subdir, files in os.walk(self.prod_path):
         #     if "usd_published" in dir:
@@ -345,7 +433,7 @@ class import_usd_asset():
 
         return list(self.assets_vars.keys()), self.assets_vars
 
-if __name__ == "__main":
+if __name__ == "__main__":
     x = importer_window()
     x.show()
 
