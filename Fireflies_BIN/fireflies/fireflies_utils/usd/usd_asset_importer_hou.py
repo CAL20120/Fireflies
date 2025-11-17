@@ -241,13 +241,15 @@ class importer_window(QtWidgets.QDialog):
         
         # print(type(asset_type))
         # print(asset_type)
+        
+        utils = hou_utils.hou_usd()
 
+        hip_path = utils.path_converter(path=asset_path)
         if asset_type == "asset":
-            hou_utils.hou_usd.import_prod_usd_asset(self, asset_path=asset_path)
+            hou_utils.hou_usd.import_prod_usd_asset(self, asset_path=hip_path)
 
         elif asset_type == "sequence":
-            x = hou_utils.hou_usd()
-            x.import_usd_sequence(asset_path=asset_path)
+            utils.import_usd_sequence(asset_path=hip_path)
 
 
 
@@ -433,7 +435,6 @@ class import_usd_asset():
 
         return list(self.assets_vars.keys()), self.assets_vars
 
-if __name__ == "__main__":
-    x = importer_window()
-    x.show()
+x = importer_window()
+x.show()
 

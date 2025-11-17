@@ -166,3 +166,16 @@ class hou_usd():
         target_pane.flipbook(viewport, fbk_settings)
 
         print("preview exporter to: {}".format(output))
+
+    def path_converter(self, path:str) -> str:
+        os.path.normpath(path)
+
+        HIP = os.environ.get('HIP')
+        os.path.normpath(HIP)
+
+        relative_path = os.path.relpath(path, HIP)
+
+        norm_rel = relative_path.replace('\\', '/')
+        hip_path = f"$HIP/{norm_rel}"
+
+        return hip_path
