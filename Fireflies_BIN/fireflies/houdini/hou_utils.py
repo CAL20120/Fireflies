@@ -167,6 +167,7 @@ class hou_usd():
 
         print("preview exporter to: {}".format(output))
 
+
     def path_converter(self, path:str) -> str:
         os.path.normpath(path)
 

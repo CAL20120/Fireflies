@@ -230,11 +230,12 @@ class create_hou_matlib():
                     setattr(self, 'rough_node', tex)            
 
 
-            if "SSS" in tex:
+            if "SSS_GAIN" in tex:
                 if not hasattr(self, 'sss_node'):
-                    self.link_textures(tex_name="sss", texture_path=tex, input_value="subsurfaceColor")
+                    self.link_textures(tex_name="sss_gain", texture_path=tex, input_value="subsurfaceGain")
                     self.pxr_layer.parm('enableSubsurface').set(1)
                     setattr(self, 'sss_node')            
+
 
             if "SPECULAR" in tex:
                 if not hasattr(self, 'spec_node'):
@@ -292,6 +293,8 @@ class create_hou_matlib():
 
                     setattr(self, 'normal_node', tex)            
                     
+                if "MSK" in tex:
+                    pass
 
 
 class rman_generate_tx():
@@ -302,8 +305,9 @@ class rman_generate_tx():
     def make_tx(self, input_file:str):
 
         file_dir = os.path.dirname(input_file.replace("\\", "\\"))
-        path_tex = "{}.tex".format(file_dir)
-        
+        # path_tex = "{}.tex".format(file_dir)
+        path_tex = f"{input_file.rsplit('.', 1)[0]}.tex"
+
         # if os.path.exists(path_tex):
         #     return
 

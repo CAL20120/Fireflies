@@ -1,7 +1,7 @@
 from synology_api.filestation import FileStation
 from synology_api.exceptions import FileStationError
 
-from fireflies.houdini import hou_utils
+from fireflies.houdini import hou_utils, texture_linker
 
 import datetime
 import time
@@ -109,6 +109,8 @@ class nas_requests():
 
 
     def download_asset(self, nas_path, asset_name, prod_path):
+        utils = hou_utils.hou_usd()
+
         validate, asset_type, asset_path = self.check_local_instance(prod_path=prod_path, asset_name=asset_name)
 
         lib_local_path = f"{prod_path}/_lib_sync/{asset_type}"
@@ -121,11 +123,22 @@ class nas_requests():
         
         if validate == True:
             if asset_type == "ASSET":
-                self.hou_utils.import_prod_usd_asset(asset_path=asset_path)
+                hip_path = utils.path_converter(path=asset_path)
+                self.hou_utils.import_prod_usd_asset(asset_path=hip_path)
             
             if asset_type == "LIGHT":
                 asset_name = asset_name.rsplit('.', 1)[0]
-                self.hou_utils.import_light(asset_path=asset_path, asset_name=asset_name)
+
+                if any(ext in asset_path for ext in ['exr', 'hdr']):
+                    tx_path = f"{asset_path.rsplit('.', 1)[0]}.tx"
+                    if not os.path.exists(tx_path):
+                        texture_manager = texture_linker.rman_generate_tx()
+                        
+                        tx_path = texture_manager.make_tx(input_file=asset_path)
+
+                        hip_path = utils.path_converter(path=tx_path)
+
+                self.hou_utils.import_light(asset_path=hip_path, asset_name=asset_name)
 
 
 

@@ -13,8 +13,8 @@ from fireflies.houdini import hou_utils
 from fireflies.fireflies_utils import fireflies_requests
 
 class lib_importer_window(QtWidgets.QDialog):
-    def __init__(self):
-        super(lib_importer_window, self).__init__()
+    def __init__(self, parent=hou.qt.mainWindow()):
+        super(lib_importer_window, self).__init__(parent)
         self.nas_requests = fireflies_requests.nas_requests()
         
         self.prod_path = hou.hipFile.path().rsplit("/", 4)[0].replace("/", "\\")
