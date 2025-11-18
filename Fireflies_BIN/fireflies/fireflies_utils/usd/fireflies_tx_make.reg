@@ -1,0 +1,6 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CLASSES_ROOT\*\shell\FIREFLIES_Make_TX]
+
+[HKEY_CLASSES_ROOT\*\shell\FIREFLIES_Make_TX\command]
+@="\"C:\\Fireflies\\Fireflies_BIN\\fireflies\\fireflies_utils\\usd\\local_tx_make.bat\" \"%1\""
