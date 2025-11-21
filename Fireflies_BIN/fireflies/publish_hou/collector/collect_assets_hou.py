@@ -5,6 +5,7 @@ import hou
 
 from fireflies.houdini import hou_utils, abstract_hou_publish
 
+from pxr import Usd, UsdGeom, Sdf
 class CollectHouData(pyblish.api.ContextPlugin):
     """Collect Any Assets, Layouts or pyblishable data  from houdini"""
 
@@ -23,13 +24,12 @@ class CollectHouData(pyblish.api.ContextPlugin):
     def process(self, context):
         context.data["comment"] = ""
         
-        targets, paths = self.abstract_publish.fetch_targets()
+        targets, paths, prim = self.abstract_publish.fetch_targets()
 
-        for name, path in zip(targets, paths):
-            node = hou.node(path)
-
-            instance = context.create_instance(node.evalParm('asset_name'))
-            instance.data['node'] = hou.node(path)
+        for index, name in enumerate(targets):
+            instance = context.create_instance(name)
+            instance.data['prim_path'] = paths[index]
+            instance.data['prim'] = prim[index]
 
             # instance.append("node")
             instance.data['family'] = "assets"

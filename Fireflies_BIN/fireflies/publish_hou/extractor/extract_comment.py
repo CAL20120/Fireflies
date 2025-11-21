@@ -17,8 +17,8 @@ class Extract_Commentary(pyblish.api.InstancePlugin):
         context = instance.context
         comment = context.data.get('comment')
 
-        node = instance.data.get('node')
-        asset_name = node.evalParm('asset_name')
+        # node = instance.data.get('node')
+        # asset_name = node.evalParm('asset_name')
 
         abstract_publish = abstract_hou_publish.hou_publish()
-        abstract_publish.write_commentary(text=comment, asset_name=asset_name)
+        abstract_publish.write_commentary(text=comment, asset_name=instance.name)
