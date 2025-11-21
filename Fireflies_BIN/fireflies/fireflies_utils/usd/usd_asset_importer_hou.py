@@ -115,15 +115,28 @@ class importer_window(QtWidgets.QDialog):
 
             asset_versions = sorted(self.assets_vars[name].keys())
 
-            target_version = asset_versions[0]
-            for task, asset in self.assets_vars[name][target_version].items():
+            target_tasks = []
+            for version in asset_versions:
+                for task in self.assets_vars[name][version].keys():
+                    if task not in target_tasks:
+                        target_tasks.append(task)
+
+            for task in target_tasks:
+                target_tasks_version = [
+                    version for version in asset_versions if task in self.assets_vars[name][version]
+                ]
+                target_tasks_version = sorted(target_tasks_version)
+
+                init_version = target_tasks_version[0]
+                asset = self.assets_vars[name][init_version][task]
+
                 child = QtWidgets.QTreeWidgetItem([task])
                 asset_item.addChild(child)
 
                 child.setText(2, asset['type'])
 
                 self.version_combo = QtWidgets.QComboBox()
-                self.version_combo.addItems(asset_versions)
+                self.version_combo.addItems(target_tasks_version)
                 self.version_combo.setProperty('asset', name)
                 self.version_combo.setProperty('task', task)
                 self.version_combo.setProperty('child', child)
@@ -382,6 +395,7 @@ class import_usd_asset():
 
         self.asset_file = []
         for version_dir in self.asset_versions:
+            print(version_dir)
             for file in os.listdir(version_dir):
                 if file.endswith(".usd"):
                     asset_path = os.path.join(version_dir, file)
@@ -418,34 +432,52 @@ class import_usd_asset():
                 "rig", 
                 "groom",
                 "layout", 
-                'anim'
+                "anim",
+                "setup_fx",
+                "assembly"
             ]
             
             tasks_iter = next((task for task in target_tasks if task in target_dir), None)
 
+
+            
             if tasks_iter:
                 current_task = tasks_iter
 
             else:
-                print("No task found in asset path")
-                print(target_dir)
+                print("no task found")
                 continue
+
+            # else:
+            #     print("No task found in asset path")
+            #     print(target_dir)
+            #     continue
 
 
             if asset_target and not anim_target:
                 name = asset_target.group(1)
                 
-                if version_path not in self.assets_vars[name]:
-                    self.assets_vars[name][version_path] = {}
-                self.assets_vars[name][version_path][current_task] = {
-                    "type": "asset",
-                    "path": asset
-                }
-                
+                # if version_path not in self.assets_vars[name]:
+                #     self.assets_vars[name][version_path] = {}
+
+                asset_dict = self.assets_vars[name].setdefault(version_path, {})
+
+                # self.assets_vars[name][version_path][current_task] = {
+                #     "type": "asset",
+                #     "path": asset
+                # }
+
+                target = asset_dict.setdefault(
+                    current_task,
+                    {
+                        "type": "asset",
+                        "path": asset
+                    }
+                )
+
                 continue
 
-
-            if anim_target:
+            if anim_target:                
                 name = anim_target.group(1)
                 frame = int(anim_target.group(2))
 
@@ -482,14 +514,15 @@ class import_usd_asset():
 
         # return self.result_published, self.result_usd_path
 
-        print(self.assets_vars)
+
+        # print(self.assets_vars)
 
         return list(self.assets_vars.keys()), self.assets_vars
 
 
-if __name__ == "__main__":
-    x = importer_window()
-    x.show()
+# if __name__ == "__main__":
+x = importer_window()
+x.show()
 
 # x = import_usd_asset()
 # x.find_asset()
