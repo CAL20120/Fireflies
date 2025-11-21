@@ -48,12 +48,12 @@ class importer_window(QtWidgets.QDialog):
 
 
     def create_widgets(self):
-        self.asset_table = QtWidgets.QTableWidget()
+        self.asset_table = QtWidgets.QTreeWidget()
         self.asset_table.setColumnCount(5)
         
-        self.header = self.asset_table.horizontalHeader()
-        self.asset_table.setHorizontalHeaderLabels(["Asset", "Version", "Type", "Local Path", "Date"])
-        self.header.setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
+        # self.header = self.asset_table.horizontalHeader()
+        self.asset_table.setHeaderLabels(["Asset", "Version", "Type", "Path", "Date"])
+        self.asset_table.header().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
         
         # self.preview_btn = QtWidgets.QPushButton("Preview Asset")
         
@@ -98,7 +98,7 @@ class importer_window(QtWidgets.QDialog):
         # self.refresh_btn.clicked.connect(self.refresh_asset_table)
         self.import_btn.clicked.connect(self.import_asset)       
 
-        self.asset_table.selectionModel().selectionChanged.connect(self.sel_changed)
+        # self.asset_table.selectionModel().selectionChanged.connect(self.sel_changed)
         self.asset_table.selectionModel().selectionChanged.connect(self.import_comment)
 
         # self.preview_btn.clicked.connect(self.show_preview)
@@ -106,40 +106,76 @@ class importer_window(QtWidgets.QDialog):
 
 
     def refresh_asset_table(self):
+        self.asset_table.clear()
 
-        self.asset_table.setRowCount(0)
+        for name in self.assets_name:
+            asset_item = QtWidgets.QTreeWidgetItem([name])
+            
+            self.asset_table.addTopLevelItem(asset_item)
 
-        for x, asset in enumerate(self.assets_name):
-            asset_versions = list(self.assets_vars[asset].keys())
-
-            self.asset_table.insertRow(x)
-            self.add_item(x, 0, asset)
-
-            self.version_combo = QtWidgets.QComboBox()
-            self.version_combo.addItems(asset_versions)
-            self.version_combo.setProperty('row', x)
-
-            self.version_combo.currentTextChanged.connect(self.refresh_version)
-            self.asset_table.setCellWidget(x, 1, self.version_combo)
+            asset_versions = sorted(self.assets_vars[name].keys())
 
             target_version = asset_versions[0]
+            for task, asset in self.assets_vars[name][target_version].items():
+                child = QtWidgets.QTreeWidgetItem([task])
+                asset_item.addChild(child)
 
-            target_asset = self.assets_vars[asset][target_version]
-            target_type = target_asset['type']
+                child.setText(2, asset['type'])
 
-            if target_type == "asset":
-                asset_path = target_asset['path']
+                self.version_combo = QtWidgets.QComboBox()
+                self.version_combo.addItems(asset_versions)
+                self.version_combo.setProperty('asset', name)
+                self.version_combo.setProperty('task', task)
+                self.version_combo.setProperty('child', child)
 
-            elif target_type == "sequence":
-                asset_path = target_asset['frames'][0]['path']
+                self.version_combo.currentTextChanged.connect(self.refresh_version)
+                self.version_combo.currentTextChanged.connect(self.import_comment)
 
-            self.add_item(x, 2, target_type)
+                self.asset_table.setItemWidget(child, 1, self.version_combo)
 
-            self.add_item(x, 3, asset_path)
+                asset_path = asset['path'] if asset['type'] == "asset" else asset['frames'][0]['path']
 
-            time_map = os.path.getmtime(asset_path)
-            modified_time = datetime.fromtimestamp(time_map)
-            self.add_item(x, 4, modified_time)
+                child.setText(3, asset_path)
+
+                time_map = os.path.getmtime(asset_path)
+                modified_time = datetime.fromtimestamp(time_map)
+                child.setText(4, str(modified_time))
+
+            asset_item.setExpanded(True)
+
+        # self.asset_table.setRowCount(0)
+
+        # for x, asset in enumerate(self.assets_name):
+        #     asset_versions = list(self.assets_vars[asset].keys())
+
+        #     self.asset_table.insertRow(x)
+        #     self.add_item(x, 0, asset)
+
+        #     self.version_combo = QtWidgets.QComboBox()
+        #     self.version_combo.addItems(asset_versions)
+        #     self.version_combo.setProperty('row', x)
+
+        #     self.version_combo.currentTextChanged.connect(self.refresh_version)
+        #     self.asset_table.setCellWidget(x, 1, self.version_combo)
+
+        #     target_version = asset_versions[0]
+
+        #     target_asset = self.assets_vars[asset][target_version]
+        #     target_type = target_asset['type']
+
+        #     if target_type == "asset":
+        #         asset_path = target_asset['path']
+
+        #     elif target_type == "sequence":
+        #         asset_path = target_asset['frames'][0]['path']
+
+        #     self.add_item(x, 2, target_type)
+
+        #     self.add_item(x, 3, asset_path)
+
+        #     time_map = os.path.getmtime(asset_path)
+        #     modified_time = datetime.fromtimestamp(time_map)
+        #     self.add_item(x, 4, modified_time)
 
 
         # for x in range(len(self.assets)):
@@ -160,34 +196,23 @@ class importer_window(QtWidgets.QDialog):
 
         #we need the get the qt signel to know which version changed in the ui
         target_combo = self.sender()
-        target_row = target_combo.property('row')
 
-        asset = self.asset_table.item(target_row, 0).text()
+        child = target_combo.property('child')
+        asset_name = target_combo.property('asset')
+        task = target_combo.property('task')
 
-        asset_versions = sorted(self.assets_vars[asset].keys())
+        sel = target_combo.currentText()
+        
+        asset = self.assets_vars[asset_name][sel][task]
 
-        index = target_combo.currentIndex()
+        asset_path = asset['path'] if asset['type'] == "asset" else asset['frames'][0]['path']
 
-        target_version = asset_versions[index]
-
-        target_asset = self.assets_vars[asset][target_version]
-        target_type = target_asset['type']
-
-        if target_type == "asset":
-            asset_path = target_asset['path']
-
-        elif target_type == "sequence":
-            asset_path = target_asset['frames'][0]['path']
-
-
-        self.asset_table.item(target_row, 2).setText(target_type)
-        self.asset_table.item(target_row, 3).setText(asset_path)
-
+        child.setText(2, asset['type'])
+        child.setText(3, asset_path)
 
         time_map = os.path.getmtime(asset_path)
         modified_time = datetime.fromtimestamp(time_map)
-        self.asset_table.setItem(target_row, 4, QtWidgets.QTableWidgetItem(str(modified_time)))
-
+        child.setText(4, str(modified_time))
 
 
     def add_item(self, row, column, text) -> QtWidgets:
@@ -207,33 +232,29 @@ class importer_window(QtWidgets.QDialog):
 
 
     def get_asset_data(self) -> str:
-        name, index  = self.sel_changed()
+        current_sel = self.asset_table.selectedItems()
+        if not current_sel:
+            print("No current selection")
+            return
+        
+        target_task = current_sel[0]
+        target_parent = target_task.parent()
+        
+        asset_name = target_parent.text(0)
+        task_name = target_task.text(0)
 
-        asset = self.asset_table.item(index, 0).text()
+        target_combo = self.asset_table.itemWidget(target_task, 1)
+        asset_version = target_combo.currentText()
 
-        asset_versions = sorted(self.assets_vars[asset].keys())
-        target_combo = self.asset_table.cellWidget(index, 1)
+        target_version = self.assets_vars[asset_name][asset_version][task_name]
+        target_type = target_version['type']
 
-        index = target_combo.currentIndex()
-
-        target_version = asset_versions[index]
-
-        target_asset = self.assets_vars[asset][target_version]
-        target_type = target_asset['type']
-
-        if target_type == "asset":
-            asset_path = target_asset['path']
-
-        elif target_type == "sequence":
-            asset_path = target_asset['frames'][0]['path']
-
+        asset_path = target_version['path'] if target_type == "asset" else target_version['frames'][0]['path']
 
         return asset_path, target_type
 
-    def import_asset(self):
-        print("importing usd asset: {}".format(self.sel_changed()[0]))
-        # print(self.sel_changed()[1])
 
+    def import_asset(self):
         asset_path, asset_type = self.get_asset_data()
 
         # print(type(asset_path))
@@ -263,7 +284,10 @@ class importer_window(QtWidgets.QDialog):
         for child in children:
             child.deleteLater()
 
-        name, index  = self.sel_changed()
+        current_sel = self.asset_table.selectedItems()
+        current_task  = current_sel[0]
+        parent = current_task.parent()
+        name = parent.text(0)
 
         self.text_edit_comment = QtWidgets.QTextEdit()
         self.text_edit_comment.setReadOnly(True)
@@ -354,6 +378,7 @@ class import_usd_asset():
 
                 self.asset_versions.append(version_dir)
 
+#
 
         self.asset_file = []
         for version_dir in self.asset_versions:
@@ -363,9 +388,8 @@ class import_usd_asset():
                     correct_path = asset_path.replace("\\", "/")
                     self.asset_file.append(correct_path)
 
+
         #time to build the dict
-
-
 
         for asset in self.asset_file:
             file = os.path.basename(asset)
@@ -384,12 +408,37 @@ class import_usd_asset():
             asset_target = asset_pattern.match(file)
             anim_target = anim_pattern.match(file)
 
+            #we need to find the related task
+            target_dir = os.path.dirname(asset)
+
+            target_tasks = [
+                "model",
+                "lookdev",
+                "texturing",
+                "rig", 
+                "groom",
+                "layout", 
+                'anim'
+            ]
+            
+            tasks_iter = next((task for task in target_tasks if task in target_dir), None)
+
+            if tasks_iter:
+                current_task = tasks_iter
+
+            else:
+                print("No task found in asset path")
+                print(target_dir)
+                continue
+
 
             if asset_target and not anim_target:
                 name = asset_target.group(1)
                 
-                self.assets_vars[name][version_path] = {
-                    "type": "asset", 
+                if version_path not in self.assets_vars[name]:
+                    self.assets_vars[name][version_path] = {}
+                self.assets_vars[name][version_path][current_task] = {
+                    "type": "asset",
                     "path": asset
                 }
                 
@@ -400,9 +449,11 @@ class import_usd_asset():
                 name = anim_target.group(1)
                 frame = int(anim_target.group(2))
 
+                anim_dict = self.assets_vars[name].setdefault(version_path, {})
+
                 #important to use setdefault to create a value for each frame
-                target = self.assets_vars[name].setdefault(
-                    version_path, 
+                target = anim_dict.setdefault(
+                    current_task, 
                     {
                         "type": "sequence",
                         "frames": []
@@ -435,6 +486,10 @@ class import_usd_asset():
 
         return list(self.assets_vars.keys()), self.assets_vars
 
-x = importer_window()
-x.show()
 
+if __name__ == "__main__":
+    x = importer_window()
+    x.show()
+
+# x = import_usd_asset()
+# x.find_asset()
