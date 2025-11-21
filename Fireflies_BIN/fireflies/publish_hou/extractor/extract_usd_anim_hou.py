@@ -16,8 +16,11 @@ class Usd_Extractor_Anim(pyblish.api.InstancePlugin):
         pass
 
     def process(self, instance):
-        node_path = instance.data.get('node')
+        prim = instance.data.get('prim')
+
 
         self.abstract_publish = abstract_hou_publish.hou_publish()
+        
+        node = instance.data.get('node')
 
-        self.abstract_publish.extract_animation(node=node_path)
+        self.abstract_publish.extract_animation(root_prim=prim, node=node)

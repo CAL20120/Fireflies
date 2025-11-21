@@ -24,12 +24,13 @@ class CollectHouData(pyblish.api.ContextPlugin):
     def process(self, context):
         context.data["comment"] = ""
         
-        targets, paths, prim = self.abstract_publish.fetch_targets()
+        targets, paths, prim, nodes = self.abstract_publish.fetch_targets()
 
         for index, name in enumerate(targets):
             instance = context.create_instance(name)
             instance.data['prim_path'] = paths[index]
             instance.data['prim'] = prim[index]
+            instance.data['node'] = nodes[index]
 
             # instance.append("node")
             instance.data['family'] = "assets"

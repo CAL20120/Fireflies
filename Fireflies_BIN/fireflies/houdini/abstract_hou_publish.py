@@ -6,6 +6,9 @@ from fireflies.houdini import hou_utils
 
 import hou
 
+from pxr import Usd, UsdGeom, Sdf, UsdUtils
+
+
 class hou_publish():
     def __init__(self):
         super(hou_publish, self).__init__()
@@ -21,19 +24,42 @@ class hou_publish():
 
         print(self.curr_context)
 
-        target_nodes = []
+        target_name = []
         target_paths = []
+        target_prims = []
+        target_nodes = []
 
         for node in self.curr_context.allSubChildren():
             target_parm = node.parm('target_publish')
             if target_parm:
-                target_nodes.append(node.name())
-                target_paths.append(node.path())
+                stage = node.stage()
+                if not stage:
+                    print("No stage found")
+                    return
+
+                #in solaris GetDefaultPrim returns an invalid prim
+                root_prim = stage.GetPseudoRoot()
+                if not root_prim:
+                    continue
+
+                target_prim = root_prim.GetChildren()[-1]
+
+                prim_name = target_prim.GetName()
+                prim_path = str(target_prim.GetPath())
+
+                target_name.append(prim_name)
+                target_paths.append(prim_path)
+                target_prims.append(target_prim)
+
+                target_nodes.append(node)
+
+        # print(zip(target_prim, target_paths))
+
+        print(target_name)
+        print(target_paths)
+
+        return target_name, target_paths, target_prims, target_nodes 
         
-        print(zip(target_nodes, target_paths))
-
-        return target_nodes, target_paths
-
 
     def get_last_version(self, asset_name:str):
         version_id = 1
@@ -57,33 +83,46 @@ class hou_publish():
             #         break
 
         # export_dir = f"{self.export_dir}/{asset_name}/{asset_name}_{version_id:03}"
+                
         export_path = f"{export_dir}/{asset_name}.usd"
 
 
         return export_dir, export_path
 
 
-    def extract_usd(self, node):
+    def extract_usd(self, root_prim:Usd):
         if not os.path.exists(self.export_dir):
             os.makedirs(self.export_dir)
 
+        # stage = node.stage()
 
-        stage = node.stage()
-
-        asset_name = node.evalParm('asset_name')
+        # asset_name = node.evalParm('asset_name')
         # export_path = "{}/{}.usd".format(self.export_dir, asset_name)
 
+        asset_name = str(root_prim.GetName())
+
+        target_stage = root_prim.GetStage()
+
         _, export_path = self.get_last_version(asset_name=asset_name)
-
         print(export_path)
-        stage.Export(export_path)
+
+        # stage = Usd.Stage.CreateNew(export_path)
+        
+        # UsdUtils.CopyLayerMetadata(
+        #     source=None,
+        #     destination=stage.GetRootLayer(),
+        #     skipSubLayers=False
+            
+        # )
+
+        target_stage.Export(export_path)
 
 
 
-    def extract_animation(self, node):
+    def extract_animation(self, root_prim:Usd, node:hou):
         f_start, f_end = hou.playbar.playbackRange()
         
-        asset_name = node.evalParm('asset_name')
+        asset_name = str(root_prim.GetName())
 
         export_dir, _ = self.get_last_version(asset_name=asset_name)
 

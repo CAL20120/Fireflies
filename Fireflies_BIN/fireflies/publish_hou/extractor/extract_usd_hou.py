@@ -16,7 +16,7 @@ class Usd_Extractor_Hou(pyblish.api.InstancePlugin):
     def process(self, instance):
         self.abstract_publish = abstract_hou_publish.hou_publish()
 
-        # node_path = instance.data.get('node')
+        node_path = instance.data.get('node')
         # self.abstract_publish.extract_usd(node=node_path)
 
         prim_path = instance.data.get('prim_path') 
