@@ -19,8 +19,14 @@ from fireflies.houdini import hou_utils
 
 
 class importer_window(QtWidgets.QDialog):
-    def __init__(self, parent=hou.qt.mainWindow()):
+    import_target = QtCore.Signal(str)
+
+    def __init__(self, import_classic:bool=None, parent=hou.qt.mainWindow()):
         super(importer_window, self).__init__(parent)
+
+        self.import_classic = import_classic
+        self.import_target = None
+
         self.setWindowTitle("Import USD Asset")
         self.setMinimumSize(750, 700)
 
@@ -279,15 +285,18 @@ class importer_window(QtWidgets.QDialog):
         utils = hou_utils.hou_usd()
 
         hip_path = utils.path_converter(path=asset_path)
-        if asset_type == "asset":
-            hou_utils.hou_usd.import_prod_usd_asset(self, asset_path=hip_path)
+        
+        if self.import_classic:
+            if asset_type == "asset":
+                hou_utils.hou_usd.import_prod_usd_asset(self, asset_path=hip_path)
 
-        elif asset_type == "sequence":
-            utils.import_usd_sequence(asset_path=hip_path)
+            elif asset_type == "sequence":
+                utils.import_usd_sequence(asset_path=hip_path)
+
+        else: 
+            self.import_target.parm('input_file').set(hip_path)
 
 
-
-    
     def import_comment(self):
         children = []
         for x in range(self.comment_layout.count()):
@@ -520,9 +529,9 @@ class import_usd_asset():
         return list(self.assets_vars.keys()), self.assets_vars
 
 
-# if __name__ == "__main__":
-x = importer_window()
-x.show()
+if __name__ == "__main__":
+    x = importer_window(import_classic=True)
+    x.show()
 
 # x = import_usd_asset()
 # x.find_asset()

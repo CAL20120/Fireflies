@@ -18,7 +18,7 @@ hou.session.dialog.show()]]></script>
   <tool name="prod_importer_hou" label="PROD Asset" icon="C:/Fireflies/Fireflies_BIN/fireflies/logos/asset_importer.png">
     <script scriptType="python"><![CDATA[from fireflies.fireflies_utils.usd import usd_asset_importer
 
-hou.session.dialog = usd_asset_importer.importer_window()
+hou.session.dialog = usd_asset_importer.importer_window(import_classic=True)
 hou.session.dialog.show()]]></script>
   </tool>
 
@@ -69,7 +69,7 @@ hou.session.dialog.show()]]></script>
   <tool name="lib_assets0" label="LIB Asset" icon="C:/Fireflies/Fireflies_BIN/fireflies/logos/lib_asset.png">
     <script scriptType="python"><![CDATA[from fireflies.fireflies_utils.usd import lib_importer_hou
 
-hou.session.dialog = lib_importer_hou.lib_importer_window()
+hou.session.dialog = lib_importer_hou.lib_importer_window(import_classic=True)
 hou.session.dialog.show()]]></script>
   </tool>
 

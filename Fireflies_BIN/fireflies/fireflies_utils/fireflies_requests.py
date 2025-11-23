@@ -103,12 +103,12 @@ class nas_requests():
             return True, asset_type, prod_asset_path
        
         else: 
-            print("No local instance for this asset")
+            print("No local instance for this asset \n downloading...")
         
         return False, asset_type, prod_asset_path
 
 
-    def download_asset(self, nas_path, asset_name, prod_path):
+    def download_asset(self, nas_path, asset_name, prod_path, disable_import:bool=None):
         utils = hou_utils.hou_usd()
 
         validate, asset_type, asset_path = self.check_local_instance(prod_path=prod_path, asset_name=asset_name)
@@ -118,12 +118,11 @@ class nas_requests():
         if not os.path.exists(lib_local_path):
             os.makedirs(lib_local_path)
 
-        if validate == False:
-            self.fs.get_file(path=nas_path, dest_path=lib_local_path, mode='download')
-        
-        if validate == True:
+
+        if validate:
             if asset_type == "ASSET":
                 hip_path = utils.path_converter(path=asset_path)
+                
                 self.hou_utils.import_prod_usd_asset(asset_path=hip_path)
             
             if asset_type == "LIGHT":
@@ -137,9 +136,15 @@ class nas_requests():
                         tx_path = texture_manager.make_tx(input_file=asset_path)
 
                         hip_path = utils.path_converter(path=tx_path)
+                
+                if not disable_import:
+                    self.hou_utils.import_light(asset_path=hip_path, asset_name=asset_name)
 
-                self.hou_utils.import_light(asset_path=hip_path, asset_name=asset_name)
+        else:
+            self.fs.get_file(path=nas_path, dest_path=lib_local_path, mode='download')
 
+        if hip_path:
+            return hip_path
 
 
 if __name__ == "__main__":

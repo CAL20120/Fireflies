@@ -13,10 +13,15 @@ from fireflies.houdini import hou_utils
 from fireflies.fireflies_utils import fireflies_requests
 
 class lib_importer_window(QtWidgets.QDialog):
-    def __init__(self, parent=hou.qt.mainWindow()):
+    import_target = QtCore.Signal(str)
+
+    def __init__(self, import_classic:bool=None, parent=hou.qt.mainWindow()):
         super(lib_importer_window, self).__init__(parent)
         self.nas_requests = fireflies_requests.nas_requests()
         
+        self.import_classic = import_classic
+        self.import_target = None
+
         self.prod_path = hou.hipFile.path().rsplit("/", 4)[0].replace("/", "\\")
         self.prod_path_curr = hou.hipFile.path().rsplit("/", 4)[0]
         
@@ -138,7 +143,7 @@ class lib_importer_window(QtWidgets.QDialog):
 
 
     def import_asset(self):
-        sel_name, item_index = self.sel_changed()
+        _, item_index = self.sel_changed()
 
         nas_path = None
 
@@ -154,7 +159,13 @@ class lib_importer_window(QtWidgets.QDialog):
 
         asset_name = nas_path.rsplit("/", 1)[-1]
 
-        self.nas_requests.download_asset(nas_path=nas_path, asset_name=asset_name, prod_path=self.prod_path_curr)
+        if self.import_classic:
+            self.nas_requests.download_asset(nas_path=nas_path, asset_name=asset_name, prod_path=self.prod_path_curr)
+
+        else: 
+            hip_path = self.nas_requests.download_asset(nas_path=nas_path, asset_name=asset_name, prod_path=self.prod_path_curr, disable_import=True)
+
+            self.import_target.parm('input_light2').set(hip_path)
 
         self.refresh_table()
 
