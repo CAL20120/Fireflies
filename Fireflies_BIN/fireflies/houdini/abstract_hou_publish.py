@@ -42,6 +42,9 @@ class hou_publish():
                 if not root_prim:
                     continue
 
+                if root_prim.GetName() == "HoudiniLayerInfo":
+                    continue
+
                 target_prim = root_prim.GetChildren()[-1]
 
                 prim_name = target_prim.GetName()
@@ -106,6 +109,7 @@ class hou_publish():
         _, export_path = self.get_last_version(asset_name=asset_name)
         print(export_path)
 
+
         # stage = Usd.Stage.CreateNew(export_path)
         
         # UsdUtils.CopyLayerMetadata(
@@ -115,7 +119,13 @@ class hou_publish():
             
         # )
 
-        target_stage.Export(export_path)
+        #we want to only export the current layer (what's after a layer break in houdini in this case)
+        #because when exporting a task otherwise we would get the whole stage instead of the targeted layer
+        #stack
+
+        current_layer = root_prim.GetPrimStack()[0].layer
+
+        current_layer.Export(export_path)
 
 
 
