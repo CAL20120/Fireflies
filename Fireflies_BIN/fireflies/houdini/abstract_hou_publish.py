@@ -150,7 +150,7 @@ class hou_publish():
             stage.Export(export_path)
 
 
-    def write_commentary(self, text, asset_name):
+    def get_export_path(self, asset_name):
         export_dir = f"{self.export_dir}/{asset_name}"
 
         target_versions = sorted(
@@ -168,9 +168,15 @@ class hou_publish():
 
         target_version = f"{asset_name}_{int(result):03d}"
 
+        return export_dir, target_version
+        pass
+
+    def write_commentary(self, text, asset_name):
+        export_dir, target_version = self.get_export_path(asset_name)
+
         comment_dir = "{}/metadata/commentary".format(target_version)
-        # comment_dir = os.path.join(export_dir, comment_dir)
-        comment_dir = f"{export_dir}/{comment_dir}"
+        comment_dir = os.path.join(export_dir, comment_dir)
+
         comment_path = f"{comment_dir}/{asset_name}_comment.txt"
 
         print(comment_path)
@@ -182,5 +188,15 @@ class hou_publish():
             f.write(text)
 
 
-    def export_preview(self):
-        pass
+    def export_preview(self, asset_name):
+        export_dir, target_version = self.get_export_path(asset_name)
+
+        preview_dir = "{}/metadata/preview".format(target_version)
+
+        preview_dir = os.path.join(export_dir, preview_dir)
+        preview_path = f"{preview_dir}/{asset_name}_preview.jpg"
+
+        if not os.path.exists(preview_dir):
+            os.makedirs(preview_dir)
+
+        self.utils.create_playblast(output=preview_path)
