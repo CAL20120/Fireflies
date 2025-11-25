@@ -47,6 +47,13 @@ class hou_usd():
 
             unpack_node.setInput(0, asset_node)
 
+            asset_node.parm('purpose').set('render')
+
+            unpack_node.parm('transferattributes').set('*')
+            unpack_node.parm('importprimvars').set('*')
+            unpack_node.parm('importattributes').set('*')
+
+
         try:
             asset_node.parm('filepath').set(asset_path)
         except:
