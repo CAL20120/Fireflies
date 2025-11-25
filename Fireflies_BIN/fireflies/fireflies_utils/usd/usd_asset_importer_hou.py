@@ -20,11 +20,13 @@ from fireflies.houdini import hou_utils
 
 class importer_window(QtWidgets.QDialog):
     import_target = QtCore.Signal(str)
+    target_input = QtCore.Signal(str)
 
     def __init__(self, import_classic:bool=None, parent=hou.qt.mainWindow()):
         super(importer_window, self).__init__(parent)
 
         self.import_classic = import_classic
+        self.target_input = None
         self.import_target = None
 
         self.setWindowTitle("Import USD Asset")
@@ -85,6 +87,8 @@ class importer_window(QtWidgets.QDialog):
 
         self.comment_layout = QtWidgets.QHBoxLayout()
 
+        self.preview_layout = QtWidgets.QHBoxLayout()
+
         self.bottom_btn_layout = QtWidgets.QHBoxLayout()
         self.bottom_btn_layout.addWidget(self.import_btn)
         self.bottom_btn_layout.addWidget(self.close_btn)
@@ -94,7 +98,9 @@ class importer_window(QtWidgets.QDialog):
         self.main_layout.addLayout(self.table_layout)
         self.main_layout.addLayout(self.asset_info_layout)
         self.main_layout.addLayout(self.comment_layout)
-        self.main_layout.addStretch()
+        self.main_layout.addLayout(self.preview_layout)
+
+        # self.main_layout.addStretch()
         self.main_layout.addLayout(self.bottom_btn_layout)
 
 
@@ -106,9 +112,7 @@ class importer_window(QtWidgets.QDialog):
 
         # self.asset_table.selectionModel().selectionChanged.connect(self.sel_changed)
         self.asset_table.selectionModel().selectionChanged.connect(self.import_comment)
-
-        # self.preview_btn.clicked.connect(self.show_preview)
-        
+        self.asset_table.selectionModel().selectionChanged.connect(self.import_preview)
 
 
     def refresh_asset_table(self):
@@ -131,6 +135,7 @@ class importer_window(QtWidgets.QDialog):
                 target_tasks_version = [
                     version for version in asset_versions if task in self.assets_vars[name][version]
                 ]
+
                 target_tasks_version = sorted(target_tasks_version)
 
                 init_version = target_tasks_version[0]
@@ -149,6 +154,7 @@ class importer_window(QtWidgets.QDialog):
 
                 self.version_combo.currentTextChanged.connect(self.refresh_version)
                 self.version_combo.currentTextChanged.connect(self.import_comment)
+                self.version_combo.currentTextChanged.connect(self.import_preview)
 
                 self.asset_table.setItemWidget(child, 1, self.version_combo)
 
@@ -293,6 +299,9 @@ class importer_window(QtWidgets.QDialog):
             elif asset_type == "sequence":
                 utils.import_usd_sequence(asset_path=hip_path)
 
+        if self.target_input:
+            self.import_target.parm(self.target_input).set(hip_path)
+
         else: 
             self.import_target.parm('input_file').set(hip_path)
 
@@ -330,25 +339,42 @@ class importer_window(QtWidgets.QDialog):
         self.comment_layout.addWidget(self.text_edit_comment)
 
 
-    def show_preview(self):
-        _, index = self.sel_changed()
-        self.x = hou_utils.hou_usd()
+    # def show_preview(self):
+    #     _, index = self.sel_changed()
+    #     self.x = hou_utils.hou_usd()
         
-        target_path = self.paths[index]
-        print(target_path)
-        self.x.show_preview(asset_path=target_path)
+    #     target_path = self.paths[index]
+    #     print(target_path)
+    #     self.x.show_preview(asset_path=target_path)
 
 
+    def import_preview(self):
+        children = []
+        for x in range(self.preview_layout.count()):
+            child = self.preview_layout.itemAt(x).widget()
+            if child:
+                children.append(child)
+        for child in children:
+            child.deleteLater()
 
-    def show_preview(self):
-        name, index  = self.sel_changed()
-        asset_path = self.paths[index]
+        current_sel = self.asset_table.selectedItems()
+        current_task  = current_sel[0]
+        parent = current_task.parent()
+        name = parent.text(0)
 
-        asset_path = asset_path.replace("/", "\\")
-        print("opening ###### {}".format(asset_path))
+        asset_path, _ = self.get_asset_data()
+        version_path = os.path.dirname(asset_path)
+        target_file = f"{version_path}/metadata/preview/{name}_preview.jpg"
 
-        # asset_path = "R:\\Christopher_LUCAS\\PRODS\\test_dev\\001\\01\\model\\usd_published\\test_ASSET.usd"
-        # fireflies_usd_viewer(asset_path=asset_path)
+        if os.path.exists(target_file):
+            label = QtWidgets.QLabel()
+
+            texture = QtGui.QPixmap(target_file)
+            label.setPixmap(
+                texture.scaled(426, 240, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
+            )
+
+            self.preview_layout.addWidget(label)
 
 
 class import_usd_asset():
@@ -400,7 +426,6 @@ class import_usd_asset():
 
                 self.asset_versions.append(version_dir)
 
-#
 
         self.asset_file = []
         for version_dir in self.asset_versions:
@@ -447,9 +472,8 @@ class import_usd_asset():
             ]
             
             tasks_iter = next((task for task in target_tasks if task in target_dir), None)
-
-
             
+
             if tasks_iter:
                 current_task = tasks_iter
 
@@ -535,3 +559,4 @@ if __name__ == "__main__":
 
 # x = import_usd_asset()
 # x.find_asset()
+ 
