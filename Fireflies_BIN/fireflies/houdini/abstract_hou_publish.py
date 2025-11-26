@@ -109,24 +109,39 @@ class hou_publish():
         _, export_path = self.get_last_version(asset_name=asset_name)
         print(export_path)
 
-
-        # stage = Usd.Stage.CreateNew(export_path)
+        """
+        stage = Usd.Stage.CreateNew(export_path)
         
-        # UsdUtils.CopyLayerMetadata(
-        #     source=None,
-        #     destination=stage.GetRootLayer(),
-        #     skipSubLayers=False
+        UsdUtils.CopyLayerMetadata(
+            source=None,
+            destination=stage.GetRootLayer(),
+            skipSubLayers=False
             
-        # )
+        )
 
-        #we want to only export the current layer (what's after a layer break in houdini in this case)
-        #because when exporting a task otherwise we would get the whole stage instead of the targeted layer
-        #stack
+        """
 
+        # we want to only export the current layer (what's after a layer break in houdini in this case)
+        # because when exporting a task otherwise we would get the whole stage instead of the targeted layer
+        # stack
         current_layer = root_prim.GetPrimStack()[0].layer
 
         current_layer.Export(export_path)
 
+
+
+    #we use this method to export assemblies, because exporting a single layer
+    #results in an empty usd file
+    def export_full_scene(self, asset_name:str, current_node:hou):
+        if not os.path.exists(self.export_dir):
+            os.makedirs(self.export_dir)
+
+        _, export_path = self.get_last_version(asset_name=asset_name)
+        print(export_path)
+
+        stage = current_node.stage()
+
+        stage.Export(export_path)
 
 
     def extract_animation(self, root_prim:Usd, node:hou):

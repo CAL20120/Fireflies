@@ -79,6 +79,18 @@ class hou_usd():
             sublayer_node.parm('filepath1').set(path)
 
 
+    def import_regular_asset(self, asset_path:str):
+        asset_name = os.path.basename(asset_path)
+
+        if self.curr_context.type().name() == "sopnet":
+            sop_create = self.curr_context.createNode('sopcreate', asset_name)
+
+            file_node = sop_create.createNode('file', 'asset_import')
+            file_node.parm('file').set(asset_path)
+
+            output_node = sop_create.createNode('output', 'output01')
+            output_node.setInput(0, file_node)
+
 
     def import_light(self, asset_path, asset_name):
         curr_context = self.get_current_context()
@@ -155,19 +167,19 @@ class hou_usd():
             print("asset path does not exist")
 
 
-    def create_playblast(self):
+    def create_playblast(self, output:str):
         desktop = hou.ui.curDesktop()
         target_pane = desktop.paneTabOfType(hou.paneTabType.SceneViewer)
 
         viewport = target_pane.curViewport()
 
-        output = f"{self.scene_path}/quick_preview/{0}/{self.scene_name}.png"
+        # output = f"{self.scene_path}/quick_preview/{0}/{self.scene_name}.png"
         # f_start, f_end = hou.playbar.playbackRange()
 
         fbk_settings = target_pane.flipbookSettings().stash()
         fbk_settings.frameRange((hou.frame(), hou.frame()))
         fbk_settings.useResolution(True)
-        fbk_settings.useResolution(2560, 1140)
+        fbk_settings.useResolution((1920, 1080))
         fbk_settings.output(output)
 
         target_pane.flipbook(viewport, fbk_settings)
