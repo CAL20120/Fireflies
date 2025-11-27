@@ -80,16 +80,15 @@ class hou_usd():
 
 
     def import_regular_asset(self, asset_path:str):
-        asset_name = os.path.basename(asset_path)
+        # asset_name = os.path.basename(asset_path)
+
+        if self.curr_context.type().name() == "lopnet":
+            asset_node = self.curr_context.createNode('Fireflies::regular_asset_import')
+            asset_node.parm('input_file').set(asset_path)
 
         if self.curr_context.type().name() == "sopnet":
-            sop_create = self.curr_context.createNode('sopcreate', asset_name)
-
-            file_node = sop_create.createNode('file', 'asset_import')
+            file_node = self.curr_context.createNode('file')
             file_node.parm('file').set(asset_path)
-
-            output_node = sop_create.createNode('output', 'output01')
-            output_node.setInput(0, file_node)
 
 
     def import_light(self, asset_path, asset_name):
@@ -180,6 +179,8 @@ class hou_usd():
         fbk_settings.frameRange((hou.frame(), hou.frame()))
         fbk_settings.useResolution(True)
         fbk_settings.useResolution((1920, 1080))
+        
+        fbk_settings.outputToMPlay(False)
         fbk_settings.output(output)
 
         target_pane.flipbook(viewport, fbk_settings)
