@@ -1,0 +1,2 @@
+pyblish_lite
+tests

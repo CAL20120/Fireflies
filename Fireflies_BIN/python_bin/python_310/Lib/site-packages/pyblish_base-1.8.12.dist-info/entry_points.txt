@@ -1,0 +1,2 @@
+[console_scripts]
+pyblish = pyblish.cli:main
