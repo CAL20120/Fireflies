@@ -132,16 +132,47 @@ class hou_publish():
 
     #we use this method to export assemblies, because exporting a single layer
     #results in an empty usd file
-    def export_full_scene(self, asset_name:str, current_node:hou):
+    def export_full_stack(self, asset_name:str, current_node:hou):
         if not os.path.exists(self.export_dir):
             os.makedirs(self.export_dir)
 
-        _, export_path = self.get_last_version(asset_name=asset_name)
+        export_dir, export_path = self.get_last_version(asset_name=asset_name)
         print(export_path)
 
         stage = current_node.stage()
+        root_layer = stage.GetRootLayer()
 
-        stage.Export(export_path)
+        # export_path = f"{export_path.rsplit('.', 1)[0]}.usda"
+
+        # target_sublayers = stage.GetRootLayer().subLayerPaths
+        # # out_stage = Usd.Stage.CreateNew(export_path)
+
+        # for layer in target_sublayers:
+        #     out_stage.GetRootLayer().subLayerPaths.append(layer)
+
+
+        target_layers = []
+
+        for path in root_layer.subLayerPaths:
+            if "anon" in path:
+                continue
+
+            target_layers.append(str(path).strip('@'))
+
+
+        out_sublayers = []
+        for path in target_layers:
+            relative_path = os.path.relpath(path, export_dir)
+            out_relative = relative_path.replace("\\", "/")
+
+            out_sublayers.append(out_relative)
+
+        root_layer.subLayerPaths = out_sublayers
+
+        root_layer.Export(export_path)
+
+        stage.Save()
+
 
 
     def extract_animation(self, root_prim:Usd, node:hou):
@@ -156,6 +187,7 @@ class hou_publish():
 
         if not os.path.exists(self.export_dir):
             os.makedirs(self.export_dir)
+
 
         for frame in range(int(f_start), int(f_end)):
             hou.setFrame(frame)

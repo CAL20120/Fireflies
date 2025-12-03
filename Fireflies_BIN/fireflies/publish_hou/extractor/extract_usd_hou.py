@@ -26,7 +26,7 @@ class Usd_Extractor_Hou(pyblish.api.InstancePlugin):
         current_scene = hou.hipFile.path()
 
         if "assembly" in os.path.dirname(current_scene):
-            self.abstract_publish.export_full_scene(asset_name=instance.name, current_node=node)
+            self.abstract_publish.export_full_stack(asset_name=instance.name, current_node=node)
 
         else:
             self.abstract_publish.extract_usd(root_prim=prim)
