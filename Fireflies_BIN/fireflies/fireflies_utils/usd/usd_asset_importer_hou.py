@@ -6,23 +6,35 @@ import re
 
 import collections
 
-from pxr import Usd, UsdGeom, Sdf
+# from fireflies.fireflies_utils.usd import fireflies_usd_viewer
+
+
+#otherwise when we import this script in the standalone 
+#assembly resolver it won't load
+try:
+    import hou
+    from fireflies.houdini import hou_utils
+    from pxr import Usd, UsdGeom, Sdf
+except:
+    pass
+
 
 from PySide2 import QtCore
 from PySide2 import QtWidgets
 from PySide2 import QtGui
 
 
-import hou
-from fireflies.houdini import hou_utils
-# from fireflies.fireflies_utils.usd import fireflies_usd_viewer
-
-
 class importer_window(QtWidgets.QDialog):
     import_target = QtCore.Signal(str)
     target_input = QtCore.Signal(str)
 
-    def __init__(self, import_classic:bool=None, parent=hou.qt.mainWindow()):
+
+    def __init__(self, import_classic:bool=None):
+        try: 
+            parent = hou.qt.mainWindow()
+        except:
+            pass
+
         super(importer_window, self).__init__(parent)
 
         self.import_classic = import_classic
@@ -85,9 +97,10 @@ class importer_window(QtWidgets.QDialog):
         self.asset_info_layout = QtWidgets.QHBoxLayout()
         # self.asset_info_layout.addWidget(self.asset_info_table)
 
+        # self.metadata_layout = QtWidgets.QHBoxLayout()
         self.comment_layout = QtWidgets.QHBoxLayout()
-
         self.preview_layout = QtWidgets.QHBoxLayout()
+
 
         self.bottom_btn_layout = QtWidgets.QHBoxLayout()
         self.bottom_btn_layout.addWidget(self.import_btn)
@@ -302,7 +315,7 @@ class importer_window(QtWidgets.QDialog):
         if self.target_input:
             self.import_target.parm(self.target_input).set(hip_path)
 
-        else: 
+        if not self.import_classic: 
             self.import_target.parm('input_file').set(hip_path)
 
 
@@ -380,8 +393,12 @@ class importer_window(QtWidgets.QDialog):
 class import_usd_asset():
     def __init__(self):
         super(import_usd_asset, self).__init__()
-        self.prod_path = hou.hipFile.path().rsplit("/", 4)[0].replace("/", "\\")
 
+        try: 
+            import hou
+            self.prod_path = hou.hipFile.path().rsplit("/", 4)[0].replace("/", "\\")
+        except:
+            self.prod_path = None
 
     def find_asset(self) -> str | collections.defaultdict:
         #the purpose here is to build a dict with each assets and its version to 
@@ -429,7 +446,7 @@ class import_usd_asset():
 
         self.asset_file = []
         for version_dir in self.asset_versions:
-            print(version_dir)
+            # print(version_dir)
             for file in os.listdir(version_dir):
                 if file.endswith(".usd"):
                     asset_path = os.path.join(version_dir, file)
@@ -468,7 +485,8 @@ class import_usd_asset():
                 "layout", 
                 "anim",
                 "setup_fx",
-                "assembly"
+                "assembly", 
+                "light",
             ]
             
             tasks_iter = next((task for task in target_tasks if task in target_dir), None)
@@ -559,4 +577,5 @@ if __name__ == "__main__":
 
 # x = import_usd_asset()
 # x.find_asset()
- 
+
+
