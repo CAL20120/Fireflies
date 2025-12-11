@@ -8,7 +8,7 @@ class Usd_Extractor_Hou(pyblish.api.InstancePlugin):
     """Publish usd file from houdini"""
 
     # order = pyblish.api.ExtractorOrder
-    order = 1.1
+    order = 2.1
     optional=True
     label="Publish USD file (single frame)"
 
@@ -26,8 +26,10 @@ class Usd_Extractor_Hou(pyblish.api.InstancePlugin):
         current_scene = hou.hipFile.path()
 
         if "assembly" in os.path.dirname(current_scene):
-            self.abstract_publish.export_full_stack(asset_name=instance.name, current_node=node)
+            stage_path = self.abstract_publish.export_full_stack(asset_name=instance.name, current_node=node)
 
         else:
-            self.abstract_publish.extract_usd(root_prim=prim)
+            stage_path = self.abstract_publish.extract_usd(root_prim=prim)
 
+        instance.data['stage_local_path'] = stage_path
+        

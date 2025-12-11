@@ -1,12 +1,13 @@
 import os
 import sys
 import re
+import random
 
 from fireflies.houdini import hou_utils
 
 import hou
 
-from pxr import Usd, UsdGeom, Sdf, UsdUtils
+from pxr import Usd, UsdGeom, Sdf, UsdUtils, UsdShade
 
 
 class hou_publish():
@@ -61,7 +62,7 @@ class hou_publish():
         print(target_name)
         print(target_paths)
 
-        return target_name, target_paths, target_prims, target_nodes 
+        return target_name, target_paths, target_prims, target_nodes, 
         
 
     def get_last_version(self, asset_name:str):
@@ -109,6 +110,7 @@ class hou_publish():
         _, export_path = self.get_last_version(asset_name=asset_name)
         print(export_path)
 
+
         """
         stage = Usd.Stage.CreateNew(export_path)
         
@@ -126,7 +128,110 @@ class hou_publish():
         # stack
         current_layer = root_prim.GetPrimStack()[0].layer
 
+
+        # self.resolve_relative_paths(stage = target_stage, export_path=export_path, target_layer=current_layer)
+
+        target_stage.SetEditTarget(current_layer)
+
+        target_stage.Save()
+
         current_layer.Export(export_path)
+
+        # self.resolve_relative_paths(stage_path=export_path)
+
+        return export_path
+
+
+    def resolve_relative_paths(self, stage_path:Usd) -> Usd.Stage:
+        print("CORRECTING PATHS #########!")
+
+        # print(stage_path)
+        # tmp_export_dir = "tmp_export/tmp_check_{}.usd".format(
+        #     random.randrange(0000, 9999)
+        # )
+        
+        # test = os.path.dirname(stage_path)
+        # tmp_export_path = f"{test}/{tmp_export_dir}".replace(os.sep, '/')
+        
+        # x = os.path.dirname(tmp_export_path)
+        # if not os.path.exists(x):
+        #     os.makedirs(x)
+
+        # current_stage = current_stage.stage()
+
+        # current_stage.GetRootLayer().Export(tmp_export_path)
+        
+        
+        rel_dir = os.path.dirname(stage_path)
+
+
+        stage = Usd.Stage.Open(stage_path)
+
+        print("########## STAGE #########")
+        # stage = hou_node.stage()
+
+        print(stage)
+
+        # stage.SetEditTarget(stage.GetRootLayer())
+
+
+        for prim in stage.Traverse():
+            if prim.GetName() == "HoudiniLayerInfo":
+                continue
+
+            print(prim)
+
+    
+        for prim in stage.TraverseAll():
+            if prim.GetName() == "HoudiniLayerInfo":
+                continue
+
+            shader = UsdShade.Shader(prim)
+            if not shader:
+                print("Not Shader")
+                continue
+
+
+            for input in shader.GetInputs():
+                input_name = input.GetBaseName()
+                print("input: {}".format(input_name))
+
+                if "filename" in input_name.lower():
+                    tex_path = input.Get()
+                    print(tex_path)
+
+                    # if not tex_path:
+                    #     continue
+                
+                    tex_path = str(tex_path).strip('@')
+
+                    if not os.path.isabs(tex_path):
+                        print("Path is already relative")
+                        continue
+
+
+                    if tex_path.startswith('$HIP'):
+                        tex_path = hou.text.expandString(tex_path)
+
+                    # if os.path.isabs(tex_path):
+                    print("##########################")
+                    print(tex_path)
+                    print(rel_dir)
+                    print("##########################")
+                    rel_path = os.path.relpath(tex_path, rel_dir).replace(os.sep, '/')
+
+                    print(rel_path)
+
+                    print(os.path.abspath(rel_path))
+                    
+                    input.Set(Sdf.AssetPath(rel_path))
+
+
+        # target_layer.Save()
+        # target_layer.Export(export_path)
+
+        stage.GetRootLayer().Export(stage_path)
+
 
 
 
@@ -197,6 +302,7 @@ class hou_publish():
             stage.Export(export_path)
 
 
+
     def get_export_path(self, asset_name):
         export_dir = f"{self.export_dir}/{asset_name}"
 
@@ -216,7 +322,8 @@ class hou_publish():
         target_version = f"{asset_name}_{int(result):03d}"
 
         return export_dir, target_version
-        pass
+
+
 
     def write_commentary(self, text, asset_name):
         export_dir, target_version = self.get_export_path(asset_name)

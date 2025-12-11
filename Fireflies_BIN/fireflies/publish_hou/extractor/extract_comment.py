@@ -8,7 +8,7 @@ class Extract_Commentary(pyblish.api.InstancePlugin):
     """Extract comment on publish """
 
     # order = pyblish.api.ExtractorOrder
-    order = 1.2
+    order = 2.2
 
     optional=True
     label="Export comment"

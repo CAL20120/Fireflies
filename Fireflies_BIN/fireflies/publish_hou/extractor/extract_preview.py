@@ -6,7 +6,7 @@ from fireflies.houdini import abstract_hou_publish
 class Extract_Preview(pyblish.api.InstancePlugin):
     """Extract scene preview on publish"""
 
-    order = 1.3
+    order = 2.3
 
     optional=True
     label = "Export preview (single frame)"
