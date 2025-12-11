@@ -18,7 +18,11 @@ class Usd_Validator_Hou(pyblish.api.InstancePlugin):
 
         # node = instance.data.get('node')
         # current_layer = instance.data.get('current_layer')
+        current_scene = hou.hipFile.path()
 
+        if "assembly" in os.path.dirname(current_scene):
+            return
+        
         stage_path = instance.data.get('stage_local_path')
         print(stage_path)
 
