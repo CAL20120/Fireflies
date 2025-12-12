@@ -143,6 +143,10 @@ class hou_publish():
 
 
     def resolve_relative_paths(self, stage_path:Usd) -> Usd.Stage:
+        if not stage_path:
+            print("No stage found")
+            return
+
         print("CORRECTING PATHS #########!")
 
         # print(stage_path)
