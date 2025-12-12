@@ -4,6 +4,8 @@ from datetime import datetime
 import subprocess
 import re
 
+import random
+
 import collections
 
 # from fireflies.fireflies_utils.usd import fireflies_usd_viewer
@@ -52,7 +54,7 @@ class importer_window(QtWidgets.QDialog):
         # self.import_comment()
 
     def get_asset_paths(self):
-        self.prod_path = hou.hipFile.path().rsplit("/", 4)[0].replace("/", "\\")
+        self.prod_path = hou.hipFile.path().rsplit("/", 4)[0].replace("/", os.sep)
 
         x = import_usd_asset()
         self.assets_name, self.assets_vars = x.find_asset()
@@ -138,11 +140,13 @@ class importer_window(QtWidgets.QDialog):
 
             asset_versions = sorted(self.assets_vars[name].keys())
 
+
             target_tasks = []
             for version in asset_versions:
                 for task in self.assets_vars[name][version].keys():
                     if task not in target_tasks:
                         target_tasks.append(task)
+
 
             for task in target_tasks:
                 target_tasks_version = [
@@ -476,34 +480,16 @@ class import_usd_asset():
             #we need to find the related task
             target_dir = os.path.dirname(asset)
 
-            target_tasks = [
-                "model",
-                "lookdev",
-                "texturing",
-                "rig", 
-                "groom",
-                "layout", 
-                "anim",
-                "setup_fx",
-                "assembly", 
-                "light",
-            ]
-            
-            tasks_iter = next((task for task in target_tasks if task in target_dir), None)
-            
 
-            if tasks_iter:
-                current_task = tasks_iter
-
-            else:
-                print("no task found")
-                continue
+            current_task = self.find_current_task(target_dir=target_dir)
 
             # else:
             #     print("No task found in asset path")
             #     print(target_dir)
             #     continue
 
+
+            asset_id = random.randrange(0000, 9999)
 
             if asset_target and not anim_target:
                 name = asset_target.group(1)
@@ -522,6 +508,7 @@ class import_usd_asset():
                     current_task,
                     {
                         "type": "asset",
+                        "asset_id": asset_id,
                         "path": asset
                     }
                 )
@@ -571,11 +558,37 @@ class import_usd_asset():
         return list(self.assets_vars.keys()), self.assets_vars
 
 
+
+    def find_current_task(self, target_dir) -> str:
+        target_tasks = [
+            "model",
+            "assembly", 
+            "lookdev",
+            "texturing",
+            "rig", 
+            "groom",
+            "layout", 
+            "anim",
+            "setup_fx",
+            "light",
+        ]
+        
+        tasks_iter = next((task for task in target_tasks if task in target_dir), None)
+        
+
+        if tasks_iter:
+            current_task = tasks_iter
+            return current_task
+
+        else:
+            print("no task found")
+            
+
+
 if __name__ == "__main__":
     x = importer_window(import_classic=True)
     x.show()
 
 # x = import_usd_asset()
 # x.find_asset()
-
 
