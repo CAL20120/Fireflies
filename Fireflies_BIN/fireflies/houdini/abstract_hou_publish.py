@@ -285,6 +285,9 @@ class hou_publish():
 
 
     def extract_animation(self, root_prim:Usd, node:hou):
+        if not os.path.exists(self.export_dir):
+            os.makedirs(self.export_dir)
+
         f_start, f_end = hou.playbar.playbackRange()
         
         asset_name = str(root_prim.GetName())
@@ -293,16 +296,12 @@ class hou_publish():
 
         # export_path = "{}/{}.usd".format(self.export_dir, asset_name:04d)
 
-
-        if not os.path.exists(self.export_dir):
-            os.makedirs(self.export_dir)
-
-
         for frame in range(int(f_start), int(f_end)):
             hou.setFrame(frame)
             stage = node.stage()
 
             export_path = f"{export_dir}/{asset_name}_{frame}.usd"
+            # print(export_path)
             stage.Export(export_path)
 
 

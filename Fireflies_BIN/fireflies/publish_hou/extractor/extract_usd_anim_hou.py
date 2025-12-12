@@ -6,7 +6,7 @@ from fireflies.houdini import abstract_hou_publish
 class Usd_Extractor_Anim(pyblish.api.InstancePlugin):
     """Publish usd animation from houdini"""
 
-    order = 1.1
+    order = 2.1
     optional=True
     active=False
     
