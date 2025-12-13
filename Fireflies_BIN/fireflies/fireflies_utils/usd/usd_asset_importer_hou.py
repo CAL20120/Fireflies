@@ -515,7 +515,7 @@ class import_usd_asset():
 
                 continue
 
-            if anim_target:                
+            if anim_target:
                 name = anim_target.group(1)
                 frame = int(anim_target.group(2))
 
@@ -559,7 +559,7 @@ class import_usd_asset():
 
 
 
-    def find_current_task(self, target_dir) -> str:
+    def find_current_task(self, target_dir:os.path.dirname) -> str:
         target_tasks = [
             "model",
             "assembly", 
@@ -573,12 +573,26 @@ class import_usd_asset():
             "light",
         ]
         
-        tasks_iter = next((task for task in target_tasks if task in target_dir), None)
+        # tasks_iter = next((task for task in target_tasks if task in target_dir), None)
         
 
-        if tasks_iter:
-            current_task = tasks_iter
-            return current_task
+        target_match = []
+        for task in target_tasks:
+            index = target_dir.find(task)
+
+            if index != -1:
+                target_match.append((index, task))
+
+
+        if target_match:
+            # print(target_match)
+            target_match.sort()
+
+            return target_match[0][1]
+
+        # if tasks_iter:
+        #     current_task = tasks_iter
+        #     return current_task
 
         else:
             print("no task found")
