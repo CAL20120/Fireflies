@@ -34,6 +34,15 @@ class context_window(QtWidgets.QDialog):
 
     def get_flds(self):
         target_flds = os.listdir(self.path)
+
+        exclude_list = [
+            "desktop.ini",
+            ".SynologyWorkingDirectory"
+        ]
+        for x, fld in enumerate(target_flds):
+            if any(ex in fld for ex in exclude_list):
+                target_flds.pop(x)
+
         # target_flds = [path for path in self.path.iterdir() if path.is_dir()]
         return target_flds
     
@@ -165,8 +174,11 @@ class context_window(QtWidgets.QDialog):
         self.tasks_combo.clear()
         self.tasks_name = self.shots_combo.currentText()
         self.tasks_path = f"{self.shots_path}\\{self.tasks_name}"
+        
         print(self.tasks_path)
+        
         target_tasks = os.listdir(self.tasks_path)
+        
         for fld in target_tasks:
             self.tasks_combo.addItem(fld)
 
@@ -180,23 +192,29 @@ class context_window(QtWidgets.QDialog):
         self.fullPath = f"{self.tasks_path}\\{self.tasks_combo.currentText()}"
         if self.custom_name_line.text() == "":
             self.scene_name = f"{self.prod_combo.currentText()}_{self.sequence_combo.currentText()}_{self.shots_combo.currentText()}_{self.tasks_combo.currentText()}.mb"
+        
         else: 
             self.scene_name = f"{self.prod_combo.currentText()}_{self.sequence_combo.currentText()}_{self.shots_combo.currentText()}_{self.tasks_combo.currentText()}_{self.custom_name_line.text()}.mb"
 
         self.export_path = f"{self.fullPath}\\{self.scene_name}"
+        
         return self.fullPath
 
     def refresh_scene_ath(self):
         # self.scenes_on_disk = os.listdir(self.build_scene_path[0])
 
         test_path = f"{self.tasks_path}\\{self.tasks_combo.currentText()}"
+        
         target_scenes = [f for  f in os.listdir(test_path) if f.endswith(".mb") or f.endswith(".ma")]
+        
         self.context_info.setRowCount(0)
 
         for x in range(len(target_scenes)):
             self.context_info.insertRow(x)
             self.add_item_context_info(x, 0, target_scenes[x])
+        
         self.export_preview()
+        
         return target_scenes
 
 
@@ -204,26 +222,34 @@ class context_window(QtWidgets.QDialog):
         item = QtWidgets.QTableWidgetItem(text)
         self.context_info.setItem(row, column, item)
 
+
     def sel_changed(self):
         try:
             sel = self.context_info.selectedItems()[0]
             sel_name = sel.text()
+            
             print(sel.text())
             return sel_name
+        
         except:
             return        
+
 
     def open_scene(self):
         open_path = f"{self.build_scene_path()}/{self.sel_changed()}"
         print(open_path)
+        
         cmds.file(open_path, open=True, force=True)
         self.close()
+
 
     def export_context_scene(self):
         self.build_scene_path()
         print(self.export_path)
+        
         cmds.file(rename=self.export_path)
         cmds.file(save=True)
+        
         self.export_preview()
         self.close()
 
@@ -233,6 +259,7 @@ class context_window(QtWidgets.QDialog):
         self.build_scene_path()
         print(self.export_path)
 
+
     def export_preview(self):
         self.build_scene_path()
         
@@ -240,9 +267,11 @@ class context_window(QtWidgets.QDialog):
         # except:
         #     output = self.scene_name.rsplit(".", 1)[0]
         init_path = f"{self.build_scene_path()}/metadata/preview/"
+        
         if os.path.exists(init_path) == False:
             print("creating metadata folder")
             os.makedirs(os.path.dirname(init_path))
+        
         cmds.playblast(
             completeFilename=f"{init_path}{output}.jpg",
             format="image",
@@ -253,8 +282,10 @@ class context_window(QtWidgets.QDialog):
             viewer=False,
             frame=cmds.currentTime(q=True),
         )
+
         print("#######")
         print(output)
+
 
     def import_preview(self):
         children = []
@@ -262,6 +293,7 @@ class context_window(QtWidgets.QDialog):
             child = self.preview_layout.itemAt(x).widget()
             if child:
                 children.append(child)
+        
         for child in children:
             child.deleteLater()
             
@@ -270,10 +302,14 @@ class context_window(QtWidgets.QDialog):
         
         if os.path.exists(init_path):
             print("preview found")
+            
             label = QtWidgets.QLabel()
             texture = QtGui.QPixmap(init_path)
             label.setPixmap(texture.scaled(640, 360, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation))
+            
             self.preview_layout.addWidget(label)
+
+
 
 if __name__ == "__main__":
     x = context_window()

@@ -29,8 +29,18 @@ class context_window(QtWidgets.QDialog):
         self.create_connections()
 
 
+
     def get_flds(self):
         target_flds = os.listdir(self.path)
+
+        exclude_list = [
+            "desktop.ini",
+            ".SynologyWorkingDirectory"
+        ]
+        for x, fld in enumerate(target_flds):
+            if any(ex in fld for ex in exclude_list):
+                target_flds.pop(x)
+
         # target_flds = [path for path in self.path.iterdir() if path.is_dir()]
         return target_flds
     
@@ -59,11 +69,13 @@ class context_window(QtWidgets.QDialog):
         self.context_info.setColumnWidth(0, 326)
         self.context_info.setColumnWidth(1, 175)
         # self.context_info.setColumnWidth(2, 175)
+        
         self.context_info.setHorizontalHeaderLabels(["Scene", "Modified", "User"])
         # self.refresh_btn = QtWidgets.QPushButton("Refresh")
         header_view = self.context_info.horizontalHeader()
         header_view.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
 
+        
         self.start_shot_btn = QtWidgets.QPushButton("Start/Save Shot")
         self.open_btn = QtWidgets.QPushButton("Open")
         self.close_btn = QtWidgets.QPushButton("Close")
@@ -140,15 +152,19 @@ class context_window(QtWidgets.QDialog):
     def update_prods(self):
         for fld in self.get_flds():
             self.prod_combo.addItem(fld)
+        
         self.prod_name = self.prod_combo.currentText()
+        
         return
 
 
     def update_sequence(self):
         self.sequence_combo.clear()
         self.sq_name = self.prod_combo.currentText()
+        
         self.seq_path = f"{self.path}\\{self.sq_name}"
         self.target_sequences = os.listdir(self.seq_path)
+        
         for fld in self.target_sequences:
             self.sequence_combo.addItem(fld)
 
@@ -157,8 +173,11 @@ class context_window(QtWidgets.QDialog):
         self.shots_combo.clear()
         self.shot_name = self.sequence_combo.currentText()
         self.shots_path = f"{self.seq_path}\\{self.shot_name}"
+        
         target_shots = os.listdir(self.shots_path)
+        
         print(target_shots)
+        
         for fld in target_shots:
             self.shots_combo.addItem(fld)
     
@@ -167,26 +186,28 @@ class context_window(QtWidgets.QDialog):
         self.tasks_combo.clear()
         self.tasks_name = self.shots_combo.currentText()
         self.tasks_path = f"{self.shots_path}\\{self.tasks_name}"
+        
         print(self.tasks_path)
+        
         target_tasks = os.listdir(self.tasks_path)
+        
         for fld in target_tasks:
             self.tasks_combo.addItem(fld)
 
-    # def update_all(self):
-    #     self.update_prods()
-    #     self.update_sequence()
-    #     self.update_shots()
-    #     self.update_tasks()
+
 
     def build_scene_path(self):
         self.fullPath = f"{self.tasks_path}\\{self.tasks_combo.currentText()}"
         if self.custom_name_line.text() == "":
             self.scene_name = f"{self.prod_combo.currentText()}_{self.sequence_combo.currentText()}_{self.shots_combo.currentText()}_{self.tasks_combo.currentText()}.hipnc"
+        
         else: 
             self.scene_name = f"{self.prod_combo.currentText()}_{self.sequence_combo.currentText()}_{self.shots_combo.currentText()}_{self.tasks_combo.currentText()}_{self.custom_name_line.text()}.hipnc"
 
         self.export_path = f"{self.fullPath}\\{self.scene_name}"
+        
         return self.fullPath
+        
 
 
     def refresh_scene_ath(self):
@@ -201,6 +222,7 @@ class context_window(QtWidgets.QDialog):
         for path in self.target_scenes:
             valid_path = os.path.join(target_base, path)
             # print(valid_path)
+            
             time_map = os.path.getmtime(valid_path)
             modified_time = datetime.fromtimestamp(time_map)
 
@@ -233,6 +255,7 @@ class context_window(QtWidgets.QDialog):
             sel_name = sel.text()
             print(sel.text())
             return sel_name
+        
         except:
             return        
 
@@ -240,6 +263,7 @@ class context_window(QtWidgets.QDialog):
     def open_scene(self):
         open_path = f"{self.build_scene_path()}/{self.sel_changed()}"
         print(open_path)
+        
         hou.hipFile.load(open_path.replace("\\", "/"))
         self.close()
 
@@ -248,6 +272,7 @@ class context_window(QtWidgets.QDialog):
         self.build_scene_path()
         print(self.export_path)
         # cmds.file(rename=self.export_path)
+        
         hou.hipFile.save(file_name=self.export_path)
 
         # cmds.file(save=True)
@@ -259,6 +284,7 @@ class context_window(QtWidgets.QDialog):
         target_base = self.build_scene_path()
         # print(target_base)
         test_path = f"{self.tasks_path}\\{self.tasks_combo.currentText()}"
+        
         self.target_scene = [f for  f in os.listdir(test_path) if f.endswith(".hip") or f.endswith("hipnc") or f.endswith("hiplc")]
 
         for path in self.target_scene:
