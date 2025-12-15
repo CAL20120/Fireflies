@@ -569,7 +569,7 @@ class import_usd_asset():
             "groom",
             "layout", 
             "anim",
-            "setup_fx",
+            # "setup_fx",
             "light",
         ]
         
@@ -596,7 +596,7 @@ class import_usd_asset():
 
         else:
             print("no task found")
-            
+
 
 
 if __name__ == "__main__":

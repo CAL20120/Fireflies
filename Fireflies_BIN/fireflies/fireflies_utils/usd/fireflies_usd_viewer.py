@@ -78,13 +78,13 @@ def launch_app(asset_path):
     if os.path.exists(asset_path):
         with Usd.StageCacheContext(UsdUtils.StageCache.Get()):
             stage = Usd.Stage.Open(asset_path)
+    
     else:
         print("path does not exist")
+        return
+    
     x = Usd_Viewer_hou(stage)
 
-    if not os.path.exists(asset_path):
-        print("Invalid path")
-        return
 
     window = Usd_Viewer_hou(stage=stage, asset_path=asset_path)
     window.show()

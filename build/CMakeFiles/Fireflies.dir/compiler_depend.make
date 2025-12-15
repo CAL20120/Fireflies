@@ -6,6 +6,7 @@ CMakeFiles/Fireflies.dir/source/launch_softs.cpp.obj: C:/Fireflies/Fireflies/Fir
   C:/Strawberry/c/include/c++/13.2.0/backward/binders.h \
   C:/Strawberry/c/include/c++/13.2.0/bit \
   C:/Strawberry/c/include/c++/13.2.0/bits/alloc_traits.h \
+  C:/Strawberry/c/include/c++/13.2.0/bits/allocated_ptr.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/allocator.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/basic_ios.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/basic_ios.tcc \
@@ -13,6 +14,8 @@ CMakeFiles/Fireflies.dir/source/launch_softs.cpp.obj: C:/Fireflies/Fireflies/Fir
   C:/Strawberry/c/include/c++/13.2.0/bits/basic_string.tcc \
   C:/Strawberry/c/include/c++/13.2.0/bits/char_traits.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/charconv.h \
+  C:/Strawberry/c/include/c++/13.2.0/bits/chrono.h \
+  C:/Strawberry/c/include/c++/13.2.0/bits/codecvt.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/concept_check.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/cpp_type_traits.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/cxxabi_forced.h \
@@ -20,6 +23,10 @@ CMakeFiles/Fireflies.dir/source/launch_softs.cpp.obj: C:/Fireflies/Fireflies/Fir
   C:/Strawberry/c/include/c++/13.2.0/bits/exception.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/exception_defines.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/exception_ptr.h \
+  C:/Strawberry/c/include/c++/13.2.0/bits/fs_dir.h \
+  C:/Strawberry/c/include/c++/13.2.0/bits/fs_fwd.h \
+  C:/Strawberry/c/include/c++/13.2.0/bits/fs_ops.h \
+  C:/Strawberry/c/include/c++/13.2.0/bits/fs_path.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/functexcept.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/functional_hash.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/hash_bytes.h \
@@ -28,8 +35,11 @@ CMakeFiles/Fireflies.dir/source/launch_softs.cpp.obj: C:/Fireflies/Fireflies/Fir
   C:/Strawberry/c/include/c++/13.2.0/bits/istream.tcc \
   C:/Strawberry/c/include/c++/13.2.0/bits/locale_classes.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/locale_classes.tcc \
+  C:/Strawberry/c/include/c++/13.2.0/bits/locale_conv.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/locale_facets.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/locale_facets.tcc \
+  C:/Strawberry/c/include/c++/13.2.0/bits/locale_facets_nonio.h \
+  C:/Strawberry/c/include/c++/13.2.0/bits/locale_facets_nonio.tcc \
   C:/Strawberry/c/include/c++/13.2.0/bits/localefwd.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/memory_resource.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/memoryfwd.h \
@@ -38,12 +48,17 @@ CMakeFiles/Fireflies.dir/source/launch_softs.cpp.obj: C:/Fireflies/Fireflies/Fir
   C:/Strawberry/c/include/c++/13.2.0/bits/new_allocator.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/ostream.tcc \
   C:/Strawberry/c/include/c++/13.2.0/bits/ostream_insert.h \
+  C:/Strawberry/c/include/c++/13.2.0/bits/parse_numbers.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/postypes.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/predefined_ops.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/ptr_traits.h \
+  C:/Strawberry/c/include/c++/13.2.0/bits/quoted_string.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/range_access.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/refwrap.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/requires_hosted.h \
+  C:/Strawberry/c/include/c++/13.2.0/bits/shared_ptr.h \
+  C:/Strawberry/c/include/c++/13.2.0/bits/shared_ptr_base.h \
+  C:/Strawberry/c/include/c++/13.2.0/bits/sstream.tcc \
   C:/Strawberry/c/include/c++/13.2.0/bits/std_abs.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/stl_algobase.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/stl_construct.h \
@@ -56,33 +71,45 @@ CMakeFiles/Fireflies.dir/source/launch_softs.cpp.obj: C:/Fireflies/Fireflies/Fir
   C:/Strawberry/c/include/c++/13.2.0/bits/streambuf_iterator.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/string_view.tcc \
   C:/Strawberry/c/include/c++/13.2.0/bits/stringfwd.h \
+  C:/Strawberry/c/include/c++/13.2.0/bits/unique_ptr.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/uses_allocator.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/uses_allocator_args.h \
   C:/Strawberry/c/include/c++/13.2.0/bits/utility.h \
   C:/Strawberry/c/include/c++/13.2.0/cctype \
   C:/Strawberry/c/include/c++/13.2.0/cerrno \
   C:/Strawberry/c/include/c++/13.2.0/clocale \
+  C:/Strawberry/c/include/c++/13.2.0/codecvt \
   C:/Strawberry/c/include/c++/13.2.0/cstddef \
+  C:/Strawberry/c/include/c++/13.2.0/cstdint \
   C:/Strawberry/c/include/c++/13.2.0/cstdio \
   C:/Strawberry/c/include/c++/13.2.0/cstdlib \
+  C:/Strawberry/c/include/c++/13.2.0/ctime \
   C:/Strawberry/c/include/c++/13.2.0/cwchar \
   C:/Strawberry/c/include/c++/13.2.0/cwctype \
   C:/Strawberry/c/include/c++/13.2.0/debug/assertions.h \
   C:/Strawberry/c/include/c++/13.2.0/debug/debug.h \
   C:/Strawberry/c/include/c++/13.2.0/exception \
+  C:/Strawberry/c/include/c++/13.2.0/ext/aligned_buffer.h \
   C:/Strawberry/c/include/c++/13.2.0/ext/alloc_traits.h \
   C:/Strawberry/c/include/c++/13.2.0/ext/atomicity.h \
+  C:/Strawberry/c/include/c++/13.2.0/ext/concurrence.h \
   C:/Strawberry/c/include/c++/13.2.0/ext/numeric_traits.h \
   C:/Strawberry/c/include/c++/13.2.0/ext/string_conversions.h \
   C:/Strawberry/c/include/c++/13.2.0/ext/type_traits.h \
+  C:/Strawberry/c/include/c++/13.2.0/filesystem \
   C:/Strawberry/c/include/c++/13.2.0/initializer_list \
+  C:/Strawberry/c/include/c++/13.2.0/iomanip \
   C:/Strawberry/c/include/c++/13.2.0/ios \
   C:/Strawberry/c/include/c++/13.2.0/iosfwd \
   C:/Strawberry/c/include/c++/13.2.0/iostream \
   C:/Strawberry/c/include/c++/13.2.0/istream \
+  C:/Strawberry/c/include/c++/13.2.0/limits \
+  C:/Strawberry/c/include/c++/13.2.0/locale \
   C:/Strawberry/c/include/c++/13.2.0/new \
   C:/Strawberry/c/include/c++/13.2.0/ostream \
   C:/Strawberry/c/include/c++/13.2.0/pstl/pstl_config.h \
+  C:/Strawberry/c/include/c++/13.2.0/ratio \
+  C:/Strawberry/c/include/c++/13.2.0/sstream \
   C:/Strawberry/c/include/c++/13.2.0/stdexcept \
   C:/Strawberry/c/include/c++/13.2.0/stdlib.h \
   C:/Strawberry/c/include/c++/13.2.0/streambuf \
@@ -102,7 +129,9 @@ CMakeFiles/Fireflies.dir/source/launch_softs.cpp.obj: C:/Fireflies/Fireflies/Fir
   C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/error_constants.h \
   C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/gthr-default.h \
   C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/gthr.h \
+  C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/messages_members.h \
   C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/os_defines.h \
+  C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/time_members.h \
   C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/adxintrin.h \
   C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/ammintrin.h \
   C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/amxbf16intrin.h \
@@ -187,6 +216,7 @@ CMakeFiles/Fireflies.dir/source/launch_softs.cpp.obj: C:/Fireflies/Fireflies/Fir
   C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/smmintrin.h \
   C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/stdarg.h \
   C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/stddef.h \
+  C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/stdint.h \
   C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/syslimits.h \
   C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/tbmintrin.h \
   C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/tmmintrin.h \
@@ -335,6 +365,7 @@ CMakeFiles/Fireflies.dir/source/launch_softs.cpp.obj: C:/Fireflies/Fireflies/Fir
   C:/Strawberry/c/x86_64-w64-mingw32/include/specstrings.h \
   C:/Strawberry/c/x86_64-w64-mingw32/include/stdarg.h \
   C:/Strawberry/c/x86_64-w64-mingw32/include/stddef.h \
+  C:/Strawberry/c/x86_64-w64-mingw32/include/stdint.h \
   C:/Strawberry/c/x86_64-w64-mingw32/include/stdio.h \
   C:/Strawberry/c/x86_64-w64-mingw32/include/stdlib.h \
   C:/Strawberry/c/x86_64-w64-mingw32/include/stralign.h \
@@ -907,17 +938,25 @@ CMakeFiles/Fireflies.dir/source/main.cpp.obj: C:/Fireflies/Fireflies/Fireflies_f
   C:/Strawberry/c/x86_64-w64-mingw32/include/wtypesbase.h
 
 
-C:/Strawberry/c/include/c++/13.2.0/bit:
+C:/Strawberry/c/include/c++/13.2.0/bits/quoted_string.h:
 
 C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/immintrin.h:
 
-C:/Strawberry/c/include/c++/13.2.0/bits/quoted_string.h:
-
 C:/Strawberry/c/include/c++/13.2.0/bits/basic_ios.h:
+
+C:/Strawberry/c/include/c++/13.2.0/bit:
 
 C:/Fireflies/Fireflies/Fireflies_fmk/source/launch_softs.cpp:
 
 C:/Fireflies/Fireflies/Fireflies_fmk/include/headers/launch_softs.h:
+
+C:/Strawberry/c/include/c++/13.2.0/bits/range_access.h:
+
+C:/Strawberry/c/x86_64-w64-mingw32/include/wingdi.h:
+
+C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/fxsrintrin.h:
+
+C:/Strawberry/c/include/c++/13.2.0/bits/allocated_ptr.h:
 
 C:/Strawberry/c/include/c++/13.2.0/tr1/poly_hermite.tcc:
 
@@ -932,6 +971,10 @@ C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/avx512vlbwintrin.h:
 C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/avxvnniintrin.h:
 
 C:/Strawberry/c/include/c++/13.2.0/bits/refwrap.h:
+
+C:/Strawberry/c/include/c++/13.2.0/bits/locale_conv.h:
+
+C:/Strawberry/c/x86_64-w64-mingw32/include/rpcndr.h:
 
 C:/Strawberry/c/include/c++/13.2.0/bits/stl_vector.h:
 
@@ -959,17 +1002,35 @@ C:/Strawberry/c/include/c++/13.2.0/ext/string_conversions.h:
 
 C:/Strawberry/c/include/c++/13.2.0/cmath:
 
-C:/Strawberry/c/include/c++/13.2.0/bits/uses_allocator_args.h:
-
-C:/Strawberry/c/x86_64-w64-mingw32/include/fileapi.h:
-
-C:/Strawberry/c/x86_64-w64-mingw32/include/threadpoolapiset.h:
-
-C:/Strawberry/c/include/c++/13.2.0/cstddef:
-
 C:/Strawberry/c/x86_64-w64-mingw32/include/unknwnbase.h:
 
 C:/Strawberry/c/include/c++/13.2.0/bits/charconv.h:
+
+C:/Strawberry/c/include/c++/13.2.0/bits/chrono.h:
+
+C:/Strawberry/c/x86_64-w64-mingw32/include/nb30.h:
+
+C:/Strawberry/c/include/c++/13.2.0/bits/fs_ops.h:
+
+C:/Strawberry/c/x86_64-w64-mingw32/include/winsvc.h:
+
+C:/Strawberry/c/include/c++/13.2.0/bits/stl_iterator_base_funcs.h:
+
+C:/Strawberry/c/x86_64-w64-mingw32/include/stralign.h:
+
+C:/Strawberry/c/x86_64-w64-mingw32/include/corecrt_startup.h:
+
+C:/Strawberry/c/include/c++/13.2.0/bits/stl_iterator.h:
+
+C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/c++allocator.h:
+
+C:/Strawberry/c/include/c++/13.2.0/bits/codecvt.h:
+
+C:/Strawberry/c/x86_64-w64-mingw32/include/apiset.h:
+
+C:/Strawberry/c/include/c++/13.2.0/ext/aligned_buffer.h:
+
+C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/messages_members.h:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/mmsystem.h:
 
@@ -989,9 +1050,7 @@ C:/Strawberry/c/include/c++/13.2.0/bits/cpp_type_traits.h:
 
 C:/Strawberry/c/include/c++/13.2.0/bits/exception_defines.h:
 
-C:/Strawberry/c/include/c++/13.2.0/cstdio:
-
-C:/Strawberry/c/include/c++/13.2.0/bits/regex.h:
+C:/Strawberry/c/include/c++/13.2.0/bits/fs_dir.h:
 
 C:/Strawberry/c/include/c++/13.2.0/bits/cxxabi_forced.h:
 
@@ -1009,6 +1068,18 @@ C:/Strawberry/c/include/c++/13.2.0/bits/exception_ptr.h:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/propidl.h:
 
+C:/Strawberry/c/x86_64-w64-mingw32/include/sec_api/stralign_s.h:
+
+C:/Strawberry/c/include/c++/13.2.0/bits/locale_facets_nonio.tcc:
+
+C:/Strawberry/c/include/c++/13.2.0/bits/fs_fwd.h:
+
+C:/Strawberry/c/include/c++/13.2.0/typeinfo:
+
+C:/Strawberry/c/include/c++/13.2.0/bits/fs_path.h:
+
+C:/Strawberry/c/include/c++/13.2.0/deque:
+
 C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/avx512vnnivlintrin.h:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/sys/timeb.h:
@@ -1024,8 +1095,6 @@ C:/Strawberry/c/include/c++/13.2.0/bits/ptr_traits.h:
 C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/atomic_word.h:
 
 C:/Strawberry/c/include/c++/13.2.0/bits/functional_hash.h:
-
-C:/Strawberry/c/include/c++/13.2.0/bits/streambuf_iterator.h:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/limits.h:
 
@@ -1045,11 +1114,17 @@ C:/Strawberry/c/include/c++/13.2.0/bits/locale_facets.h:
 
 C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/xmmintrin.h:
 
+C:/Strawberry/c/include/c++/13.2.0/bits/ostream_insert.h:
+
+C:/Strawberry/c/include/c++/13.2.0/bits/locale_facets_nonio.h:
+
+C:/Strawberry/c/x86_64-w64-mingw32/include/profileapi.h:
+
 C:/Strawberry/c/include/c++/13.2.0/bits/localefwd.h:
 
-C:/Strawberry/c/include/c++/13.2.0/bits/regex_scanner.tcc:
+C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/mm_malloc.h:
 
-C:/Strawberry/c/include/c++/13.2.0/clocale:
+C:/Strawberry/c/include/c++/13.2.0/bits/shared_ptr.h:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/processtopologyapi.h:
 
@@ -1071,37 +1146,25 @@ C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/pconfigintrin.h:
 
 C:/Strawberry/c/include/c++/13.2.0/bits/ostream.tcc:
 
-C:/Strawberry/c/include/c++/13.2.0/bits/ostream_insert.h:
+C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/wmmintrin.h:
 
-C:/Strawberry/c/include/c++/13.2.0/bits/range_access.h:
-
-C:/Strawberry/c/x86_64-w64-mingw32/include/wingdi.h:
-
-C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/fxsrintrin.h:
+C:/Strawberry/c/include/c++/13.2.0/bits/parse_numbers.h:
 
 C:/Strawberry/c/include/c++/13.2.0/bits/requires_hosted.h:
+
+C:/Strawberry/c/include/c++/13.2.0/bits/shared_ptr_base.h:
+
+C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/mm3dnow.h:
+
+C:/Strawberry/c/include/c++/13.2.0/utility:
+
+C:/Strawberry/c/include/c++/13.2.0/bits/sstream.tcc:
 
 C:/Strawberry/c/include/c++/13.2.0/bits/std_abs.h:
 
 C:/Strawberry/c/include/c++/13.2.0/bits/stl_algobase.h:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/winerror.h:
-
-C:/Strawberry/c/include/c++/13.2.0/bits/utility.h:
-
-C:/Strawberry/c/x86_64-w64-mingw32/include/winsvc.h:
-
-C:/Strawberry/c/include/c++/13.2.0/bits/fs_ops.h:
-
-C:/Strawberry/c/include/c++/13.2.0/bits/stl_iterator_base_funcs.h:
-
-C:/Strawberry/c/x86_64-w64-mingw32/include/stralign.h:
-
-C:/Strawberry/c/x86_64-w64-mingw32/include/corecrt_startup.h:
-
-C:/Strawberry/c/include/c++/13.2.0/bits/stl_iterator.h:
-
-C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/c++allocator.h:
 
 C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/syslimits.h:
 
@@ -1117,23 +1180,59 @@ C:/Strawberry/c/x86_64-w64-mingw32/include/rpcdcep.h:
 
 C:/Strawberry/c/include/c++/13.2.0/bits/streambuf.tcc:
 
+C:/Strawberry/c/include/c++/13.2.0/bits/streambuf_iterator.h:
+
 C:/Strawberry/c/include/c++/13.2.0/bits/string_view.tcc:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/sdks/_mingw_ddk.h:
 
-C:/Strawberry/c/include/c++/13.2.0/cstdlib:
-
 C:/Strawberry/c/include/c++/13.2.0/bits/stringfwd.h:
 
+C:/Strawberry/c/include/c++/13.2.0/cstdlib:
+
 C:/Strawberry/c/include/c++/13.2.0/iomanip:
+
+C:/Strawberry/c/include/c++/13.2.0/array:
+
+C:/Strawberry/c/include/c++/13.2.0/bits/unique_ptr.h:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/pshpack8.h:
 
 C:/Strawberry/c/include/c++/13.2.0/bits/uses_allocator.h:
 
+C:/Strawberry/c/include/c++/13.2.0/bits/uses_allocator_args.h:
+
+C:/Strawberry/c/x86_64-w64-mingw32/include/fileapi.h:
+
+C:/Strawberry/c/x86_64-w64-mingw32/include/threadpoolapiset.h:
+
+C:/Strawberry/c/include/c++/13.2.0/cstddef:
+
+C:/Strawberry/c/include/c++/13.2.0/bits/utility.h:
+
 C:/Strawberry/c/include/c++/13.2.0/cctype:
 
 C:/Strawberry/c/include/c++/13.2.0/cerrno:
+
+C:/Strawberry/c/include/c++/13.2.0/bits/regex_scanner.tcc:
+
+C:/Strawberry/c/include/c++/13.2.0/clocale:
+
+C:/Strawberry/c/include/c++/13.2.0/codecvt:
+
+C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/sgxintrin.h:
+
+C:/Strawberry/c/x86_64-w64-mingw32/include/guiddef.h:
+
+C:/Strawberry/c/include/c++/13.2.0/cstdint:
+
+C:/Strawberry/c/include/c++/13.2.0/cstdio:
+
+C:/Strawberry/c/include/c++/13.2.0/bits/regex.h:
+
+C:/Strawberry/c/include/c++/13.2.0/ctime:
+
+C:/Strawberry/c/include/c++/13.2.0/bits/regex_compiler.tcc:
 
 C:/Strawberry/c/include/c++/13.2.0/cwchar:
 
@@ -1159,9 +1258,9 @@ C:/Strawberry/c/include/c++/13.2.0/debug/debug.h:
 
 C:/Strawberry/c/include/c++/13.2.0/exception:
 
-C:/Strawberry/c/x86_64-w64-mingw32/include/psdk_inc/_socket_types.h:
-
 C:/Strawberry/c/include/c++/13.2.0/ext/concurrence.h:
+
+C:/Strawberry/c/x86_64-w64-mingw32/include/psdk_inc/_socket_types.h:
 
 C:/Strawberry/c/include/c++/13.2.0/ext/alloc_traits.h:
 
@@ -1176,6 +1275,10 @@ C:/Strawberry/c/include/c++/13.2.0/tr1/modified_bessel_func.tcc:
 C:/Strawberry/c/include/c++/13.2.0/ext/numeric_traits.h:
 
 C:/Strawberry/c/include/c++/13.2.0/ext/type_traits.h:
+
+C:/Strawberry/c/include/c++/13.2.0/unordered_map:
+
+C:/Strawberry/c/include/c++/13.2.0/filesystem:
 
 C:/Strawberry/c/include/c++/13.2.0/initializer_list:
 
@@ -1195,6 +1298,10 @@ C:/Strawberry/c/include/c++/13.2.0/istream:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/processenv.h:
 
+C:/Strawberry/c/include/c++/13.2.0/limits:
+
+C:/Strawberry/c/include/c++/13.2.0/locale:
+
 C:/Strawberry/c/x86_64-w64-mingw32/include/_mingw_secapi.h:
 
 C:/Strawberry/c/include/c++/13.2.0/new:
@@ -1206,6 +1313,18 @@ C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/lwpintrin.h:
 C:/Strawberry/c/include/c++/13.2.0/pstl/pstl_config.h:
 
 C:/Strawberry/c/include/c++/13.2.0/bits/std_mutex.h:
+
+C:/Strawberry/c/include/c++/13.2.0/ratio:
+
+C:/Strawberry/c/include/c++/13.2.0/bits/shared_ptr_atomic.h:
+
+C:/Strawberry/c/x86_64-w64-mingw32/include/objidl.h:
+
+C:/Strawberry/c/include/c++/13.2.0/sstream:
+
+C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/keylockerintrin.h:
+
+C:/Strawberry/c/include/c++/13.2.0/tr1/beta_function.tcc:
 
 C:/Strawberry/c/include/c++/13.2.0/stdlib.h:
 
@@ -1235,10 +1354,6 @@ C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/avx512vp2intersectintr
 
 C:/Strawberry/c/include/c++/13.2.0/type_traits:
 
-C:/Strawberry/c/include/c++/13.2.0/typeinfo:
-
-C:/Strawberry/c/include/c++/13.2.0/bits/fs_fwd.h:
-
 C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/c++config.h:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/_mingw_mac.h:
@@ -1262,6 +1377,12 @@ C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/gthr.h:
 C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/avx512ifmaintrin.h:
 
 C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/os_defines.h:
+
+C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/time_members.h:
+
+C:/Strawberry/c/x86_64-w64-mingw32/include/windows.h:
+
+C:/Strawberry/c/include/c++/13.2.0/map:
 
 C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/adxintrin.h:
 
@@ -1381,25 +1502,11 @@ C:/Strawberry/c/x86_64-w64-mingw32/include/sal.h:
 
 C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/ia32intrin.h:
 
-C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/keylockerintrin.h:
-
-C:/Strawberry/c/include/c++/13.2.0/sstream:
-
-C:/Strawberry/c/include/c++/13.2.0/tr1/beta_function.tcc:
-
 C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/limits.h:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/commdlg.h:
 
 C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/lzcntintrin.h:
-
-C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/mm3dnow.h:
-
-C:/Strawberry/c/include/c++/13.2.0/bits/shared_ptr_base.h:
-
-C:/Strawberry/c/include/c++/13.2.0/bits/shared_ptr.h:
-
-C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/mm_malloc.h:
 
 C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/mmintrin.h:
 
@@ -1435,10 +1542,6 @@ C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/serializeintrin.h:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/winnetwk.h:
 
-C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/sgxintrin.h:
-
-C:/Strawberry/c/include/c++/13.2.0/codecvt:
-
 C:/Strawberry/c/include/c++/13.2.0/bits/enable_special_members.h:
 
 C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/shaintrin.h:
@@ -1456,6 +1559,8 @@ C:/Strawberry/c/x86_64-w64-mingw32/include/sdkddkver.h:
 C:/Strawberry/c/x86_64-w64-mingw32/include/memoryapi.h:
 
 C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/stddef.h:
+
+C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/stdint.h:
 
 C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/tbmintrin.h:
 
@@ -1476,10 +1581,6 @@ C:/Strawberry/c/include/c++/13.2.0/tr1/hypergeometric.tcc:
 C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/waitpkgintrin.h:
 
 C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/wbnoinvdintrin.h:
-
-C:/Strawberry/c/include/c++/13.2.0/bits/parse_numbers.h:
-
-C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/wmmintrin.h:
 
 C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/x86gprintrin.h:
 
@@ -1521,14 +1622,6 @@ C:/Strawberry/c/x86_64-w64-mingw32/include/_mingw_unicode.h:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/_timeval.h:
 
-C:/Strawberry/c/include/c++/13.2.0/ext/aligned_buffer.h:
-
-C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/messages_members.h:
-
-C:/Strawberry/c/x86_64-w64-mingw32/include/apiset.h:
-
-C:/Strawberry/c/include/c++/13.2.0/bits/codecvt.h:
-
 C:/Strawberry/c/x86_64-w64-mingw32/include/apisetcconv.h:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/basetsd.h:
@@ -1549,9 +1642,9 @@ C:/Strawberry/c/x86_64-w64-mingw32/include/combaseapi.h:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/concurrencysal.h:
 
-C:/Strawberry/c/x86_64-w64-mingw32/include/stdint.h:
-
 C:/Strawberry/c/x86_64-w64-mingw32/include/corecrt.h:
+
+C:/Strawberry/c/x86_64-w64-mingw32/include/stdint.h:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/corecrt_stdio_config.h:
 
@@ -1564,8 +1657,6 @@ C:/Strawberry/c/include/c++/13.2.0/bits/stl_heap.h:
 C:/Strawberry/c/x86_64-w64-mingw32/include/dpapi.h:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/crtdefs.h:
-
-C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/basic_file.h:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/ctype.h:
 
@@ -1600,10 +1691,6 @@ C:/Strawberry/c/x86_64-w64-mingw32/include/tvout.h:
 C:/Strawberry/c/x86_64-w64-mingw32/include/fibersapi.h:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/fltwinerror.h:
-
-C:/Strawberry/c/include/c++/13.2.0/cstdint:
-
-C:/Strawberry/c/x86_64-w64-mingw32/include/guiddef.h:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/handleapi.h:
 
@@ -1657,10 +1744,6 @@ C:/Strawberry/c/include/c++/13.2.0/bits/this_thread_sleep.h:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/namespaceapi.h:
 
-C:/Strawberry/c/x86_64-w64-mingw32/include/nb30.h:
-
-C:/Strawberry/c/include/c++/13.2.0/bits/chrono.h:
-
 C:/Strawberry/c/include/c++/13.2.0/tr1/exp_integral.tcc:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/GL/gl.h:
@@ -1668,12 +1751,6 @@ C:/Strawberry/c/x86_64-w64-mingw32/include/GL/gl.h:
 C:/Strawberry/c/x86_64-w64-mingw32/include/oaidl.h:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/objbase.h:
-
-C:/Strawberry/c/include/c++/13.2.0/bits/shared_ptr_atomic.h:
-
-C:/Strawberry/c/include/c++/13.2.0/ratio:
-
-C:/Strawberry/c/x86_64-w64-mingw32/include/objidl.h:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/ole2.h:
 
@@ -1692,10 +1769,6 @@ C:/Strawberry/c/x86_64-w64-mingw32/include/process.h:
 C:/Strawberry/c/include/c++/13.2.0/vector:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/processthreadsapi.h:
-
-C:/Strawberry/c/x86_64-w64-mingw32/include/profileapi.h:
-
-C:/Strawberry/c/include/c++/13.2.0/bits/locale_facets_nonio.h:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/prsht.h:
 
@@ -1723,10 +1796,6 @@ C:/Strawberry/c/x86_64-w64-mingw32/include/rpcasync.h:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/rpcdce.h:
 
-C:/Strawberry/c/x86_64-w64-mingw32/include/rpcndr.h:
-
-C:/Strawberry/c/include/c++/13.2.0/bits/locale_conv.h:
-
 C:/Strawberry/c/x86_64-w64-mingw32/include/rpcnsi.h:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/rpcnterr.h:
@@ -1740,10 +1809,6 @@ C:/Strawberry/c/x86_64-w64-mingw32/include/sec_api/stdlib_s.h:
 C:/Strawberry/c/include/c++/13.2.0/bits/unordered_map.h:
 
 C:/Strawberry/c/include/c++/13.2.0/bits/vector.tcc:
-
-C:/Strawberry/c/include/c++/13.2.0/bits/locale_facets_nonio.tcc:
-
-C:/Strawberry/c/x86_64-w64-mingw32/include/sec_api/stralign_s.h:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/sec_api/string_s.h:
 
@@ -1795,12 +1860,6 @@ C:/Strawberry/c/x86_64-w64-mingw32/include/wincon.h:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/wincrypt.h:
 
-C:/Strawberry/c/x86_64-w64-mingw32/include/windows.h:
-
-C:/Strawberry/c/include/c++/13.2.0/map:
-
-C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/time_members.h:
-
 C:/Strawberry/c/x86_64-w64-mingw32/include/winefs.h:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/winioctl.h:
@@ -1833,27 +1892,13 @@ C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/imconfig.h:
 
 C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui.h:
 
-C:/Strawberry/c/include/c++/13.2.0/bits/unique_ptr.h:
-
-C:/Strawberry/c/include/c++/13.2.0/array:
-
 C:/Strawberry/c/include/c++/13.2.0/bits/algorithmfwd.h:
 
 C:/Strawberry/c/include/c++/13.2.0/bits/align.h:
 
-C:/Strawberry/c/include/c++/13.2.0/bits/allocated_ptr.h:
-
 C:/Strawberry/c/include/c++/13.2.0/bits/atomic_base.h:
 
 C:/Strawberry/c/include/c++/13.2.0/bits/atomic_lockfree_defines.h:
-
-C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/c++io.h:
-
-C:/Strawberry/c/include/c++/13.2.0/bits/fs_dir.h:
-
-C:/Strawberry/c/include/c++/13.2.0/bits/fs_path.h:
-
-C:/Strawberry/c/include/c++/13.2.0/deque:
 
 C:/Strawberry/c/include/c++/13.2.0/bits/hashtable.h:
 
@@ -1862,10 +1907,6 @@ C:/Strawberry/c/include/c++/13.2.0/bits/hashtable_policy.h:
 C:/Strawberry/c/include/c++/13.2.0/bits/node_handle.h:
 
 C:/Strawberry/c/include/c++/13.2.0/bits/regex.tcc:
-
-C:/Strawberry/c/include/c++/13.2.0/bits/regex_compiler.tcc:
-
-C:/Strawberry/c/include/c++/13.2.0/ctime:
 
 C:/Strawberry/c/include/c++/13.2.0/bits/regex_constants.h:
 
@@ -1878,10 +1919,6 @@ C:/Strawberry/c/include/c++/13.2.0/bits/regex_executor.h:
 C:/Strawberry/c/include/c++/13.2.0/bits/regex_executor.tcc:
 
 C:/Strawberry/c/include/c++/13.2.0/bits/regex_scanner.h:
-
-C:/Strawberry/c/include/c++/13.2.0/utility:
-
-C:/Strawberry/c/include/c++/13.2.0/bits/sstream.tcc:
 
 C:/Strawberry/c/include/c++/13.2.0/bits/std_thread.h:
 
@@ -1907,15 +1944,7 @@ C:/Strawberry/c/include/c++/13.2.0/compare:
 
 C:/Strawberry/c/include/c++/13.2.0/cstring:
 
-C:/Strawberry/c/include/c++/13.2.0/unordered_map:
-
-C:/Strawberry/c/include/c++/13.2.0/filesystem:
-
 C:/Strawberry/c/include/c++/13.2.0/functional:
-
-C:/Strawberry/c/include/c++/13.2.0/limits:
-
-C:/Strawberry/c/include/c++/13.2.0/locale:
 
 C:/Strawberry/c/include/c++/13.2.0/math.h:
 
@@ -1937,7 +1966,9 @@ C:/Strawberry/c/include/c++/13.2.0/tr1/riemann_zeta.tcc:
 
 C:/Strawberry/c/include/c++/13.2.0/tr1/special_function_util.h:
 
-C:/Strawberry/c/lib/gcc/x86_64-w64-mingw32/13.2.0/include/stdint.h:
+C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/basic_file.h:
+
+C:/Strawberry/c/include/c++/13.2.0/x86_64-w64-mingw32/bits/c++io.h:
 
 C:/Strawberry/c/x86_64-w64-mingw32/include/assert.h:
 
