@@ -50,6 +50,7 @@ class Resolver_window(QtWidgets.QDialog):
         # self.refresh_win()
         self.usd_viewer = None
         self.task_preview = None
+        self.task_comment = None
 
 
     def get_prod_data(self):
@@ -166,13 +167,13 @@ class Resolver_window(QtWidgets.QDialog):
         # self.test_btn.clicked.connect(self.debug_func)
         
         self.prod_combo.currentIndexChanged.connect(self.get_prod_data)
-        self.prod_combo.currentIndexChanged.connect(self.get_task_preview)
+        self.prod_combo.currentIndexChanged.connect(self.get_task_meta)
 
 
         self.published_assets_table.selectionModel().selectionChanged.connect(self.refresh_asset_info)
         self.published_assets_table.selectionModel().selectionChanged.connect(self.preview_asset)
 
-        self.version_tree.selectionModel().selectionChanged.connect(self.get_task_preview)
+        self.version_tree.selectionModel().selectionChanged.connect(self.get_task_meta)
 
         self.update_btn.clicked.connect(self.update_local_layers)
 
@@ -344,13 +345,15 @@ class Resolver_window(QtWidgets.QDialog):
         self.asset_layout.addWidget(self.usd_viewer)
 
 
-    def get_task_preview(self):
-        if self.task_preview:
+    def get_task_meta(self):
+        if self.task_preview or self.task_comment:
             try: 
                 self.task_preview.deleteLater()
+                self.task_comment.deleteLater()
             
             except: 
                 self.task_preview = None
+                self.task_comment = None
 
 
         sel = self.version_tree.selectedItems()
@@ -390,21 +393,39 @@ class Resolver_window(QtWidgets.QDialog):
 
         asset_dir = os.path.dirname(asset_path)
 
-        target_file = f"{asset_dir}/metadata/preview/{name}_preview.jpg"
+        target_dir = f"{asset_dir}/metadata/"
 
+        target_file = f"{target_dir}/preview/{name}_preview.jpg"
+        target_comment = f"{target_dir}/commentary/{name}_comment.txt"
 
-        if not os.path.exists(target_file):
-            print("Couldn't find the task preview")
-            return
+        
+        exist_test = [target_file, target_comment]
+
+        for path in exist_test:
+            if not os.path.exists(path):
+                print("Couldn't find the related task metadata")
+                return
 
 
         texture = QtGui.QPixmap(target_file)
 
         self.task_preview.setPixmap(
-            texture.scaled(640, 360, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
+            texture.scaled(426, 240, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
         )
 
+
+        self.task_comment = QtWidgets.QTextEdit()
+        self.task_comment.setReadOnly(True)
+        
+
+        with open(target_comment, "r") as f:
+            comment = f.read()
+
+        self.task_comment.setPlainText(comment)
+
         self.table_layout.addWidget(self.task_preview)
+        self.table_layout.addWidget(self.task_comment)
+
 
 
     def get_current_layers(self) -> Sdf:
@@ -535,7 +556,7 @@ class Resolver_window(QtWidgets.QDialog):
 
             self.version_tree.setItemWidget(task_item, 1, self.task_combo)
 
-            self.task_combo.currentTextChanged.connect(self.get_task_preview)
+            self.task_combo.currentTextChanged.connect(self.get_task_meta)
 
         # print(stage.GetLayerStack())
 
