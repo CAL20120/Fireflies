@@ -252,9 +252,9 @@ class Resolver_window(QtWidgets.QDialog):
         asset_sel = self.published_assets_table.currentRow()
         print(asset_sel)
 
-        if asset_sel < 1:
-            print("No current selection")
-            return
+        # if asset_sel < 1:
+        #     print("No current selection")
+        #     return
 
 
         # self.asset_info_table.setRowCount(len(self.target_name))
@@ -481,9 +481,9 @@ class Resolver_window(QtWidgets.QDialog):
         
         asset_row = self.published_assets_table.currentRow()
         
-        if asset_row <= 0:
-            print("No asset selected")
-            return
+        # if asset_row <= 0:
+        #     print("No asset selected")
+        #     return
 
         current_name = self.target_name[asset_row]
         print(self.asset_name)
