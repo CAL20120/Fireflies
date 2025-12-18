@@ -75,6 +75,12 @@ class context_window(QtWidgets.QDialog):
         header_view = self.context_info.horizontalHeader()
         header_view.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
 
+
+        self.ct_prod_btn = QtWidgets.QPushButton("Prod")
+        self.ct_seq_btn = QtWidgets.QPushButton("Sequence")
+        self.ct_shot_btn = QtWidgets.QPushButton("Shot")
+        self.ct_task_btn = QtWidgets.QPushButton("Task")
+
         
         self.start_shot_btn = QtWidgets.QPushButton("Start/Save Shot")
         self.open_btn = QtWidgets.QPushButton("Open")
@@ -89,27 +95,40 @@ class context_window(QtWidgets.QDialog):
         self.set_shots_layout.addWidget(self.shots_combo)
         self.set_shots_layout.addWidget(self.tasks_combo)
 
+
+        self.ct_layout = QtWidgets.QHBoxLayout()
+        self.ct_layout.addWidget(self.ct_prod_btn)
+        self.ct_layout.addWidget(self.ct_seq_btn)
+        self.ct_layout.addWidget(self.ct_shot_btn)
+        self.ct_layout.addWidget(self.ct_task_btn)
+
+
         self.bottom_btn_layout = QtWidgets.QHBoxLayout()
         self.bottom_btn_layout.addWidget(self.start_shot_btn)
         self.bottom_btn_layout.addWidget(self.open_btn)
         self.bottom_btn_layout.addWidget(self.close_btn)
         self.bottom_btn_layout.addWidget(self.debug_btn)
 
+
         self.preview_layout = QtWidgets.QHBoxLayout()
+
 
         self.line_layout = QtWidgets.QFormLayout()
         self.line_layout.addRow("Custom name: ", self.custom_name_line)
+
 
         self.main_layout = QtWidgets.QVBoxLayout(self)
         self.main_layout.addLayout(self.set_shots_layout)
         self.main_layout.addWidget(self.context_info)
         self.main_layout.addLayout(self.line_layout)
+        self.main_layout.addLayout(self.ct_layout)
         self.main_layout.addLayout(self.preview_layout)
         # self.main_layout.addWidget(self.refresh_btn)
 
 
         self.main_layout.addStretch()
         self.main_layout.addLayout(self.bottom_btn_layout)
+
 
     def create_connections(self):
         self.close_btn.clicked.connect(self.close)
@@ -136,12 +155,63 @@ class context_window(QtWidgets.QDialog):
         self.start_shot_btn.clicked.connect(self.export_context_scene)
 
 
+        self.ct_prod_btn.clicked.connect(lambda: self.create_target_fld("prod"))
+        self.ct_seq_btn.clicked.connect(lambda: self.create_target_fld("seq"))
+        self.ct_shot_btn.clicked.connect(lambda: self.create_target_fld("shot"))
+        self.ct_task_btn.clicked.connect(lambda: self.create_target_fld("task"))
+
     def update_all(self):
         self.update_prods()
         self.update_sequence()
         self.update_shots()
         self.update_tasks()
         pass
+
+
+    def create_target_fld(self, target:str):
+        regular_targets = ["prod", "seq", "shot"]
+
+        if any(name in target for name in regular_targets):
+
+            self.win = pop_up_win()
+            self.win.text_signal.connect(self.target_fld_callback)
+
+            self.win.show()
+
+
+        else:
+            self.win = task_win()
+            self.win.task_signal.connect(self.target_fld_callback)
+
+            self.win.show()
+
+
+        self.current_target = target
+
+
+    def target_fld_callback(self, target_name):
+        prod = self.prod_combo.currentText()
+        seq = self.sequence_combo.currentText()
+        shot = self.shots_combo.currentText()
+        
+
+        if self.current_target == "prod":
+            init_path = self.path
+
+        elif self.current_target == "seq":
+            init_path = os.path.join(self.path, prod)
+
+        elif self.current_target == "shot":
+            init_path = os.path.join(self.path, prod, seq)
+
+        else: 
+            init_path = os.path.join(self.path, prod, seq, shot)
+
+        out_path = os.path.join(init_path, target_name)
+
+        if not os.path.exists(out_path):
+            os.makedirs(out_path)
+
 
 
     def test_print(self):
@@ -280,6 +350,7 @@ class context_window(QtWidgets.QDialog):
         self.close()
 
 
+
     def test(self):
         target_base = self.build_scene_path()
         # print(target_base)
@@ -291,47 +362,121 @@ class context_window(QtWidgets.QDialog):
             valid_path = os.path.join(target_base, path)
             print(valid_path)
 
-    # def export_preview(self):
-    #     self.build_scene_path()
-        
-    #     output = self.scene_name
-    #     # except:
-    #     #     output = self.scene_name.rsplit(".", 1)[0]
-    #     init_path = f"{self.build_scene_path()}/metadata/preview/"
-    #     if os.path.exists(init_path) == False:
-    #         print("creating metadata folder")
-    #         os.makedirs(os.path.dirname(init_path))
-    #     cmds.playblast(
-    #         completeFilename=f"{init_path}{output}.jpg",
-    #         format="image",
-    #         compression="jpg",
-    #         quality=100,
-    #         width=1920,
-    #         height=1080,
-    #         viewer=False,
-    #         frame=cmds.currentTime(q=True),
-    #     )
-    #     print("#######")
-    #     print(output)
 
-    # def import_preview(self):
-    #     children = []
-    #     for x in range(self.preview_layout.count()):
-    #         child = self.preview_layout.itemAt(x).widget()
-    #         if child:
-    #             children.append(child)
-    #     for child in children:
-    #         child.deleteLater()
-            
-    #     output = f"{self.sel_changed()}"
-    #     init_path = f"{self.build_scene_path()}/metadata/preview/{output}.jpg"
+
+
+class pop_up_win(QtWidgets.QDialog):
+    text_signal = QtCore.Signal(str)
+
+    def __init__(self):
+        super(pop_up_win, self).__init__()
+
+        self.setWindowTitle("Set name")
+        self.setMinimumSize(100, 50)
         
-    #     if os.path.exists(init_path):
-    #         print("preview found")
-    #         label = QtWidgets.QLabel()
-    #         texture = QtGui.QPixmap(init_path)
-    #         label.setPixmap(texture.scaled(640, 360, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation))
-    #         self.preview_layout.addWidget(label)
+        self.create_elements()
+
+
+    def create_elements(self):
+        self.input_line = QtWidgets.QLineEdit()
+
+        self.create_btn = QtWidgets.QPushButton("Create")
+        self.close_btn = QtWidgets.QPushButton("Close")
+
+        self.input_layout = QtWidgets.QFormLayout()
+        self.input_layout.addRow("Name: ", self.input_line)
+
+        
+        self.btn_layout = QtWidgets.QHBoxLayout()
+        self.btn_layout.addWidget(self.create_btn)
+        self.btn_layout.addWidget(self.close_btn)
+        
+        self.main_layout = QtWidgets.QVBoxLayout(self)
+        self.main_layout.addLayout(self.input_layout)
+        self.main_layout.addLayout(self.btn_layout)
+
+        self.create_btn.clicked.connect(self.out_val)
+        self.close_btn.clicked.connect(self.close)
+
+
+    def out_val(self):
+        out_text = self.input_line.text()
+
+        if out_text:
+            print(out_text)
+            self.text_signal.emit(out_text)
+
+        else: 
+            print("No input detected")
+            return
+
+        self.accept()
+
+
+class task_win(QtWidgets.QDialog):
+    task_signal = QtCore.Signal(str)
+
+    def __init__(self):
+        super(task_win, self).__init__()
+
+        self.setWindowTitle("Set name")
+        self.setMinimumSize(100, 50)
+        
+        self.create_elements()
+
+
+    def create_elements(self):
+        self.task_combo = QtWidgets.QComboBox()
+
+        self.create_btn = QtWidgets.QPushButton("Create")
+        self.close_btn = QtWidgets.QPushButton("Close")
+
+        self.input_layout = QtWidgets.QFormLayout()
+        self.input_layout.addRow("Name: ", self.task_combo)
+
+        
+        self.btn_layout = QtWidgets.QHBoxLayout()
+        self.btn_layout.addWidget(self.create_btn)
+        self.btn_layout.addWidget(self.close_btn)
+        
+        self.main_layout = QtWidgets.QVBoxLayout(self)
+        self.main_layout.addLayout(self.input_layout)
+        self.main_layout.addLayout(self.btn_layout)
+
+        self.create_btn.clicked.connect(self.out_val)
+        self.close_btn.clicked.connect(self.close)
+
+        target_tasks = [
+            "model",
+            "assembly", 
+            "lookdev",
+            "texturing",
+            "rig", 
+            "groom",
+            "layout", 
+            "anim",
+            "light",
+        ]
+
+        self.task_combo.addItems(target_tasks)
+
+
+
+    def out_val(self):
+        out_text = self.task_combo.currentText()
+
+        if out_text:
+            print(out_text)
+            self.task_signal.emit(out_text)
+
+        else: 
+            print("No input detected")
+            return
+
+        self.accept()
+
+
+
 
 if __name__ == "__main__":
     x = context_window()
