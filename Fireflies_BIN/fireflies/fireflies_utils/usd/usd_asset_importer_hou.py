@@ -311,7 +311,7 @@ class importer_window(QtWidgets.QDialog):
         
         if self.import_classic:
             if asset_type == "asset":
-                hou_utils.hou_usd.import_prod_usd_asset(self, asset_path=hip_path)
+                utils.import_prod_usd_asset(asset_path=hip_path)
 
             elif asset_type == "sequence":
                 utils.import_usd_sequence(asset_path=hip_path)
@@ -327,8 +327,11 @@ class importer_window(QtWidgets.QDialog):
         children = []
         for x in range(self.comment_layout.count()):
             child = self.comment_layout.itemAt(x).widget()
+            
             if child:
                 children.append(child)
+        
+
         for child in children:
             child.deleteLater()
 
@@ -351,6 +354,7 @@ class importer_window(QtWidgets.QDialog):
 
         with open(target_file, "r") as f:
             comment = f.read()
+        
         self.text_edit_comment.setPlainText(comment)
 
         self.comment_layout.addWidget(self.text_edit_comment)
@@ -369,8 +373,11 @@ class importer_window(QtWidgets.QDialog):
         children = []
         for x in range(self.preview_layout.count()):
             child = self.preview_layout.itemAt(x).widget()
+            
             if child:
                 children.append(child)
+        
+        
         for child in children:
             child.deleteLater()
 
@@ -401,6 +408,7 @@ class import_usd_asset():
         try: 
             import hou
             self.prod_path = hou.hipFile.path().rsplit("/", 4)[0].replace("/", "\\")
+        
         except:
             self.prod_path = None
 
@@ -422,6 +430,7 @@ class import_usd_asset():
 
         self.assets = []
         for dirs in self.usd_publied_dir:
+            
             for asset in os.listdir(dirs):
                 asset_dir = os.path.join(dirs, asset)
 
@@ -455,6 +464,7 @@ class import_usd_asset():
                 if file.endswith(".usd"):
                     asset_path = os.path.join(version_dir, file)
                     correct_path = asset_path.replace("\\", "/")
+                    
                     self.asset_file.append(correct_path)
 
 
