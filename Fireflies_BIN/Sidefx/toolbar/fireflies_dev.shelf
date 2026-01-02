@@ -11,6 +11,7 @@
     <memberTool name="lib_assets"/>
     <memberTool name="quick_preview"/>
     <memberTool name="pyblish_houdini_dev"/>
+    <memberTool name="hip_importer"/>
   </toolshelf>
 
   <tool name="context" label="Context" icon="C:/Fireflies/Fireflies_BIN/fireflies/logos/set_context.png">
@@ -24,7 +25,7 @@ hou.session.dialog.show()]]></script>
   <tool name="prod_importer_hou" label="PROD Asset" icon="C:/Fireflies/Fireflies_BIN/fireflies/logos/asset_importer.png">
     <script scriptType="python"><![CDATA[from fireflies.fireflies_utils.usd import usd_asset_importer_hou
 
-hou.session.dialog = usd_asset_importer_hou.importer_window()
+hou.session.dialog = usd_asset_importer_hou.importer_window(import_classic=True)
 hou.session.dialog.show()]]></script>
   </tool>
 

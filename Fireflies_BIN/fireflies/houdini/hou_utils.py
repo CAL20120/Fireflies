@@ -6,6 +6,8 @@ from datetime import datetime
 import subprocess
 import re
 
+print("Importing -- hou_utils.py")
+
 class hou_usd():
     def __init__(self):
         self.scene_path = hou.hipFile.path().rsplit("/", 1)[0]
@@ -19,7 +21,15 @@ class hou_usd():
     
 
     def get_current_context(self) -> hou:
-        desktop = hou.ui.curDesktop()
+        try:
+            desktop = hou.ui.curDesktop()
+        
+        except:
+            print("Couldn't find the hou ui")
+            desktop = None
+            return
+
+
         self.pane = desktop.paneTabOfType(hou.paneTabType.NetworkEditor)
         self.curr_context = self.pane.pwd()
 
