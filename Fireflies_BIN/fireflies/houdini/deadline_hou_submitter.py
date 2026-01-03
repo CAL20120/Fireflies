@@ -30,10 +30,10 @@ class hou_deadline_submitter():
         return file_path
 
 
-    def hou_job_info(self, job_name, frames, priority):
+    def hou_job_info(self, job_name, frames, priority:str, comment, machine_sel:str) -> str:
         info_txt = 'Plugin=CommandLine\n' \
                     'Name={} [Write stage]\n' \
-                    'Comment=Fireflies Deadline Render\n' \
+                    'Comment={}\n' \
                     'Pool=none\n' \
                     'Group=none\n' \
                     'Priority={}\n' \
@@ -41,8 +41,13 @@ class hou_deadline_submitter():
                     'Frames={}\n' \
                     'ChunkSize=100\n' \
                     'MachineLimit=1\n' \
-                    'ConcurrentTasks=1'.format(job_name, priority, frames)
-        
+                    'ConcurrentTasks=1\n'.format(job_name, comment, priority, frames)
+
+
+        if machine_sel:
+                info_txt += 'Allowlist={}\n'.format(machine_sel)
+                # print(f"### Selected Machine: {machine_sel} ###")
+
         target_path = os.path.join(self.tmp_dir, 'export_job_info.job')
 
         out = self.write_target_file(target_path, info_txt)
@@ -50,7 +55,7 @@ class hou_deadline_submitter():
         return out
 
 
-    def hou_plugin_info(self, scene_path, target_node, export_path):
+    def hou_plugin_info(self, scene_path, target_node, export_path) -> str:
         generate_usd_script = "C:\\Fireflies\\Fireflies_BIN\\fireflies\\houdini\\usd_render_call.py"
         
 
@@ -68,17 +73,22 @@ class hou_deadline_submitter():
         return out
     
 
-    def hou_render_job_info(self, job_name, priority, frames, id, department):
+    def hou_render_job_info(self, job_name, priority:str, frames, id, department, comment, machine_sel:str) -> str:
         info_txt = 'Plugin=CommandLine\n' \
                     'Name={} [Render]\n' \
-                    'Comment=test de rendu\n' \
+                    'Comment={}\n' \
                     'Pool=none\n' \
                     'Group=none\n' \
                     'Priority={}\n' \
                     'Department={}\n' \
                     'Frames={}\n' \
                     'ChunkSize=1\n' \
-                    'JobDependency0={}'.format(job_name, priority, department, frames, id)
+                    'JobDependency0={}\n'.format(job_name, comment, priority, department, frames, id)
+        
+
+        if machine_sel:
+                info_txt += 'Allowlist={}\n'.format(machine_sel)
+                print(f"### Selected Machine: {machine_sel} ###")
         
         target_path = os.path.join(self.tmp_dir, 'render_job_info.job')
 
@@ -87,7 +97,7 @@ class hou_deadline_submitter():
         return out
 
 
-    def hou_render_plugin_info(self, usd_file:os.path, out_images):
+    def hou_render_plugin_info(self, usd_file:os.path, out_images) -> str:
         args = f'-R HdPrmanXpuLoaderRendererPlugin -V 1 -o {out_images} {usd_file}'
 
         plugin_txt = 'Executable={}\n' \
@@ -154,6 +164,8 @@ class hou_deadline_submitter():
         dl_priority = priority_ints[priority_index]
         print("Selected priority: " + str(dl_priority))
 
+        dl_comment = target_node.evalParm('dl_comment')
+
         out_images = target_node.evalParm('output')
         print(out_images)
 
@@ -206,7 +218,12 @@ class hou_deadline_submitter():
         ).replace("\\", '/')
 
 
-        usd_export_job = self.hou_job_info(job_name, dl_frames, dl_priority)
+        machine_sel = False
+        if target_node.evalParm('dl_machine_sel'):
+            machine_sel = target_node.evalParm('dl_machine_list')
+
+
+        usd_export_job = self.hou_job_info(job_name, dl_frames, dl_priority, dl_comment, machine_sel)
         usd_export_plugin = self.hou_plugin_info(scene_path, target_node.path(), export_path)
 
         job_cmd = [self.deadline_ex, usd_export_job, usd_export_plugin]
@@ -235,7 +252,7 @@ class hou_deadline_submitter():
 
         husk_render_input = export_path.replace('$F4', "<STARTFRAME%4>").replace('$F', '<STARTFRAME>')
 
-        render_job = self.hou_render_job_info(job_name, dl_priority, dl_frames, usd_job_id, departement)
+        render_job = self.hou_render_job_info(job_name, dl_priority, dl_frames, usd_job_id, departement, dl_comment, machine_sel)
         render_plugin = self.hou_render_plugin_info(usd_file=husk_render_input, out_images=husk_out_images)
 
         render_job_cmd = [self.deadline_ex, render_job, render_plugin]

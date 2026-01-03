@@ -1,6 +1,6 @@
 for /f "tokens=*" %%a in (C:\Fireflies\Fireflies_BIN\Sidefx\env\houdini_rm27.env) do set %%a
 
-set "DEADLINE_HOU=\\CHRIS_NAS\Deadline_DB\db_main\submission\Houdini\Client"
+set "DEADLINE_HOU=Z:\Deadline_DB\db_main\submission\Houdini\Client"
 
 set PYTHONPATH=%DEADLINE_HOU%;%PYTHONPATH%
 
