@@ -174,14 +174,16 @@ class hou_deadline_submitter():
 
         out_images = local_nas_prod + new_path[-1]
 
-        target_frame = re.search(r'\d+', out_images)
+        fld, file = os.path.split(out_images)
+
+        target_frame = re.search(r'\d+', file)
 
         if not target_frame:
             print("### Couldn't find a frame number in the export path -- Exiting ###")
 
-        # print(target_frame.group())
+        fixed_name = file.replace(target_frame.group(), '$F')
 
-        out_images = out_images.replace(target_frame.group(), '$F')
+        out_images = os.path.join(fld, fixed_name).replace('\\', '/')
 
         print(f"### EXPORT PATH: {out_images} ###")
 
