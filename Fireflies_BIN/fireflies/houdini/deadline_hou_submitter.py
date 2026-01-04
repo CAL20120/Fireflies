@@ -1,6 +1,8 @@
 import os 
 import sys
 import re
+import shutil
+
 
 import subprocess 
 
@@ -10,7 +12,7 @@ import random
 import hou 
 
 from fireflies.houdini import hou_utils
-from fireflies.fireflies_utils import fireflies_requests
+# from fireflies.fireflies_utils import fireflies_requests
 
 class hou_deadline_submitter():
     def __init__(self):
@@ -113,17 +115,41 @@ class hou_deadline_submitter():
     
 
 
-    def sumbit_usd_render_job(self):
+    def sumbit_usd_render_job(self, target_node_path=None):
         local_nas_prod = "Z:/PRODS"
 
-        target_node = hou.pwd()
+        if not target_node_path:
+            target_node = hou.pwd()
+        
+        else: 
+            target_node = hou.node(target_node_path)
+
         scene_path = hou.hipFile.path()
+
+
+        out_images = target_node.evalParm('output')
+        print(out_images)
+
+
+        out_dir = os.path.dirname(out_images)
+        if not os.path.exists(out_dir):
+            os.makedirs(out_dir, exist_ok=True)
+
+
+        scene_dir = os.path.dirname(scene_path)
+        export_dir = os.path.join(scene_dir, "deadline_usd")
+        export_dir = export_dir.replace('/', '\\')
+
+        if not os.path.exists(export_dir):
+            os.makedirs(export_dir, exist_ok=True)
+
 
         new_path = scene_path.split('PRODS', 1)
         # print(new_path)
 
         scene_path = local_nas_prod + new_path[-1]
 
+        print("#### NAS SCENE: {} ####".format(scene_path))
 
         if not os.path.exists(local_nas_prod) and "PROD" not in scene_path:
             print("## Issue related to the PROD directory -- Exiting ##")
@@ -166,15 +192,22 @@ class hou_deadline_submitter():
 
         dl_comment = target_node.evalParm('dl_comment')
 
-        out_images = target_node.evalParm('output')
-        print(out_images)
 
         new_path = out_images.split('PRODS', 1)
         print(new_path)
 
+
         out_images = local_nas_prod + new_path[-1]
 
         fld, file = os.path.split(out_images)
+
+        out_dir = os.path.dirname(out_images)
+
+        scene_dir = os.path.dirname(scene_path)
+        export_dir = os.path.join(scene_dir, "deadline_usd")
+        export_dir = export_dir.replace('/', '\\')
+
+
 
         target_frame = re.search(r'\d+', file)
 
@@ -192,11 +225,6 @@ class hou_deadline_submitter():
 
         # print(dl_path)
 
-        out_dir = os.path.dirname(out_images)
-        if not os.path.exists(out_dir):
-            os.makedirs(out_dir)
-
-
         husk_out_images = dl_path.replace('__target_frames__', '<STARTFRAME>')
 
         if not out_images:
@@ -209,15 +237,16 @@ class hou_deadline_submitter():
         dl_frames = f"{f_start}-{f_end}"
 
 
-        scene_dir = os.path.dirname(scene_path)
-        export_dir = os.path.join(scene_dir, "deadline_usd").replace('\\', '/')
 
-        if not os.path.exists(export_dir):
-            os.makedirs(export_dir)
+        print("####### EXPORT DIR: {} ######".format(export_dir))
+
+        export_dir = export_dir.replace(os.sep, '/')
 
         export_path = os.path.join(
             export_dir, "__render__.$F4.usd"
         ).replace("\\", '/')
+
+        print("### USD EXPORT PATH: {} ###".format(export_path))
 
 
         machine_sel = False
@@ -230,6 +259,8 @@ class hou_deadline_submitter():
 
         job_cmd = [self.deadline_ex, usd_export_job, usd_export_plugin]
         
+        print("### Launching jobs ###")
+
         dl_proc = subprocess.Popen(
             job_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
         )
@@ -264,6 +295,24 @@ class hou_deadline_submitter():
         )
 
         stdout_job, stderr_job = render_proc.communicate()
+
+        out_usd_dir = os.path.dirname(export_path)
+        target_dir = os.path.basename(out_usd_dir)
+        
+        #in case there is an issue with the permissions on the server and the folder couldn't be created
+        # if not os.path.exists(out_usd_dir):
+        #     tmp_usd_dir = os.path.join(self.tmp_dir, target_dir)
+
+        #     try:
+        #         os.makedirs(tmp_usd_dir)
+        #         shutil.copy2(tmp_usd_dir, out_usd_dir)
+
+        #         os.remove(tmp_usd_dir)
+
+        #     except:
+        #         print("Couldn't reach / fix deadline_usd export dir -- Exiting")
+
+
 
 
 if __name__ == "__main__":

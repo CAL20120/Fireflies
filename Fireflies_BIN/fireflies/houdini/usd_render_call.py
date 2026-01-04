@@ -2,16 +2,35 @@ import argparse
 import os
 import sys
 
+import shutil
+import time
+
 import hou
 
 
 def export_usd(scene_path:str, node_path:hou, export_path:str, f_start:int, f_end:int):
-    if not os.path.exists(scene_path):
-        print("Scene path is not correct")
-        return
+    tmp_dir = os.environ.get('TMP')
 
-    hou.hipFile.load(scene_path)
-    
+    if not os.path.exists(scene_path):
+        print("CURRENT PATH: {}".format(scene_path))
+        print("Scene path is not correct, trying to load again...")
+        
+        time.sleep(10)
+        
+        if not os.path.exists(scene_path):
+            return
+        
+
+    try:
+        hou.hipFile.load(scene_path)
+
+    except:
+        print("Error while loading scene, reloading...")
+        time.sleep(10)
+
+        hou.hipFile.load(scene_path)
+
+
     target_node = hou.node(node_path)
 
     stage = target_node.stage()
@@ -28,7 +47,25 @@ def export_usd(scene_path:str, node_path:hou, export_path:str, f_start:int, f_en
         stage = target_node.stage()
         out_path = hou.text.expandStringAtFrame(export_path, frame)
 
-        stage.Export(out_path)
+        file_name = os.path.basename(out_path)
+        tmp_export_path = os.path.join(tmp_dir, file_name).replace(os.sep, '/')
+
+        stage.Export(tmp_export_path)
+
+        out_dir = os.path.dirname(export_path)
+        if not os.path.exists(out_dir):
+            os.makedirs(out_dir, exist_ok=True)
+
+
+        try:
+            shutil.copyfile(tmp_export_path, out_path)
+            os.remove(tmp_export_path)
+        
+        except:
+            print("Error when copying tmp file to final dir -- Exiting")
+            return
+
+        
 
     print("### Fireflies - USD FILES EXPORTED SUCCESSFULLY ###")
 
