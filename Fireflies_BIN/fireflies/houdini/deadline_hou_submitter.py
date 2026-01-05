@@ -41,7 +41,7 @@ class hou_deadline_submitter():
                     'Priority={}\n' \
                     'Department=Usd generation\n' \
                     'Frames={}\n' \
-                    'ChunkSize=100\n' \
+                    'ChunkSize=2000\n' \
                     'MachineLimit=1\n' \
                     'ConcurrentTasks=1\n'.format(job_name, comment, priority, frames)
 
