@@ -15,7 +15,7 @@ def export_usd(scene_path:str, node_path:hou, export_path:str, f_start:int, f_en
         print("CURRENT PATH: {}".format(scene_path))
         print("Scene path is not correct, trying to load again...")
         
-        time.sleep(10)
+        time.sleep(30)
         
         if not os.path.exists(scene_path):
             return
@@ -26,7 +26,7 @@ def export_usd(scene_path:str, node_path:hou, export_path:str, f_start:int, f_en
 
     except:
         print("Error while loading scene, reloading...")
-        time.sleep(10)
+        time.sleep(30)
 
         hou.hipFile.load(scene_path)
 
