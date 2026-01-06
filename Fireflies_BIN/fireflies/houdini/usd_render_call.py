@@ -16,19 +16,58 @@ def export_usd(scene_path:str, node_path:hou, export_path:str, f_start:int, f_en
         print("Scene path is not correct, trying to load again...")
         
         time.sleep(350)
-        
+
+        print("### Resume ###")
+
         if not os.path.exists(scene_path):
             return
         
 
+    print("### Copying scene to local dir ###")
+
+    # nas_path = scene_path.replace(os.sep, '/')
+    scene_name = os.path.basename(scene_path)
+
+    local_scene_path = os.path.join(tmp_dir, scene_name)
+    if os.path.exists(local_scene_path):
+        os.remove(local_scene_path)
+
     try:
-        hou.hipFile.load(scene_path)
+        shutil.copyfile(scene_path, local_scene_path)
 
     except:
-        print("Error while loading scene, reloading...")
-        time.sleep(120)
+        # time.sleep(5)
+        # shutil.copyfile(scene_path, local_scene_path)
 
-        hou.hipFile.load(scene_path)
+        print("### Couldn't copy scene onto local dir ###")
+        return
+
+    local_scene_path = local_scene_path.replace(os.sep, '/')
+
+    try:
+        hou.hipFile.load(local_scene_path)
+
+    except:
+        time.sleep(30)
+        print("### Trying to reload scene ###")
+        hou.hipFile.load(local_scene_path)
+
+
+    nas_dir = os.path.dirname(scene_path)
+    hou.hscript(f"set -g HIP = '{nas_dir}'")
+    hou.hscript(f"set -g JOB = '{nas_dir}'")
+
+
+    # try:
+    #     hou.hipFile.load(scene_path)
+
+    # except:
+    #     print("Error while loading scene, reloading...")
+    #     time.sleep(120)
+
+    #     print("### Resume ###")
+
+    #     hou.hipFile.load(scene_path)
 
 
     target_node = hou.node(node_path)
