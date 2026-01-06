@@ -11,29 +11,31 @@ import hou
 def export_usd(scene_path:str, node_path:hou, export_path:str, f_start:int, f_end:int):
     tmp_dir = os.environ.get('TMP')
 
-    if not os.path.exists(scene_path):
-        print("CURRENT PATH: {}".format(scene_path))
-        print("Scene path is not correct, trying to load again...")
+    norm_scene = os.path.normpath(scene_path)
+
+    # if not os.path.exists(norm_scene):
+    #     print("CURRENT PATH: {}".format(scene_path))
+    #     print("Scene path is not correct, trying to load again...")
         
-        time.sleep(350)
+    #     time.sleep(350)
 
-        print("### Resume ###")
+    #     print("### Resume ###")
 
-        if not os.path.exists(scene_path):
-            return
+    #     if not os.path.exists(norm_scene):
+    #         return
         
 
     print("### Copying scene to local dir ###")
 
     # nas_path = scene_path.replace(os.sep, '/')
-    scene_name = os.path.basename(scene_path)
+    scene_name = os.path.basename(norm_scene)
 
     local_scene_path = os.path.join(tmp_dir, scene_name)
     if os.path.exists(local_scene_path):
         os.remove(local_scene_path)
 
     try:
-        shutil.copyfile(scene_path, local_scene_path)
+        shutil.copyfile(norm_scene, local_scene_path)
 
     except:
         # time.sleep(5)
