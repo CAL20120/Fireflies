@@ -305,6 +305,20 @@ class hou_publish():
             stage.Export(export_path)
 
 
+    def debug_export(self, root_prim:Usd, node:hou):
+        if not os.path.exists(self.export_dir):
+            os.makedirs(self.export_dir)
+
+        asset_name = str(root_prim.GetName())
+
+        _, export_path = self.get_last_version(asset_name=asset_name)
+
+        stage = node.stage()
+
+        stage.Export(export_path)
+
+
+
 
     def get_export_path(self, asset_name):
         export_dir = f"{self.export_dir}/{asset_name}"
