@@ -13,6 +13,10 @@ def export_usd(scene_path:str, node_path:hou, export_path:str, f_start:int, f_en
 
     norm_scene = os.path.normpath(scene_path)
 
+    norm_dir = os.path.dirname(norm_scene)
+    os.startfile(norm_dir)
+
+
     # if not os.path.exists(norm_scene):
     #     print("CURRENT PATH: {}".format(scene_path))
     #     print("Scene path is not correct, trying to load again...")
@@ -54,6 +58,8 @@ def export_usd(scene_path:str, node_path:hou, export_path:str, f_start:int, f_en
         print("### Trying to reload scene ###")
         hou.hipFile.load(local_scene_path)
 
+
+    print("### Scene loaded at: {} ###".format(local_scene_path))
 
     nas_dir = os.path.dirname(scene_path)
     hou.hscript(f"set -g HIP = '{nas_dir}'")
