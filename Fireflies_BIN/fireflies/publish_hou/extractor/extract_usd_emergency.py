@@ -20,4 +20,6 @@ class Usd_Emergency_Extract(pyblish.api.InstancePlugin):
 
             prim = instance.data.get('prim')
 
-            self.abstract_publish.debug_export(root_prim=prim, node=node)
+            stage_path = self.abstract_publish.debug_export(root_prim=prim, node=node)
+
+            instance.data['stage_local_path'] = stage_path

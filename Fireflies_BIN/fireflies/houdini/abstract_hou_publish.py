@@ -320,6 +320,8 @@ class hou_publish():
 
         stage.Export(export_path)
 
+        return export_path
+
 
 
 
