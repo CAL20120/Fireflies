@@ -7,6 +7,7 @@ import subprocess
 import re
 
 print("Importing -- hou_utils.py")
+from pxr import Usd, UsdGeom, UsdSkel, Sdf, UsdUtils, UsdShade
 
 class hou_usd():
     def __init__(self):
@@ -233,46 +234,118 @@ class hou_usd():
         return hip_path
 
 
-from pxr import Usd, UsdGeom, UsdSkel, Sdf, UsdUtils
-class usd_utils():
-    def __init__(self):
+    def get_last_node(self, scene_path:str) -> hou.node:
         pass
 
-    def rig_test(self, node:hou):
-        stage = node.Stage()
-
-        target_skel = [prim for prim in stage.Traverse() if prim.IsA(UsdSkel.Skeleton)]
-        # print(target_skel)
-
-        target_geo_path = None
-
-        binding = UsdSkel.BindingAPI.Apply(target_prim=None)
-        binding.CreateAnimationSourceRel().SetTargets(
-            [target_geo_path]
-        )
 
 
-        skelCache = UsdSkel.Cache()
+    def quick_wind(self, prim_path:str):
+        node = hou.pwd()
+        node_path = node.path()
 
-        for prim in target_skel:
-            if prim.IsA(UsdSkel.Skeleton):
-                target_skel.PruneChildren()
+        stage_ref = hou.node(f"{node_path}/stage_ref")
 
-                skelCache.Populate(prim, Usd.TraverseInstanceProxies())
+        print(prim_path)
 
-                bindings = skelCache.ComputeSkelBindings(
-                    prim, Usd.TraverseInstanceProxies()
-                )
+        stage = stage_ref.stage()
 
-                for binding in bindings: 
-                    skelQuery = skelCache.GetSkelQuery(binding.GetSkeleton())
+        asset_prim = stage.GetPrimAtPath(prim_path)
+  
+        target = f"{prim_path}/GEO/render"
+        target_prim = stage.GetPrimAtPath(target)
+        iter_prims = iter(Usd.PrimRange(target_prim))
 
-                    skinningXform = skelQuery.ComputeSkinningTransforms(time=None)
-                    if not skinningXform:
-                        return
-                    
-                    for skinningQuery in binding.GetSkinningTargets():
-                        primSkinning = skinningQuery.GetPrim()
+        for prim in iter_prims:
+            mesh = UsdGeom.Mesh(prim)
+            if mesh:
+                mesh_prim = prim
+
+        if not mesh_prim:
+            print("No mesh was found")
+            return
+            
+        # bind = UsdShade.MaterialBindingAPI(mesh_prim)
+        # bind_mat = bind.GetDirectBinding()
+
+        mat_prim, rel = UsdShade.MaterialBindingAPI(mesh_prim).ComputeBoundMaterial()
+
+        print(mat_prim)
+
+        mat_prim_path = mat_prim.GetPath()
+
+        test = str(mat_prim_path)
+
+        target_mat_node = hou.node(f"{node_path}/target_mat")
+        target_mat_node.parm('matpath1').set(test)
+        load_btn = target_mat_node.parm('load1')
+        load_btn.pressButton()
+
+
+        check_displace = False
+        for child in mat_prim.GetPrim().GetChildren():
+            shader = UsdShade.Shader(child)
+
+            if shader:
+                target_id = shader.GetIdAttr().Get()
+
+                if target_id == "PxrDisplace":
+                    print("First displace found")
+                    check_displace = True
+
+
+        collect_node = target_mat_node.node('collect1')
+        collect_inputs = collect_node.inputs()
+
+        quick_wind_node = target_mat_node.createNode('wind_setup_disp', 'wind_disp')
+        wind_node_output = quick_wind_node.outputNames()
+
+
+        if check_displace:
+            print("Connecting wind displace to current")
+
+            for x, node in enumerate(collect_inputs):
+                if node.type().name() == "pxrdisplace::3.0":
+                    disp_node = node
+
+
+            if not disp_node:
+                print("Error when finding the current disp node")
+                return
+
+            # collect_disp = collect_node.inputIndex('displace_out')
+            # disp_node = collect_node.input(collect_disp)
+
+            in_disp_node = disp_node.inputIndex('dispScalar')
+            old_node = disp_node.input(in_disp_node)
+            old_node_outputs = old_node.outputNames()
+            resultF_old = old_node_outputs.index('resultF')
+
+
+            disp_mix_node = target_mat_node.createNode('pxrdispscalarlayer', 'disp_mix')
+            disp_mix_inputs = disp_mix_node.inputNames()
+            disp_mix_outputs = disp_mix_node.outputNames()            
+
+            base_layer = disp_mix_inputs.index('baseLayerDispScalar')
+            disp_mix_node.setInput(base_layer, old_node, resultF_old)
+
+            resultR_wind = wind_node_output.index('resultR')
+
+            wind_layer = disp_mix_inputs.index('layer1DispScalar')
+            disp_mix_node.setInput(wind_layer, quick_wind_node, resultR_wind)
+
+            layer_out = disp_mix_outputs.index('resultF')
+            disp_node_inputs = disp_node.inputNames()
+            target_input = disp_node_inputs.index('dispScalar')
+
+            disp_node.setInput(target_input, disp_mix_node, layer_out)
+
+
+        else: 
+            wind_disp_out = wind_node_output.index('displace_out')
+
+            target_input_collect = len(collect_inputs)
+            collect_node.setInput(target_input_collect, quick_wind_node, wind_disp_out)
+
 
 
 
