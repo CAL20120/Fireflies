@@ -46,7 +46,10 @@ class hou_publish():
                 if root_prim.GetName() == "HoudiniLayerInfo":
                     continue
 
-                target_prim = root_prim.GetChildren()[-1]
+                target_prim = root_prim.GetChildren()[0]
+
+                if target_prim.GetName() == "HoudiniLayerInfo":
+                    target_prim = root_prim.GetChildren()[-1]
 
                 prim_name = target_prim.GetName()
                 prim_path = str(target_prim.GetPath())
@@ -87,7 +90,7 @@ class hou_publish():
             #         break
 
         # export_dir = f"{self.export_dir}/{asset_name}/{asset_name}_{version_id:03}"
-                
+
         export_path = f"{export_dir}/{asset_name}.usd"
 
 
