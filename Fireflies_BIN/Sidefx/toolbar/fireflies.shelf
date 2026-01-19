@@ -29,6 +29,7 @@ hou.session.dialog.show()]]></script>
     <memberTool name="quick_preview0"/>
     <memberTool name="texture_linker"/>
     <memberTool name="hip_importer0"/>
+    <memberTool name="fireflies_snapshots"/>
     <memberTool name="pyblish_houdini"/>
   </toolshelf>
 
@@ -86,6 +87,13 @@ hou.session.dialog.show()]]></script>
     <script scriptType="python"><![CDATA[from fireflies.fireflies_utils.usd import import_hip
 
 hou.session.dialog = import_hip.hip_importer()
+hou.session.dialog.show()]]></script>
+  </tool>
+
+  <tool name="fireflies_snapshots" label="Snapshots" icon="C:/Fireflies/Fireflies_BIN/fireflies/logos/fireflies_snapshots.png">
+    <script scriptType="python"><![CDATA[from fireflies.houdini import snapshots_hou
+
+hou.session.dialog = snapshots_hou.snapshots_window()
 hou.session.dialog.show()]]></script>
   </tool>
 </shelfDocument>
