@@ -7,8 +7,13 @@ import time
 import hou
 
 
-def launch_cache(scene_path:str, node_path:hou, hip_dir:str):
-    os.startfile(os.path.dirname(scene_path))    
+def launch_cache(scene_path:str, node_path:hou, hip_dir:str, render_path:str):
+    norm_path = os.path.normpath(scene_path)
+
+    if not os.path.exists(norm_path):
+        time.sleep(35)
+
+    os.startfile(os.path.dirname(norm_path))
 
 
     hou.hipFile.load(scene_path)
@@ -18,6 +23,9 @@ def launch_cache(scene_path:str, node_path:hou, hip_dir:str):
 
     target_node = hou.node(f"{node_path}/target_cache")
     print(target_node)
+
+    target_node.parm('sopoutput').set(render_path)
+    print("path set in scene...")
 
     output_path = target_node.evalParm('sopoutput')
 
@@ -38,12 +46,13 @@ def main():
     parser.add_argument('-scene_path')
     parser.add_argument('-node_path')
     parser.add_argument('-render_dir')
+    parser.add_argument('-render_path')
     # parser.add_argument('-f_start', type=int)
     # parser.add_argument('-f_end', type=int)
 
     args = parser.parse_args()
 
-    launch_cache(args.scene_path, args.node_path, args.render_dir)
+    launch_cache(args.scene_path, args.node_path, args.render_dir, args.render_path)
 
 if __name__ == "__main__":
     main()

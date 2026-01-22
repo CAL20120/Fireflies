@@ -2,7 +2,7 @@ import os
 import sys
 import re
 import shutil
-
+import time
 
 import subprocess 
 
@@ -16,10 +16,12 @@ from fireflies.houdini import hou_utils
 
 
 LOCAL_NAS_PROD = "Z:/PRODS"
+LOCAL_NAS_CACHE = "Z:/PROD_CACHE"
 if not os.path.exists(LOCAL_NAS_PROD):
     print("### Couldn't find the prod nas dir -- Exiting ###")
 
 convert = lambda path : LOCAL_NAS_PROD + path.split('PRODS', 1)[-1]
+convert_cache = lambda x: x + 2
 
 class hou_deadline_submitter():
     def __init__(self):
@@ -30,6 +32,8 @@ class hou_deadline_submitter():
         self.husk_ex = "C:\\Fireflies\\Fireflies_BIN\\Sidefx\\env\\husk_dl.bat"
 
         self.tmp_dir = os.environ.get('TMP')
+
+        self.utils = hou_utils.hou_usd()
 
 
     def write_target_file(self, file_path, content):
@@ -369,7 +373,7 @@ class hou_deadline_submitter():
 
         if machine_sel:
                 info_txt += 'Allowlist={}\n'.format(machine_sel)
-                # print(f"### Selected Machine: {machine_sel} ###")
+                print(f"### Selected Machine: {machine_sel} ###")
 
 
         target_path = os.path.join(self.tmp_dir, 'export_job_info.job')
@@ -379,11 +383,11 @@ class hou_deadline_submitter():
         return out
 
 
-    def hou_cache_plugin(self, scene_path:str, target_node:hou, render_dir:str):
+    def hou_cache_plugin(self, scene_path:str, target_node:hou, render_dir:str, render_path:str):
         generate_usd_script = "C:\\Fireflies\\Fireflies_BIN\\fireflies\\houdini\\cache_render_call.py"
         
 
-        args = f'{generate_usd_script} -scene_path "{scene_path}" -node_path "{target_node}" -render_dir "{render_dir}"'
+        args = f'{generate_usd_script} -scene_path "{scene_path}" -node_path "{target_node}" -render_dir "{render_dir}" -render_path "{render_path}"'
                         
         plugin_txt = 'Executable={}\n' \
                      'Arguments={}\n' \
@@ -397,6 +401,36 @@ class hou_deadline_submitter():
         return out
 
 
+    def get_cache_paths(self, node_path:str) -> str:
+        cache_node = hou.node(node_path)
+
+        cache_dir = cache_node.evalParm('cachedir')
+        cache_name = cache_node.evalParm('cachename')
+
+        init_path = f"{cache_dir}/{cache_name}"
+
+        target_frame = re.search(r'\d{4}', init_path)
+        print(target_frame.group())
+        init_path = init_path.replace(target_frame.group(), '$F')
+
+        path = init_path
+        dir, target = path.split('PRODS', 1)
+        
+        nas_cache_path = f"{LOCAL_NAS_CACHE}{target}"
+        print("### {} ###".format(nas_cache_path))
+
+        local_cache_path = f"{dir}PROD_CACHE{target}"
+
+        cache_hip_path = self.utils.path_converter(local_cache_path)
+        cache_node.parm('sopoutput').set(cache_hip_path)
+        print("Path set...")
+
+        print("### PROD CACHE PATH: {} ###".format(local_cache_path))
+
+
+        return nas_cache_path, local_cache_path
+
+
 
     def launch_cache_job(self, target_node_path=None):
         hou.hipFile.save()
@@ -407,16 +441,23 @@ class hou_deadline_submitter():
         else: 
             target_node = hou.node(target_node_path)
     
-        node_path = target_node.path()
+        target_node.allowEditingOfContents()
 
-        cache_node = hou.node(f"{node_path}/target_cache")
-        output_path = cache_node.evalParm('sopoutput')
+        node_path = target_node.path()
+        cache_node_path = f"{node_path}/target_cache"
+        cache_node = hou.node(cache_node_path)
+        
+        nas_cache_path, local_cache_path = self.get_cache_paths(cache_node_path)
+        # hip_cache_path = self.utils.path_converter(nas_cache_path)
+
+        output_path = nas_cache_path
 
         output_dir = os.path.dirname(output_path)
 
         if not os.path.exists(output_dir):
             os.makedirs(output_dir, exist_ok=True)
 
+        output_path = nas_cache_path
 
         scene_path = hou.hipFile.path()
 
@@ -425,20 +466,30 @@ class hou_deadline_submitter():
 
         file_name, ext = os.path.basename(scene_path).rsplit('.', 1)
 
+        local_output_dir = os.path.dirname(local_cache_path)
+
+        if not os.path.exists(local_output_dir):
+            os.makedirs(local_output_dir)
+
+
         new_name = f"{file_name}_FARM_{date.today()}.{ext}"
-        new_path = os.path.join(output_dir, new_name)
+        new_path = os.path.join(local_output_dir, new_name)
 
         new_path = new_path.replace('/', os.sep)
 
         try:
             shutil.copyfile(scene_path, new_path)
+            time.sleep(3)
             print("### Scene copied to: {} ###".format(new_path))
-        except:
-            print("### Couldn't copy file ###")
+
+        except PermissionError as e:
+            print("### Couldn't copy file: {} ###".format(e))
             return
 
 
-        dl_priority, job_name, dl_comment, departement, machine_sel, f_start, f_end, new_scene = self.get_job_info(target_node.path(), new_path)
+        dl_priority, job_name, dl_comment, departement, machine_sel, f_start, f_end, _ = self.get_job_info(target_node.path(), new_path)
+
+        new_scene = LOCAL_NAS_CACHE + new_path.split('PROD_CACHE', 1)[-1].replace('\\', '/')
 
         hip_dir = os.path.dirname(new_scene)
 
@@ -447,7 +498,7 @@ class hou_deadline_submitter():
         dl_frames = f"{f_start}-{f_end}"
 
         cache_job = self.hou_cache_job(job_name, dl_comment, dl_priority, dl_frames, machine_sel)
-        cache_plugin = self.hou_cache_plugin(new_scene, target_node.path(), nas_scene_dir)
+        cache_plugin = self.hou_cache_plugin(new_scene, target_node.path(), nas_scene_dir, nas_cache_path)
 
         cmd = [self.deadline_ex, cache_job, cache_plugin]
         proc = subprocess.Popen(
