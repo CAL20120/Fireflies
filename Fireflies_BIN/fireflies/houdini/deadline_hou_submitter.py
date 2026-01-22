@@ -126,6 +126,7 @@ class hou_deadline_submitter():
     def hou_job_info(self, job_name, frames, priority:str, comment, machine_sel:str) -> str:
         info_txt = 'Plugin=CommandLine\n' \
                     'Name={} [Write stage]\n' \
+                    'BatchName={}\n' \
                     'Comment={}\n' \
                     'Pool=none\n' \
                     'Group=none\n' \
@@ -134,7 +135,7 @@ class hou_deadline_submitter():
                     'Frames={}\n' \
                     'ChunkSize=2000\n' \
                     'MachineLimit=1\n' \
-                    'ConcurrentTasks=1\n'.format(job_name, comment, priority, frames)
+                    'ConcurrentTasks=1\n'.format(job_name, job_name, comment, priority, frames)
 
 
         if machine_sel:
@@ -169,6 +170,7 @@ class hou_deadline_submitter():
     def hou_render_job_info(self, job_name, priority:str, frames, id, department, comment, machine_sel:str) -> str:
         info_txt = 'Plugin=CommandLine\n' \
                     'Name={} [Render]\n' \
+                    'BatchName={}\n' \
                     'Comment={}\n' \
                     'Pool=none\n' \
                     'Group=none\n' \
@@ -176,7 +178,7 @@ class hou_deadline_submitter():
                     'Department={}\n' \
                     'Frames={}\n' \
                     'ChunkSize=1\n' \
-                    'JobDependency0={}\n'.format(job_name, comment, priority, department, frames, id)
+                    'JobDependency0={}\n'.format(job_name, job_name, comment, priority, department, frames, id)
         
 
         if machine_sel:
@@ -361,6 +363,7 @@ class hou_deadline_submitter():
     def hou_cache_job(self, job_name, comment, priority, frames, machine_sel) -> str:
         info_txt = 'Plugin=CommandLine\n' \
                     'Name={} [Cache]\n' \
+                    'BatchName={}\n' \
                     'Comment={}\n' \
                     'Pool=none\n' \
                     'Group=none\n' \
@@ -369,7 +372,7 @@ class hou_deadline_submitter():
                     'Frames={}\n' \
                     'ChunkSize=2000\n' \
                     'MachineLimit=1\n' \
-                    'ConcurrentTasks=1\n'.format(job_name, comment, priority, frames)
+                    'ConcurrentTasks=1\n'.format(job_name, job_name, comment, priority, frames)
 
         if machine_sel:
                 info_txt += 'Allowlist={}\n'.format(machine_sel)
