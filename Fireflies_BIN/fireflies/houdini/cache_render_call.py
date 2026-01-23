@@ -9,8 +9,18 @@ import hou
 
 def launch_cache(scene_path:str, node_path:hou, hip_dir:str, render_path:str):
     norm_path = os.path.normpath(scene_path)
+    scene_dir = os.path.dirname(norm_path)
 
-    if not os.path.exists(norm_path):
+    #Raidrive updates when we open the target folder, so, to check / load the current cache 
+    #folder we open it.
+    check_path = os.path.dirname(scene_dir)
+    try:
+        os.startfile(check_path)
+    
+    except:
+        print("Couldn't find caches dir")
+
+    if not os.path.exists(scene_dir):
         time.sleep(35)
 
     os.startfile(os.path.dirname(norm_path))
