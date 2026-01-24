@@ -7,7 +7,7 @@ import subprocess
 import re
 
 print("Importing -- hou_utils.py")
-from pxr import Usd, UsdGeom, UsdSkel, Sdf, UsdUtils, UsdShade
+from pxr import Usd, UsdGeom, UsdSkel, Sdf, UsdUtils, UsdShade, UsdRender
 
 class hou_usd():
     def __init__(self):
@@ -299,6 +299,8 @@ class hou_usd():
         quick_wind_node = target_mat_node.createNode('wind_setup_disp', 'wind_disp')
         wind_node_output = quick_wind_node.outputNames()
 
+        quick_wind_node.allowEditingOfContents()
+
 
         if check_displace:
             print("Connecting wind displace to current")
@@ -348,8 +350,54 @@ class hou_usd():
 
 
 
+    def create_light_group_var(self):
+        #this method is used in the fireflies rm render node as a callback
+        
+        current_node = hou.pwd()
+        stage = current_node.editableStage()
+
+        node = current_node.parent()
+
+        # print(stage)
+
+        node_ancestors = node.inputAncestors()
+
+        grp_name = node.evalParm('grp_name')
+
+        if not grp_name:
+            return
+        
+        print(grp_name)
+
+        for ancestor in node_ancestors:
+            if "light" in ancestor.type().name():
+                print(ancestor)
+
+                group_create = ancestor.parm('xn__inputsrilightlightGroup_control_krbcf')
+                group_input = ancestor.parm('xn__inputsrilightlightGroup_jebcf')
+
+                if not group_input:
+                    continue
+
+                group_create.set('set')
+                group_input.set(grp_name)
+
+        
+        grp_var_path = f"/Render/Products/Vars/light_grp_{grp_name}"
+        
+        target_var = UsdRender.Var.Define(stage, grp_var_path)
+        
+        target_var.CreateSourceNameAttr().Set(f"C[DS]*<L.'{grp_name}'>")
+        target_var.CreateSourceTypeAttr().Set(UsdRender.Tokens.lpe)
+
+        target_var.GetPrim().CreateAttribute('driver:parameters:aov:name', Sdf.ValueTypeNames.String).Set(grp_name)
+        target_var.CreateDataTypeAttr().Set("color3f")
+
+        print("VAR CRTEATED: {}".format(grp_name))
+
+
+
 
 
 if __name__ == "__main__":
     pass
-
