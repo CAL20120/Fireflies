@@ -12,7 +12,9 @@ import random
 import hou 
 
 from fireflies.houdini import hou_utils
+from fireflies.context.prod_tracker import get_context
 # from fireflies.fireflies_utils import fireflies_requests
+
 
 
 LOCAL_NAS_PROD = "Z:/PRODS"
@@ -79,7 +81,7 @@ class hou_deadline_submitter():
 
         scene_path = scene_path.replace(os.sep, '/')
                                         
-        departement = scene_path.split('/')[-2]
+        departement = get_context(scene_path).ct_task
 
         dl_comment = node.evalParm('dl_comment')
 
@@ -133,8 +135,8 @@ class hou_deadline_submitter():
                     'Priority={}\n' \
                     'Department=Usd generation\n' \
                     'Frames={}\n' \
-                    'ChunkSize=2000\n' \
-                    'MachineLimit=1\n' \
+                    'ChunkSize=24\n' \
+                    'MachineLimit=3\n' \
                     'ConcurrentTasks=1\n'.format(job_name, job_name, comment, priority, frames)
 
 
