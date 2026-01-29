@@ -80,7 +80,7 @@ class hou_deadline_submitter():
 
         scene_path = scene_path.replace(os.sep, '/')
                                         
-        departement = get_context(scene_path).ct_task
+        departement = scene_path.split('/')[-2]
 
         dl_comment = node.evalParm('dl_comment')
 
