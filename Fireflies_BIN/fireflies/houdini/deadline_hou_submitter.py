@@ -12,7 +12,7 @@ import random
 import hou 
 
 from fireflies.houdini import hou_utils
-from fireflies.context.prod_tracker import get_context
+# from fireflies.context.prod_tracker import get_context
 # from fireflies.fireflies_utils import fireflies_requests
 
 
@@ -23,7 +23,6 @@ if not os.path.exists(LOCAL_NAS_PROD):
     print("### Couldn't find the prod nas dir -- Exiting ###")
 
 convert = lambda path : LOCAL_NAS_PROD + path.split('PRODS', 1)[-1]
-convert_cache = lambda x: x + 2
 
 class hou_deadline_submitter():
     def __init__(self):
