@@ -299,7 +299,7 @@ class hou_publish():
 
         # export_path = "{}/{}.usd".format(self.export_dir, asset_name:04d)
 
-        for frame in range(int(f_start), int(f_end)):
+        for frame in range(int(f_start), int(f_end) + 1):
             hou.setFrame(frame)
             stage = node.stage()
 
