@@ -30,7 +30,7 @@ class hou_deadline_submitter():
         self.deadline_hython = "C:\\Fireflies\\Fireflies_BIN\\Sidefx\\env\\deadline_hython_310.bat"
 
         self.deadline_ex = "C:\\Fireflies\\Deadline\\bin\\deadlinecommand.exe"
-        self.husk_ex = "C:\\Fireflies\\Fireflies_BIN\\Sidefx\\env\\husk_dl.bat"
+        self.husk_ex = "C:\\Fireflies\\Fireflies_BIN\\Sidefx\\env\\husk_684_dl.bat"
 
         self.tmp_dir = os.environ.get('TMP')
 
@@ -494,6 +494,12 @@ class hou_deadline_submitter():
         dl_priority, job_name, dl_comment, departement, machine_sel, f_start, f_end, _ = self.get_job_info(target_node.path(), new_path)
 
         new_scene = LOCAL_NAS_CACHE + new_path.split('PROD_CACHE', 1)[-1].replace('\\', '/')
+
+        try:
+            shutil.copyfile(new_path, new_scene)
+        except:
+            pass
+
 
         hip_dir = os.path.dirname(new_scene)
 
