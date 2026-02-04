@@ -16,6 +16,9 @@ def export_usd(scene_path:str, node_path:hou, export_path:str, f_start:int, f_en
     norm_dir = os.path.dirname(norm_scene)
     os.startfile(norm_dir)
 
+    export_dir = os.path.dirname(export_path)
+    os.startfile(export_dir)
+
 
     # if not os.path.exists(norm_scene):
     #     print("CURRENT PATH: {}".format(scene_path))
