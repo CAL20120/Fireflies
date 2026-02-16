@@ -97,8 +97,8 @@ class hou_deadline_submitter():
         if user_range != 0:
             f_start, f_end = hou.playbar.playbackRange()
             
-            f_start = int(f_start)
-            f_end = int(f_end)
+            f_start = int(node.evalParm('f1'))
+            f_end = int(node.evalParm('f2'))
 
 
         # new_path = scene_path.split('PRODS', 1)
@@ -230,7 +230,7 @@ class hou_deadline_submitter():
         export_dir = export_dir.replace('/', '\\')
 
         if not os.path.exists(export_dir):
-            os.makedirs(export_dir, exist_ok=True)
+            os.makedirs(export_dir)
 
         scene_path = new_scene
 
@@ -290,7 +290,7 @@ class hou_deadline_submitter():
         export_dir = export_dir.replace(os.sep, '/')
 
         export_path = os.path.join(
-            export_dir, "__render__.$F4.usd"
+            export_dir, "__render__.$F4.usdc"
         ).replace("\\", '/')
 
         print("### USD EXPORT PATH: {} ###".format(export_path))
