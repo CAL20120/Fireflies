@@ -10,12 +10,20 @@ import pathlib
 
 import hou
 
+import gazu
+
+from fireflies.context import prod_tracker
+
+CONTEXT = prod_tracker.manage_context()
+
+
+
 class context_window(QtWidgets.QDialog):
     def __init__(self):
         super(context_window, self).__init__()
         self.setWindowTitle("Set Context")
         self.setMinimumSize(702, 850)
-        self.setMaximumSize(702, 850)
+        # self.setMaximumSize(702, 850)
 
         self.f = open(r"C:\\Fireflies\\Common\\fmk_user_prefs\\user_prefs_dir.txt")
         # self.path = r"R:\\Christopher_LUCAS"
@@ -29,19 +37,22 @@ class context_window(QtWidgets.QDialog):
         self.create_connections()
 
 
-
     def get_flds(self):
-        target_flds = os.listdir(self.path)
-
         exclude_list = [
+            "fireflies_tracker",
             "desktop.ini",
             ".SynologyWorkingDirectory"
         ]
-        for x, fld in enumerate(target_flds):
-            if any(ex in fld for ex in exclude_list):
-                target_flds.pop(x)
 
+        target_flds = [
+            fld for fld in os.listdir(self.path) if fld not in exclude_list
+        ]
+
+        # for x, fld in enumerate(target_flds):
+        #     if any(ex in fld for ex in exclude_list):
+        #         target_flds.pop(x)
         # target_flds = [path for path in self.path.iterdir() if path.is_dir()]
+
         return target_flds
     
 
@@ -81,11 +92,22 @@ class context_window(QtWidgets.QDialog):
         self.ct_shot_btn = QtWidgets.QPushButton("Shot")
         self.ct_task_btn = QtWidgets.QPushButton("Task")
 
-        
+        self.kt_info_table = QtWidgets.QTableWidget()
+        self.kt_info_table.setColumnCount(1)
+        self.kt_info_table.setRowCount(4)
+        self.kt_info_table.setVerticalHeaderLabels(['Status', 'Start Date', 'Due Date', 'Assigned Artists'])
+        self.kt_info_table.horizontalHeader().hide()
+        kt_header_view = self.kt_info_table.verticalHeader()
+        self.kt_info_table.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
+
+        for x in range(5):
+            self.kt_info_table.setItem(0, x, QtWidgets.QTableWidgetItem('Waiting'))
+
+
         self.start_shot_btn = QtWidgets.QPushButton("Start/Save Shot")
         self.open_btn = QtWidgets.QPushButton("Open")
         self.close_btn = QtWidgets.QPushButton("Close")
-        self.debug_btn = QtWidgets.QPushButton("Debug")
+        # self.debug_btn = QtWidgets.QPushButton("Debug")
 
 
     def create_layout(self):
@@ -95,19 +117,20 @@ class context_window(QtWidgets.QDialog):
         self.set_shots_layout.addWidget(self.shots_combo)
         self.set_shots_layout.addWidget(self.tasks_combo)
 
-
         self.ct_layout = QtWidgets.QHBoxLayout()
         self.ct_layout.addWidget(self.ct_prod_btn)
         self.ct_layout.addWidget(self.ct_seq_btn)
         self.ct_layout.addWidget(self.ct_shot_btn)
         self.ct_layout.addWidget(self.ct_task_btn)
 
+        self.kt_info_layout = QtWidgets.QVBoxLayout()
+        self.kt_info_layout.addWidget(self.kt_info_table)
 
         self.bottom_btn_layout = QtWidgets.QHBoxLayout()
         self.bottom_btn_layout.addWidget(self.start_shot_btn)
         self.bottom_btn_layout.addWidget(self.open_btn)
         self.bottom_btn_layout.addWidget(self.close_btn)
-        self.bottom_btn_layout.addWidget(self.debug_btn)
+        # self.bottom_btn_layout.addWidget(self.debug_btn)
 
 
         self.preview_layout = QtWidgets.QHBoxLayout()
@@ -120,11 +143,13 @@ class context_window(QtWidgets.QDialog):
         self.main_layout = QtWidgets.QVBoxLayout(self)
         self.main_layout.addLayout(self.set_shots_layout)
         self.main_layout.addWidget(self.context_info)
+
         self.main_layout.addLayout(self.line_layout)
         self.main_layout.addLayout(self.ct_layout)
         self.main_layout.addLayout(self.preview_layout)
         # self.main_layout.addWidget(self.refresh_btn)
 
+        self.main_layout.addLayout(self.kt_info_layout)
 
         self.main_layout.addStretch()
         self.main_layout.addLayout(self.bottom_btn_layout)
@@ -140,10 +165,11 @@ class context_window(QtWidgets.QDialog):
         # self.tasks_combo.currentIndexChanged.connect(self.update_tasks)
         self.shots_combo.currentIndexChanged.connect(self.refresh_scene_ath)
         self.tasks_combo.currentIndexChanged.connect(self.refresh_scene_ath)
+        self.tasks_combo.currentIndexChanged.connect(self.update_kt_table)
 
         # self.refresh_btn.clicked.connect(self.refresh_scene_ath)
 
-        self.debug_btn.clicked.connect(self.test)
+        # self.debug_btn.clicked.connect(self.test)
         self.start_shot_btn.clicked.connect(self.export_context_scene)
         self.open_btn.clicked.connect(self.open_scene)
         self.context_info.selectionModel().selectionChanged.connect(self.sel_changed)
@@ -180,7 +206,11 @@ class context_window(QtWidgets.QDialog):
 
 
         else:
-            self.win = task_win()
+            props_check = False
+            if self.sequence_combo.currentText() == 'props':
+                props_check = True
+
+            self.win = task_win(props_check)
             self.win.task_signal.connect(self.target_fld_callback)
 
             self.win.show()
@@ -189,28 +219,44 @@ class context_window(QtWidgets.QDialog):
         self.current_target = target
 
 
+
     def target_fld_callback(self, target_name):
         prod = self.prod_combo.currentText()
         seq = self.sequence_combo.currentText()
         shot = self.shots_combo.currentText()
-        
+
+        props_check = False
+        if any('props' in item for item in [target_name, seq]):
+            props_check = True
+
 
         if self.current_target == "prod":
             init_path = self.path
 
         elif self.current_target == "seq":
             init_path = os.path.join(self.path, prod)
-
+            
+            if not props_check:
+                CONTEXT.add_seq(target_name, prod)
+ 
         elif self.current_target == "shot":
             init_path = os.path.join(self.path, prod, seq)
+            
+            if not props_check:
+                CONTEXT.add_shot(prod, seq, target_name)
 
         else: 
             init_path = os.path.join(self.path, prod, seq, shot)
+
+            if not props_check:
+                CONTEXT.add_task(prod, seq, shot, target_name)
+
 
         out_path = os.path.join(init_path, target_name)
 
         if not os.path.exists(out_path):
             os.makedirs(out_path)
+
 
 
 
@@ -319,6 +365,32 @@ class context_window(QtWidgets.QDialog):
         self.context_info.setItem(row, column, item)
 
 
+    #linked to the context manager to gather task information from kitsu and display it
+    def update_kt_table(self):
+        self.build_scene_path()
+        print(self.fullPath)
+
+        if 'props' in self.fullPath.lower():
+            print("### Not tracking props in the scene context ###")
+            return
+
+        kt_infos = CONTEXT.get_full_ct(self.fullPath)
+        
+        self.kt_status = kt_infos['status']
+        self.kt_start = kt_infos['start_date']
+        self.kt_end = kt_infos['end_date']
+
+        kt_user_list = kt_infos['assigned_users']
+        map_users = map(str, kt_user_list)
+        self.kt_assigned_user = ', '.join(map_users)
+
+        self.kt_info_table.setItem(0, 0, QtWidgets.QTableWidgetItem(self.kt_status))
+        self.kt_info_table.setItem(1, 0, QtWidgets.QTableWidgetItem(self.kt_start))
+        self.kt_info_table.setItem(2, 0, QtWidgets.QTableWidgetItem(self.kt_end))
+        self.kt_info_table.setItem(3, 0, QtWidgets.QTableWidgetItem(self.kt_assigned_user))
+
+
+
     def sel_changed(self):
         try:
             sel = self.context_info.selectedItems()[0]
@@ -406,6 +478,8 @@ class pop_up_win(QtWidgets.QDialog):
             print(out_text)
             self.text_signal.emit(out_text)
 
+            # TRACKER.add_task(name=out_text)
+
         else: 
             print("No input detected")
             return
@@ -416,8 +490,10 @@ class pop_up_win(QtWidgets.QDialog):
 class task_win(QtWidgets.QDialog):
     task_signal = QtCore.Signal(str)
 
-    def __init__(self):
+    def __init__(self, target_props:bool=None):
         super(task_win, self).__init__()
+
+        self.target_props = target_props
 
         self.setWindowTitle("Set name")
         self.setMinimumSize(100, 50)
@@ -446,20 +522,16 @@ class task_win(QtWidgets.QDialog):
         self.create_btn.clicked.connect(self.out_val)
         self.close_btn.clicked.connect(self.close)
 
-        target_tasks = [
-            "model",
-            "assembly", 
-            "lookdev",
-            "texturing",
-            "rig", 
-            "groom",
-            "layout", 
-            "anim",
-            "light",
-        ]
+        target_tasks = prod_tracker.SHOT_TASKS
+
+        if self.target_props:
+            target_tasks = prod_tracker.ASSET_TASKS
+
+        remove_targets = ['validate', 'to_validate']
+
+        target_tasks = [item for item in target_tasks if item not in remove_targets]
 
         self.task_combo.addItems(target_tasks)
-
 
 
     def out_val(self):
