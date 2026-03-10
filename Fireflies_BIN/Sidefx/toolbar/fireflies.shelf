@@ -42,10 +42,11 @@ hou.session.dialog.show()]]></script>
 
   <tool name="pyblish_houdini" label="Publish" icon="C:/Fireflies/Fireflies_BIN/fireflies/logos/publish_logo.png">
     <script scriptType="python"><![CDATA[import pyblish 
-import pyblish.api 
+import pyblish_qml
 import pyblish_lite
 import pyblish_houdini 
 import pyblish.util
+from pyblish_qml import settings, api
 
 pyblish_houdini.setup()
 
@@ -53,13 +54,14 @@ pyblish.api.register_plugin_path("C:\\Fireflies\\Fireflies_BIN\\fireflies\\publi
 pyblish.api.register_plugin_path("C:\\Fireflies\\Fireflies_BIN\\fireflies\\publish_hou\\validator")
 pyblish.api.register_plugin_path("C:\\Fireflies\\Fireflies_BIN\\fireflies\\publish_hou\\extractor")
 
-pyblish_lite.settings.WindowTitle = "Usd Publishing"
-pyblish_lite.settings.InitialTab = "artist"
-pyblish_lite.settings.UsdLabel = True
+settings.WindowTitle = "Usd Publishing"
+settings.InitialTab = "artist"
+settings.UsdLabel = True
 
-pyblish.api.discover()
+#pyblish.api.discover()
 
-pyblish_lite.show()]]></script>
+api.show()
+]]></script>
   </tool>
 
   <tool name="quick_preview0" label="Quick Preview" icon="C:/Fireflies/Fireflies/softs_logo/quick_previz.png">
