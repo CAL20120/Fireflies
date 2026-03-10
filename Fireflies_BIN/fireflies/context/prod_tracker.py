@@ -42,7 +42,8 @@ ASSET_TASKS = [
     "anim",
     "validate", #Only under Alice's supervision
     "to_validate", 
-    "retopo"
+    "retopo", 
+    "setup"
 
 ]
 
@@ -328,8 +329,15 @@ class manage_context():
         print("### Version published to kitsu - {} ###".format(ct_task))
 
 
-    def set_scene_range(self):
-        pass
+    def set_scene_range(self, scene_path):
+        CT_CONTEXT = manage_paths(scene_path)
+        
+        kt_infos = self.get_context_info(CT_CONTEXT.ct_prod, CT_CONTEXT.ct_seq, CT_CONTEXT.ct_shot)
+
+        f_start, f_end = kt_infos['frame_range']
+
+        if CT_HOU:
+            pass
 
 
     #all methods related to assets
@@ -339,3 +347,4 @@ if __name__ == "__main__":
     CONTEXT = manage_context()
     info = CONTEXT.get_full_ct(r'R:\Christopher_LUCAS\PRODS\test_dev_02\001\01\light')
     print(info['status'])
+
