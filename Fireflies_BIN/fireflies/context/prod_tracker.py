@@ -322,7 +322,7 @@ class manage_context():
         kt_current_status = gazu.task.get_task_status(kt_task_entity['task_status_id'])
 
         gazu.task.publish_preview(
-            task=kt_task_entity, comment=comment, preview_file_path=preview_path, 
+            task=kt_task_entity, comment=comment, preview_file_path=preview_path,
             person=self.kt_user, task_status=kt_current_status
         )
 
@@ -330,15 +330,20 @@ class manage_context():
 
 
     def set_scene_range(self, scene_path):
-        CT_CONTEXT = manage_paths(scene_path)
+        # CT_CONTEXT = manage_paths(scene_path)
         
-        kt_infos = self.get_context_info(CT_CONTEXT.ct_prod, CT_CONTEXT.ct_seq, CT_CONTEXT.ct_shot)
+        kt_infos = self.get_full_ct(scene_path)
 
         f_start, f_end = kt_infos['frame_range']
 
-        if CT_HOU:
-            pass
+        if not f_start:
+            print("### First or Last frame is not set on kitsu ###")
+            return
 
+        if CT_HOU:
+            hou.playbar.setFrameRange(f_start, f_end)
+
+        print("### Frame range set to the server data")
 
     #all methods related to assets
 
