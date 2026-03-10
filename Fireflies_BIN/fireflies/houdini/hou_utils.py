@@ -210,7 +210,7 @@ class hou_usd():
         fbk_settings = target_pane.flipbookSettings().stash()
         fbk_settings.frameRange((hou.frame(), hou.frame()))
         fbk_settings.useResolution(True)
-        fbk_settings.useResolution((1920, 1080))
+        fbk_settings.useResolution((2560, 1440))
         
         fbk_settings.outputToMPlay(False)
         fbk_settings.output(output)
