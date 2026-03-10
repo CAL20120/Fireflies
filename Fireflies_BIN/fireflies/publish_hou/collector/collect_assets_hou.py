@@ -3,9 +3,9 @@ import pyblish.api
 
 import hou 
 
+from fireflies.context import prod_tracker
 from fireflies.houdini import hou_utils, abstract_hou_publish
 
-from pxr import Usd, UsdGeom, Sdf
 class CollectHouData(pyblish.api.ContextPlugin):
     """Collect Any Assets, Layouts or pyblishable data  from houdini"""
 
@@ -24,6 +24,19 @@ class CollectHouData(pyblish.api.ContextPlugin):
     def process(self, context):
         context.data["comment"] = ""
         
+        props_check = False
+        
+        if prod_tracker.CT_HOU:
+            print("CT HOU ON PUBLISH")
+            scene_path = hou.hipFile.path().replace('/', '\\')
+
+        if 'props' in scene_path:
+            props_check = True
+            print("### Props check active ###")
+
+        context.data['props_check'] = props_check
+        context.data['scene_path'] = scene_path
+
         targets, paths, prim, nodes = self.abstract_publish.fetch_targets()
 
         for index, name in enumerate(targets):

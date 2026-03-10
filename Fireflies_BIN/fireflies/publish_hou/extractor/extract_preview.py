@@ -12,8 +12,8 @@ class Extract_Preview(pyblish.api.InstancePlugin):
     label = "Export preview (single frame)"
 
     def process(self, instance):
-        context = instance.context
-
         abstract_publish = abstract_hou_publish.hou_publish()
 
-        abstract_publish.export_preview(asset_name=instance.name)
+        preview_path = abstract_publish.export_preview(asset_name=instance.name)
+
+        instance.data['preview'] = preview_path

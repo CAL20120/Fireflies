@@ -8,8 +8,14 @@ import random
 
 import collections
 
+from colorama import Fore
+
 # from fireflies.fireflies_utils.usd import fireflies_usd_viewer
 
+from fireflies.context import prod_tracker
+
+CT_HOU = False
+CT_MAYA = False
 
 #otherwise when we import this script in the standalone 
 #assembly resolver it won't load
@@ -17,6 +23,17 @@ try:
     import hou
     from fireflies.houdini import hou_utils
     from pxr import Usd, UsdGeom, Sdf
+
+    CT_HOU = True
+
+except:
+    pass
+
+
+try:
+    import maya.cmds as cmds
+    CT_MAYA = True
+
 except:
     pass
 
@@ -31,13 +48,17 @@ class importer_window(QtWidgets.QDialog):
     target_input = QtCore.Signal(str)
 
 
-    def __init__(self, import_classic:bool=None):
+    def __init__(self, parent=None, import_classic:bool=None, prod_path:str=None):
         try: 
             parent = hou.qt.mainWindow()
+        
         except:
             pass
 
         super(importer_window, self).__init__(parent)
+
+        self.prod_path= prod_path
+        print(self.prod_path)
 
         self.import_classic = import_classic
         self.target_input = None
@@ -54,9 +75,11 @@ class importer_window(QtWidgets.QDialog):
         # self.import_comment()
 
     def get_asset_paths(self):
-        self.prod_path = hou.hipFile.path().rsplit("/", 4)[0].replace("/", os.sep)
+        
+        if not self.prod_path:
+            self.prod_path = hou.hipFile.path().rsplit("/", 4)[0].replace("/", os.sep)
 
-        x = import_usd_asset()
+        x = import_usd_asset(prod_path=self.prod_path)
         self.assets_name, self.assets_vars = x.find_asset()
 
         # self.assets_time = []
@@ -285,6 +308,8 @@ class importer_window(QtWidgets.QDialog):
         asset_name = target_parent.text(0)
         task_name = target_task.text(0)
 
+        # print(asset_name)
+
         target_combo = self.asset_table.itemWidget(target_task, 1)
         asset_version = target_combo.currentText()
 
@@ -293,11 +318,13 @@ class importer_window(QtWidgets.QDialog):
 
         asset_path = target_version['path'] if target_type == "asset" else target_version['frames'][0]['path']
 
-        return asset_path, target_type
+        return asset_path, target_type, asset_name
 
 
     def import_asset(self):
-        asset_path, asset_type = self.get_asset_data()
+        asset_path, asset_type, asset_name = self.get_asset_data()
+
+        print(asset_name)
 
         # print(type(asset_path))
         # print(asset_path)
@@ -305,10 +332,12 @@ class importer_window(QtWidgets.QDialog):
         # print(type(asset_type))
         # print(asset_type)
         
-        utils = hou_utils.hou_usd()
+        if CT_HOU:
+            utils = hou_utils.hou_usd()
 
-        hip_path = utils.path_converter(path=asset_path)
+            hip_path = utils.path_converter(path=asset_path)
         
+
         if self.import_classic:
             if asset_type == "asset":
                 utils.import_prod_usd_asset(asset_path=hip_path)
@@ -316,11 +345,22 @@ class importer_window(QtWidgets.QDialog):
             elif asset_type == "sequence":
                 utils.import_usd_sequence(asset_path=hip_path)
 
-        if self.target_input:
-            self.import_target.parm(self.target_input).set(hip_path)
+        try:
+            if self.target_input:
+                self.import_target.parm(self.target_input).set(hip_path)
 
-        if not self.import_classic: 
-            self.import_target.parm('input_file').set(hip_path)
+            if not self.import_classic: 
+                self.import_target.parm('input_file').set(hip_path)
+
+        except:
+            pass
+
+        # print(asset_path)
+        self.out_name = asset_name
+        self.accept()
+
+        return asset_name
+    
 
 
     def import_comment(self):
@@ -346,7 +386,7 @@ class importer_window(QtWidgets.QDialog):
         # asset_path = self.get_asset_path()
         # path = os.path.dirname(asset_path)
 
-        asset_path, _ = self.get_asset_data()
+        asset_path, _, _ = self.get_asset_data()
 
         version_path = os.path.dirname(asset_path)
         target_file = f"{version_path}/metadata/commentary/{name}_comment.txt"
@@ -386,7 +426,7 @@ class importer_window(QtWidgets.QDialog):
         parent = current_task.parent()
         name = parent.text(0)
 
-        asset_path, _ = self.get_asset_data()
+        asset_path, _, _ = self.get_asset_data()
         version_path = os.path.dirname(asset_path)
         target_file = f"{version_path}/metadata/preview/{name}_preview.jpg"
 
@@ -402,15 +442,15 @@ class importer_window(QtWidgets.QDialog):
 
 
 class import_usd_asset():
-    def __init__(self):
+    def __init__(self, prod_path:str=None):
         super(import_usd_asset, self).__init__()
 
-        try: 
-            import hou
-            self.prod_path = hou.hipFile.path().rsplit("/", 4)[0].replace("/", "\\")
+        self.prod_path = prod_path
         
-        except:
-            self.prod_path = None
+        if CT_HOU:
+            if not prod_path:
+                self.prod_path = hou.hipFile.path().rsplit("/", 4)[0].replace("/", "\\")
+        
 
     def find_asset(self) -> str | collections.defaultdict:
         #the purpose here is to build a dict with each assets and its version to 
@@ -499,7 +539,7 @@ class import_usd_asset():
             #     continue
 
 
-            asset_id = random.randrange(0000, 9999)
+            # asset_id = random.randrange(0000, 9999)
 
             if asset_target and not anim_target:
                 name = asset_target.group(1)
@@ -518,7 +558,6 @@ class import_usd_asset():
                     current_task,
                     {
                         "type": "asset",
-                        "asset_id": asset_id,
                         "path": asset
                     }
                 )
@@ -533,7 +572,7 @@ class import_usd_asset():
 
                 #important to use setdefault to create a value for each frame
                 target = anim_dict.setdefault(
-                    current_task, 
+                    current_task,
                     {
                         "type": "sequence",
                         "frames": []
@@ -542,7 +581,7 @@ class import_usd_asset():
 
                 target['frames'].append(
                     {
-                        "frame": frame, 
+                        "frame": frame,
                         "path": asset
                     }
                 )
@@ -550,7 +589,7 @@ class import_usd_asset():
 
         # for dir, subdir, files in os.walk(self.prod_path):
         #     if "usd_published" in dir:
-        #         self.result_dirs.append(dir)        
+        #         self.result_dirs.append(dir)
 
         # for index, dir in enumerate(self.result_dirs):
         #     for file in os.listdir(dir):
@@ -569,19 +608,23 @@ class import_usd_asset():
 
 
 
-    def find_current_task(self, target_dir:os.path.dirname) -> str:
-        target_tasks = [
-            "model",
-            "assembly", 
-            "lookdev",
-            "texturing",
-            "rig", 
-            "groom",
-            "layout", 
-            "anim",
-            # "setup_fx",
-            "light",
-        ]
+    def find_current_task(self, target_dir:str) -> str:
+        target_tasks = prod_tracker.TARGET_TASKS
+
+        # target_tasks = [
+        #     "model",
+        #     "assembly",
+        #     "lookdev",
+        #     "texturing",
+        #     "rig",
+        #     "groom",
+        #     "layout", 
+        #     "anim",
+        #     "light",
+        #     "validate", #Only under Alice's supervision
+        #     "comp", 
+        #     "env"
+        # ]
         
         # tasks_iter = next((task for task in target_tasks if task in target_dir), None)
         
