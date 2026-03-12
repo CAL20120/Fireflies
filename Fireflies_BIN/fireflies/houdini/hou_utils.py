@@ -1,5 +1,9 @@
 #This file contains all the classes and methods often used when interacting with houdini hou module in usd
-import hou
+try:
+    import hou
+
+except:
+    pass
 
 import os
 from datetime import datetime
@@ -7,6 +11,7 @@ import subprocess
 import re
 
 print("Importing -- hou_utils.py")
+
 from pxr import Usd, UsdGeom, UsdSkel, Sdf, UsdUtils, UsdShade, UsdRender
 
 class hou_usd():
@@ -21,7 +26,7 @@ class hou_usd():
         return self.prod_path
     
 
-    def get_current_context(self) -> hou:
+    def get_current_context(self):
         try:
             desktop = hou.ui.curDesktop()
         
@@ -39,7 +44,7 @@ class hou_usd():
         return self.curr_context
 
 
-    def center_node(self, current_node:hou):
+    def center_node(self, current_node):
         self.get_current_context()
 
         bound = self.pane.visibleBounds()
@@ -166,8 +171,6 @@ class hou_usd():
         # stage.GetRootLayer().save()
 
     def create_proxy_purpose(self):
-        from pxr import Usd, UsdGeom
-
         node = hou.pwd()
         stage = node.editableStage()
 
@@ -198,7 +201,7 @@ class hou_usd():
             print("asset path does not exist")
 
 
-    def create_playblast(self, output:str):
+    def create_playblast(self, output:str, frame_range:tuple=None):
         desktop = hou.ui.curDesktop()
         target_pane = desktop.paneTabOfType(hou.paneTabType.SceneViewer)
 
@@ -208,10 +211,18 @@ class hou_usd():
         # f_start, f_end = hou.playbar.playbackRange()
 
         fbk_settings = target_pane.flipbookSettings().stash()
-        fbk_settings.frameRange((hou.frame(), hou.frame()))
-        fbk_settings.useResolution(True)
-        fbk_settings.useResolution((2560, 1440))
+
+        if frame_range:
+            fbk_settings.frameRange(frame_range)
+
+        else:
+            fbk_settings.frameRange((hou.frame(), hou.frame()))
         
+        fbk_settings.useResolution(True)
+        fbk_settings.resolution((2560, 1440))
+
+        fbk_settings.cropOutMaskOverlay(True)
+
         fbk_settings.outputToMPlay(False)
         fbk_settings.output(output)
 
@@ -232,11 +243,6 @@ class hou_usd():
         hip_path = f"$HIP/{norm_rel}"
 
         return hip_path
-
-
-    def get_last_node(self, scene_path:str) -> hou.node:
-        pass
-
 
 
     def quick_wind(self, prim_path:str):
@@ -397,6 +403,23 @@ class hou_usd():
 
 
 
+#class used to manage the callbacks from a "Fireflies Asset Import"
+#node in houdini
+
+class asset_importer():
+    def __init__(self):
+        from fireflies.fireflies_utils.usd import usd_asset_importer_hou
+        
+    #on importing the asset in the node
+    def create_import_asset(self):
+        pass
+
+
+    def version_callback(self):
+        pass
+
+
+    
 
 
 if __name__ == "__main__":

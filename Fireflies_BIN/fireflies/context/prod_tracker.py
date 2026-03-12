@@ -322,7 +322,7 @@ class manage_context():
         kt_current_status = gazu.task.get_task_status(kt_task_entity['task_status_id'])
 
         gazu.task.publish_preview(
-            task=kt_task_entity, comment=comment, preview_file_path=preview_path,
+            task=kt_task_entity, comment=comment, preview_file_path=preview_path, 
             person=self.kt_user, task_status=kt_current_status
         )
 
@@ -347,9 +347,9 @@ class manage_context():
 
     #all methods related to assets
 
-
 if __name__ == "__main__":
-    CONTEXT = manage_context()
-    info = CONTEXT.get_full_ct(r'R:\Christopher_LUCAS\PRODS\test_dev_02\001\01\light')
-    print(info['status'])
+    pass
+    # CONTEXT = manage_context()
+    # info = CONTEXT.get_full_ct(r'R:\Christopher_LUCAS\PRODS\test_dev_02\001\01\light')
+    # print(info['status'])
 
