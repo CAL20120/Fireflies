@@ -17,4 +17,4 @@ set "HOUDINI_PATH=%RMANTREE%\bin;%DEADLINE_HOU%;%HOUDINI_PATH%;&"
 
 set HOUDINI_SPLASH_FILE=C:\Fireflies\Fireflies\softs_logo\fireflies_splash_rm27.png
 
-"C:\Fireflies\Common\Houdini_vars\houdini_205445\Houdini20.5.445\bin\hython.exe" -q %*
+"C:\Fireflies\Common\Houdini_vars\houdini_205684\bin\hython.exe" -q %*
