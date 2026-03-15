@@ -14,6 +14,7 @@ import gazu
 
 CT_HOU = False
 CT_MAYA = False
+CT_NUKE = False
 
 try:
     import hou #type:ignore
@@ -25,12 +26,24 @@ except:
 
 
 try:
-    import maya.cmds as cmds #type:ignore
+    import maya.cmds as cmds #type: ignore
+    import maya.OpenMayaUI as omui #type: ignore
     CT_MAYA = True
     print("MAYA CONTEXT")
 
 except:
     pass
+
+
+try:
+    import nuke #type: ignore
+    import nukescripts #type: ignore
+    CT_NUKE = True
+    print("NUKE CONTEXT")
+
+except:
+    pass
+
 
 
 ASSET_TASKS = [
@@ -295,7 +308,7 @@ class manage_context():
             'end_date': end_date, 
             'assigned_users': out_user_name, 
             'frame_range': kt_frame_range,
-            'fps': kt_fps
+            'fps': kt_fps, 
         }
 
         return info_dict
