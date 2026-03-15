@@ -1,13 +1,16 @@
-import cv2
 import os
+import sys
+
+import cv2
 
 from datetime import datetime
 
-import sys
+import json
 
 import argparse
 
-def convert_to_video(first_image_path:str, kt_infos:dict=None, version:int=None):
+
+def convert_to_video(first_image_path:str, kt_infos:dict=None, version:int=None, user:str=None):
     if not os.path.exists(first_image_path):
         print("### Invalid Path ###")
         return
@@ -52,9 +55,6 @@ def convert_to_video(first_image_path:str, kt_infos:dict=None, version:int=None)
     }
 
 
-    if kt_infos:
-        pass
-
 
     target_font = cv2.FONT_HERSHEY_SIMPLEX
 
@@ -83,7 +83,7 @@ def convert_to_video(first_image_path:str, kt_infos:dict=None, version:int=None)
             org=(50, out_resolution[1] - 50), 
             fontFace=target_font, 
             fontScale=3,
-            thickness=3, 
+            thickness=2, 
             color=color_text, 
             lineType=cv2.LINE_AA
         )
@@ -99,6 +99,34 @@ def convert_to_video(first_image_path:str, kt_infos:dict=None, version:int=None)
             lineType=cv2.LINE_AA
         )
 
+        info_w = int(out_resolution[0] - 500)
+
+        if kt_infos:
+            kt_infos = dict(kt_infos)
+
+            cv2.putText(
+                img=info_bar, 
+                text=f"status: {kt_infos['status']}",
+                org=(info_w, out_resolution[1] - 90), 
+                fontFace=target_font, 
+                fontScale=1.5, 
+                thickness=2,
+                color=color_text, 
+                lineType=cv2.LINE_AA
+            )
+
+        if user:
+            cv2.putText(
+                img=info_bar, 
+                text=f"Artist: {user}",
+                org=(info_w, out_resolution[1] - 40), 
+                fontFace=target_font, 
+                fontScale=1.5, 
+                thickness=2,
+                color=color_text, 
+                lineType=cv2.LINE_AA
+            )
+            
 
         out_video.write(info_bar)
 
@@ -110,10 +138,19 @@ def convert_to_video(first_image_path:str, kt_infos:dict=None, version:int=None)
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-first_image_path')
+    parser.add_argument('-first_image_path', type=str)
+    parser.add_argument(
+        '-kt_infos', 
+        type=json.loads, 
+        help="The Dict generated from the prod tracker " \
+        "script to include info on the generated video (pass a str and will be converted to a dcit)"
+    )
+    parser.add_argument('-user', type=str)
+
     args = parser.parse_args()
 
-    convert_to_video(args.first_image_path)
+    convert_to_video(first_image_path=args.first_image_path, kt_infos=args.kt_infos, 
+                     user=args.user)
 
 
 if __name__ == "__main__":

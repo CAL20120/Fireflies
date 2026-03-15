@@ -17,7 +17,7 @@ class Kt_Integrate_Asset(pyblish.api.InstancePlugin):
 
         props_check = context.data.get('props_check')
 
-        print("DEBUG KITSU: {}".format(props_check))
+        print("DEBUG KITSU PROPS: {}".format(props_check))
 
         video_preview_path = instance.data.get('video_preview_path')
 
