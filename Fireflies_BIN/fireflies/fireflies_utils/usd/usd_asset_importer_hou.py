@@ -296,7 +296,7 @@ class importer_window(QtWidgets.QDialog):
         return sel_name, item_index
 
 
-    def get_asset_data(self) -> str:
+    def get_asset_data(self, output_task:bool=None) -> str:
         current_sel = self.asset_table.selectedItems()
         if not current_sel:
             print("No current selection")
@@ -306,6 +306,8 @@ class importer_window(QtWidgets.QDialog):
         target_parent = target_task.parent()
         
         asset_name = target_parent.text(0)
+        print(asset_name)
+
         task_name = target_task.text(0)
 
         # print(asset_name)
@@ -318,11 +320,15 @@ class importer_window(QtWidgets.QDialog):
 
         asset_path = target_version['path'] if target_type == "asset" else target_version['frames'][0]['path']
 
-        return asset_path, target_type, asset_name
+        if output_task:
+            return asset_path, target_type, asset_name, task_name
+
+        else:
+            return asset_path, target_type, asset_name
 
 
     def import_asset(self):
-        asset_path, asset_type, asset_name = self.get_asset_data()
+        asset_path, asset_type, asset_name, current_task = self.get_asset_data(output_task=True)
 
         print(asset_name)
 
@@ -332,35 +338,53 @@ class importer_window(QtWidgets.QDialog):
         # print(type(asset_type))
         # print(asset_type)
         
+        hip_path = None
         if CT_HOU:
             utils = hou_utils.hou_usd()
 
             hip_path = utils.path_converter(path=asset_path)
-        
+            out_path = hip_path
 
         if self.import_classic:
             if asset_type == "asset":
-                utils.import_prod_usd_asset(asset_path=hip_path)
+                utils.import_prod_usd_asset(asset_path=out_path)
 
             elif asset_type == "sequence":
-                utils.import_usd_sequence(asset_path=hip_path)
+                utils.import_usd_sequence(asset_path=out_path)
 
-        try:
-            if self.target_input:
-                self.import_target.parm(self.target_input).set(hip_path)
+        else:
+            try:
+                if self.target_input:
+                    self.import_target.parm(self.target_input).set(out_path)
 
-            if not self.import_classic: 
-                self.import_target.parm('input_file').set(hip_path)
+                # if not self.import_classic: 
+                self.import_target.parm('input_file').set(out_path)
 
-        except:
-            pass
+            except:
+                print("### Error when trying to set path ###")
+
+            try:
+                self.import_target.parm('current_task').set(current_task)
+                self.import_target.parm('`asset_name`').set(str(asset_name))
+
+            except:
+                pass
+
+
 
         # print(asset_path)
         self.out_name = asset_name
+        self.out_type = asset_type
+        print(self.out_name)
+        print(self.out_type)
+
         self.accept()
 
-        return asset_name
-    
+        if not hip_path:
+            hip_path = "Undefined"
+
+        return asset_name, asset_type, hip_path
+
 
 
     def import_comment(self):
@@ -607,27 +631,17 @@ class import_usd_asset():
         return list(self.assets_vars.keys()), self.assets_vars
 
 
+    def find_asset_by_name(self, asset_name):
+        _, asset_vars = self.find_asset()
+
+        target_asset = self.assets_vars.get(asset_name)
+
+        return target_asset
+
+
 
     def find_current_task(self, target_dir:str) -> str:
         target_tasks = prod_tracker.TARGET_TASKS
-
-        # target_tasks = [
-        #     "model",
-        #     "assembly",
-        #     "lookdev",
-        #     "texturing",
-        #     "rig",
-        #     "groom",
-        #     "layout", 
-        #     "anim",
-        #     "light",
-        #     "validate", #Only under Alice's supervision
-        #     "comp", 
-        #     "env"
-        # ]
-        
-        # tasks_iter = next((task for task in target_tasks if task in target_dir), None)
-        
 
         target_match = []
         for task in target_tasks:
@@ -649,6 +663,7 @@ class import_usd_asset():
 
         else:
             print("no task found")
+
 
 
 

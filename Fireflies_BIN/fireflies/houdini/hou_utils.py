@@ -6,13 +6,21 @@ except:
     pass
 
 import os
-from datetime import datetime
 import subprocess
 import re
+from datetime import datetime
+
+import json
+
+from fireflies.fireflies_utils.usd import usd_asset_importer_hou
+
+from fireflies.context import prod_tracker
+CONTEXT = prod_tracker.manage_context()
 
 print("Importing -- hou_utils.py")
 
 from pxr import Usd, UsdGeom, UsdSkel, Sdf, UsdUtils, UsdShade, UsdRender
+
 
 class hou_usd():
     def __init__(self):
@@ -21,6 +29,9 @@ class hou_usd():
         self.prod_name = hou.hipFile.path().rsplit("/")[-5]
         self.prod_path = hou.hipFile.path().rsplit("/", 4)[0].replace("/", "\\")
         self.curr_context = self.get_current_context()
+
+        self.ASSET_FINDER = usd_asset_importer_hou.import_usd_asset(self.prod_path)
+        
 
     def return_paths(self) -> str:
         return self.prod_path
@@ -111,6 +122,7 @@ class hou_usd():
             self.center_node(sublayer_node)
 
 
+
     def import_regular_asset(self, asset_path:str):
         # asset_name = os.path.basename(asset_path)
 
@@ -153,7 +165,6 @@ class hou_usd():
 
 
     def filter_render_prims(self):
-        from pxr import Usd, Sdf
 
         node = hou.pwd()
         stage = node.editableStage()
@@ -403,23 +414,102 @@ class hou_usd():
 
 
 
-#class used to manage the callbacks from a "Fireflies Asset Import"
-#node in houdini
+    #methods used to manage the callbacks from 
+    # a "Fireflies Asset Import" node in houdini
 
-class asset_importer():
-    def __init__(self):
-        from fireflies.fireflies_utils.usd import usd_asset_importer_hou
+    #most of the scripts are in the hda
+
+    #we just pass the list of the asset_versions to update the ordered menu 
+    def set_versions_menu(self, asset_name, current_task) -> list:
+        if not asset_name:
+            print("### No asset name set ###")
+            return
+
+        if not current_task:
+            print("### No current task set ###")
+            return
+
+        asset_dict = self.ASSET_FINDER.find_asset_by_name(asset_name)
+        # print(asset_dict)
+
+        if not asset_dict:
+            print("### Couldn't fint the targeted asset dict ###")
+            return
+
+        out_vars = []
+        for version in asset_dict.keys():
+            if current_task in asset_dict[version]:
+                out_vars.append(f"token_{version}")
+                out_vars.append(str(version))
+            
+
+        # print(out_vars)
+
+        return out_vars
         
-    #on importing the asset in the node
-    def create_import_asset(self):
-        pass
+
+    def change_version_callback(self, asset_name, current_task, target_version:int):
+        asset_dict = self.ASSET_FINDER.find_asset_by_name(asset_name)
+
+        target_path = asset_dict[target_version][current_task]['path']
+
+        print(target_path)
+
+        return target_path
 
 
-    def version_callback(self):
-        pass
+    def update_metadata_info(self, asset_path) -> str:
+        asset_path = os.path.normpath(asset_path).replace('\\', '/')
+        print("### ASSET_PATH: {} ###".format(asset_path))
+
+        asset_dir = os.path.dirname(asset_path)
+        asset_name = os.path.basename(asset_path)[:-4]
+
+        comment_path = f"{asset_dir}/metadata/commentary/{asset_name}_comment.txt"
+
+        comment = "No comment"
+        if os.path.exists(comment_path):
+            with open(comment_path, 'r') as f:
+                comment = f.read()
+
+        else:
+            print("### No comment found ###")
+
+        #Format used in the hda
+        comment_form = "Current Version comment: \n" \
+                        "{} \n" \
+                        "--------------------------------".format(comment)
+
+        
+        kt_infos = CONTEXT.get_full_ct(path=asset_path, asset=True)
+        print(kt_infos)
+
+        map_users = map(str, kt_infos['assigned_users'])
+        kt_assigned_user = ', '.join(map_users)
 
 
-    
+        kt_info_form = "Assigned Artist: {} \n" \
+                        "Start Date: {} \n" \
+                        "Due Date: {} \n" \
+                        "Status: {}".format(
+                            kt_assigned_user, kt_infos['start_date'],
+                            kt_infos['end_date'], kt_infos['status']
+                        )
+
+        return comment_form, kt_info_form
+
+
+    def open_asset_resolver(self):
+        proc_env = os.environ.copy()
+        proc_env.pop("PYTHONPATH", None)
+        proc_env.pop("PYTHONHOME", None)
+
+        proc = subprocess.Popen(
+            "C:\\Fireflies\\Fireflies_BIN\\fireflies\\asset_resolver\\launch_resolver_main.bat"
+            , stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=proc_env
+        )
+
+        proc.communicate()
 
 
 if __name__ == "__main__":
