@@ -1,5 +1,6 @@
 import os 
 import sys
+import re
 
 import shutil
 from datetime import datetime
@@ -65,7 +66,8 @@ SHOT_TASKS = [
     "light",
     "comp", 
     "env", 
-    "fx"
+    "fx", 
+    "previz"
 ]
 
 TARGET_TASKS = ASSET_TASKS + SHOT_TASKS
@@ -93,13 +95,28 @@ def read_login_prefs():
 
 read_login_prefs()
 
+def check_path_type(path:str) -> bool:
+    path_check = False
+
+    check = re.search(r'(\d{3}/\d{2})', path)
+
+    if check:
+        path_check = True
+
+    print("### Path check result: {} ###".format(path_check))
+
+    return path_check
 
 
 class manage_paths():
-    def __init__(self, path:str) -> object:
+    def __init__(self, path:str, is_asset:bool=None, path_check:bool=False) -> object:
         super(manage_paths, self).__init__()
 
         target_ext = ['.hip', '.hipnc', '.hiplc', '.mb', '.ma', '.nk']
+        target_asset_ext = ['.usd', '.usda', '.usdc']
+
+        if is_asset:
+            target_ext = target_ext + target_asset_ext
 
         if any(ext for ext in target_ext if path.endswith(ext)):
             path = os.path.dirname(path)
@@ -107,11 +124,28 @@ class manage_paths():
         obj_path = pathlib.Path(path)
         path_parts = list(obj_path.parts)
 
+
         self.ct_scene = obj_path.stem
         self.ct_task = path_parts[-1]
         self.ct_shot = path_parts[-2]
         self.ct_seq = path_parts[-3]
         self.ct_prod = path_parts[-4]
+
+        if is_asset: 
+            path = path.replace('/', os.sep)
+
+            obj_path = pathlib.Path(path)
+
+            path_parts = list(obj_path.parts)
+
+            self.ct_version = obj_path.stem
+            self.ct_name = path_parts[-2]
+            self.ct_task = path_parts[-4]
+            self.ct_prod = path_parts[-7]
+
+            if path_check:
+                self.ct_shot = path_parts[-5]
+                self.ct_seq = path_parts[-6]
 
 
 
@@ -248,22 +282,71 @@ class manage_context():
             comment=comment, 
             preview_file_path=preview_path
         )
+        
+
+    #mainly used in the asset resolver to set the correct
+    #task status in kitsu
+
+    def set_to_validate(self, prod_name:str, asset_path:str, valid_state:bool) -> dict:
+        
+        self.get_context_info(prod_name)
+
+        kt_infos = self.get_full_ct(asset_path, asset=True)
+
+        if valid_state:
+            kt_validate_status = gazu.task.get_task_status_by_name('Validate')
+            comment = "### Fireflies - approved task in validate ###"
+
+        else:
+            kt_validate_status = gazu.task.get_task_status_by_name('Waiting For Validation')
+            comment = "### Fireflies - Task is waiting for validation ###"
+
+        current_task = kt_infos['task_entity']
+        # current_entity = kt_infos['current_entity']
+
+        new_status = gazu.task.add_comment(current_task, kt_validate_status, comment)
+
+        return new_status
 
 
-    #all methods related to gather / publish shot info
+    ### all methods related to gather / publish shot info ###
 
     #we try to get all the possible data from a given shot / task path
-    def get_full_ct(self, path:str) -> dict:
-        path = path.replace(os.sep, '\\')
-        CT_PATH = manage_paths(path)
+    def get_full_ct(self, path:str, asset:bool=False) -> dict:
+        check = check_path_type(path)
 
-        # print(CT_PATH.ct_task)
+        match asset:
+            case True if asset and check:
+                CT_PATH = manage_paths(path, is_asset=True, path_check=True)
 
-        self.get_context_info(CT_PATH.ct_prod, CT_PATH.ct_seq, CT_PATH.ct_shot)
+                print("### ASSET WITHIN SHOT ###")
+                print(CT_PATH.ct_prod)
+                print(CT_PATH.ct_seq)
+                print(CT_PATH.ct_shot)
+                print(CT_PATH.ct_task)
+
+                self.get_context_info(CT_PATH.ct_prod, CT_PATH.ct_seq, CT_PATH.ct_shot)
+                target_entity = self.kt_shot
+
+            case True if asset and not check:
+                CT_PATH = manage_paths(path=path, is_asset=True)
+                self.get_context_info(CT_PATH.ct_prod)
+
+                asset = gazu.asset.get_asset_by_name(self.kt_prod, CT_PATH.ct_name)
+                target_entity = asset
+
+        if not asset:
+            print("### Looking for shot ###")
+            path = path.replace(os.sep, '\\')
+            CT_PATH = manage_paths(path)
+
+            self.get_context_info(CT_PATH.ct_prod, CT_PATH.ct_seq, CT_PATH.ct_shot)
+            target_entity = self.kt_shot
+
 
         target_task_type = gazu.task.get_task_type_by_name(CT_PATH.ct_task)
-
-        kt_task_entity = gazu.task.get_task_by_entity(self.kt_shot, target_task_type)
+        
+        kt_task_entity = gazu.task.get_task_by_entity(target_entity, target_task_type)
 
         kt_start = kt_task_entity['start_date']
         kt_end = kt_task_entity['due_date']
@@ -293,23 +376,38 @@ class manage_context():
 
             out_user_name.append(user_name)
 
-        kt_shot_data = self.kt_shot['data']
+        if not asset:
+            kt_shot_data = self.kt_shot['data']
 
-        kt_fstart = kt_shot_data['frame_in']
-        kt_fend = kt_shot_data['frame_out'] 
+            kt_fstart = kt_shot_data['frame_in']
+            kt_fend = kt_shot_data['frame_out'] 
 
-        kt_frame_range = [kt_fstart, kt_fend]
+            kt_frame_range = [kt_fstart, kt_fend]
 
-        kt_fps = kt_shot_data['fps']
+            kt_fps = kt_shot_data['fps']
 
-        info_dict = {
-            'status': current_status,
-            'start_date': start_date,
-            'end_date': end_date, 
-            'assigned_users': out_user_name, 
-            'frame_range': kt_frame_range,
-            'fps': kt_fps, 
-        }
+            info_dict = {
+                'status': current_status,
+                'start_date': start_date,
+                'end_date': end_date, 
+                'assigned_users': out_user_name, 
+                'frame_range': kt_frame_range,
+                'fps': kt_fps,
+                'task_entity': kt_task_entity,
+                'current_entity': target_entity
+
+            }
+
+
+        else:
+            info_dict = {
+                'status': current_status,
+                'start_date': start_date,
+                'end_date': end_date, 
+                'assigned_users': out_user_name, 
+                'task_entity': kt_task_entity, 
+                'current_entity': target_entity
+            }
 
         return info_dict
 
@@ -361,8 +459,7 @@ class manage_context():
     #all methods related to assets
 
 if __name__ == "__main__":
-    pass
-    # CONTEXT = manage_context()
-    # info = CONTEXT.get_full_ct(r'R:\Christopher_LUCAS\PRODS\test_dev_02\001\01\light')
-    # print(info['status'])
+    path = "R:/Christopher_LUCAS/PRODS/test_dev_02/001/01/light/usd_published/rig_test_ASSET/rig_test_ASSET_003/rig_test_ASSET.usd"
+    x = manage_paths(path=path, is_asset=True)
 
+    # print(x.ct_task)
