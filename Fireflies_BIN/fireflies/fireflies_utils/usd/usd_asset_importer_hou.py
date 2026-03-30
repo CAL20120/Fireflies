@@ -8,40 +8,35 @@ import random
 
 import collections
 
-from colorama import Fore
 
 # from fireflies.fireflies_utils.usd import fireflies_usd_viewer
 
 from fireflies.context import prod_tracker
 
-CT_HOU = False
-CT_MAYA = False
+CT_HOU = prod_tracker.CT_HOU
+CT_MAYA = prod_tracker.CT_MAYA
 
 #otherwise when we import this script in the standalone 
 #assembly resolver it won't load
-try:
+if CT_HOU:
     import hou
     from fireflies.houdini import hou_utils
     from pxr import Usd, UsdGeom, Sdf
 
-    CT_HOU = True
+    CURRENT_SCENE_PATH = hou.hipFile.path()
 
-except:
-    pass
-
-
-try:
+if CT_MAYA:
     import maya.cmds as cmds
-    CT_MAYA = True
 
-except:
-    pass
+    CURRENT_SCENE_PATH = cmds.file(q=True, sn=True)
 
 
 from PySide2 import QtCore
 from PySide2 import QtWidgets
 from PySide2 import QtGui
 
+
+get_prod_path = lambda path: path.replace('\\', '/').rsplit("/", 4)[0].replace("/", os.sep)
 
 class importer_window(QtWidgets.QDialog):
     import_target = QtCore.Signal(str)
@@ -75,9 +70,9 @@ class importer_window(QtWidgets.QDialog):
         # self.import_comment()
 
     def get_asset_paths(self):
-        
         if not self.prod_path:
-            self.prod_path = hou.hipFile.path().rsplit("/", 4)[0].replace("/", os.sep)
+            self.prod_path = get_prod_path(CURRENT_SCENE_PATH)
+            print(self.prod_path)
 
         x = import_usd_asset(prod_path=self.prod_path)
         self.assets_name, self.assets_vars = x.find_asset()
@@ -471,9 +466,8 @@ class import_usd_asset():
 
         self.prod_path = prod_path
         
-        if CT_HOU:
-            if not prod_path:
-                self.prod_path = hou.hipFile.path().rsplit("/", 4)[0].replace("/", "\\")
+        if not prod_path:
+            self.prod_path = get_prod_path(CURRENT_SCENE_PATH)
         
 
     def find_asset(self) -> str | collections.defaultdict:

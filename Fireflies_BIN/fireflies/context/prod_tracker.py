@@ -291,6 +291,10 @@ class manage_context():
         
         self.get_context_info(prod_name)
 
+        CT_PATH = manage_paths(path=asset_path, is_asset=True)
+
+        version = CT_PATH.ct_version
+
         kt_infos = self.get_full_ct(asset_path, asset=True)
 
         if valid_state:
@@ -299,7 +303,8 @@ class manage_context():
 
         else:
             kt_validate_status = gazu.task.get_task_status_by_name('Waiting For Validation')
-            comment = "### Fireflies - Task is waiting for validation ###"
+            comment = "### Fireflies - Task is waiting for validation \n for version: {} ###".format(version)
+
 
         current_task = kt_infos['task_entity']
         # current_entity = kt_infos['current_entity']
@@ -453,6 +458,11 @@ class manage_context():
 
         if CT_HOU:
             hou.playbar.setFrameRange(f_start, f_end)
+
+        if CT_MAYA:
+            cmds.playbackOptions(minTime=f_start, maxTime=f_end,
+                                 animationStartTime=f_start, animationEndTime=f_end)
+
 
         print("### Frame range set to the server data")
 
