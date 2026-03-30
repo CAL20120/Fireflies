@@ -1,4 +1,4 @@
-global proc shelf_Fireflies_dev_ne_pas_utiliser () {
+global proc shelf_Fireflies_dev () {
     global string $gBuffStr;
     global string $gBuffStr0;
     global string $gBuffStr1;
@@ -9,7 +9,7 @@ global proc shelf_Fireflies_dev_ne_pas_utiliser () {
         -flexibleWidthType 3
         -flexibleWidthValue 32
         -enable 1
-        -width 35
+        -width 39
         -height 34
         -manage 1
         -visible 1
@@ -169,7 +169,7 @@ global proc shelf_Fireflies_dev_ne_pas_utiliser () {
         -style "iconOnly" 
         -marginWidth 0
         -marginHeight 1
-        -command "from fireflies.fireflies_utils.usd import usd_asset_importer\n\nx = usd_asset_importer.importer_window()\nx.show()" 
+        -command "from PySide2 import QtWidgets\n\nfrom fireflies.fireflies_utils.usd import usd_asset_importer_hou\n\nif win.exec_() == QtWidgets.QDialog.Accepted:\n\tpass\n" 
         -sourceType "python" 
         -commandRepeatable 1
         -flat 1
@@ -203,7 +203,7 @@ global proc shelf_Fireflies_dev_ne_pas_utiliser () {
         -style "iconOnly" 
         -marginWidth 0
         -marginHeight 1
-        -command "import pyblish\nimport pyblish.api\nimport pyblish_lite\n\nimport pyblish_maya\npyblish_maya.setup()\n\npyblish.api.register_plugin_path(r\"C:\\Fireflies\\Fireflies_BIN\\fireflies\\publish_usd\\collector\")\npyblish.api.register_plugin_path(r\"C:\\Fireflies\\Fireflies_BIN\\fireflies\\publish_usd\\validator\")\npyblish.api.register_plugin_path(r\"C:\\Fireflies\\Fireflies_BIN\\fireflies\\publish_usd\\extractor\")\n\npyblish_lite.settings.WindowTitle = \"Usd Asset Publishing\"\npyblish_lite.settings.InitialTab = \"overview\"\npyblish_lite.settings.UsdLabel = True\n\n\npyblish_lite.show()\n\nprint(pyblish.api.discover())" 
+        -command "import pyblish\nimport pyblish.api\nimport pyblish_qml\nfrom pyblish_qml import settings, api\n\nimport pyblish_maya\npyblish_maya.setup()\n\npyblish.api.register_plugin_path(r\"C:\\Fireflies\\Fireflies_BIN\\fireflies\\publish_usd\\collector\")\n#pyblish.api.register_plugin_path(r\"C:\\Fireflies\\Fireflies_BIN\\fireflies\\publish_usd\\validator\")\n#pyblish.api.register_plugin_path(r\"C:\\Fireflies\\Fireflies_BIN\\fireflies\\publish_usd\\extractor\")\n\nsettings.WindowTitle = \"Usd Publishing\"\nsettings.InitialTab = \"artist\"\nsettings.UsdLabel = True\n\n\napi.show()" 
         -sourceType "python" 
         -commandRepeatable 1
         -flat 1
