@@ -27,6 +27,8 @@ if CT_HOU:
 
 if CT_MAYA:
     import maya.cmds as cmds
+    from fireflies.maya import maya_utils
+    M_USD_UTILS = maya_utils.maya_usd()
 
     CURRENT_SCENE_PATH = cmds.file(q=True, sn=True)
 
@@ -340,31 +342,34 @@ class importer_window(QtWidgets.QDialog):
             hip_path = utils.path_converter(path=asset_path)
             out_path = hip_path
 
-        if self.import_classic:
-            if asset_type == "asset":
-                utils.import_prod_usd_asset(asset_path=out_path)
+            if self.import_classic:
+                if asset_type == "asset":
+                    utils.import_prod_usd_asset(asset_path=out_path)
 
-            elif asset_type == "sequence":
-                utils.import_usd_sequence(asset_path=out_path)
+                elif asset_type == "sequence":
+                    utils.import_usd_sequence(asset_path=out_path)
 
-        else:
-            try:
-                if self.target_input:
-                    self.import_target.parm(self.target_input).set(out_path)
+            else:
+                try:
+                    if self.target_input:
+                        self.import_target.parm(self.target_input).set(out_path)
 
-                # if not self.import_classic: 
-                self.import_target.parm('input_file').set(out_path)
+                    # if not self.import_classic: 
+                    self.import_target.parm('input_file').set(out_path)
 
-            except:
-                print("### Error when trying to set path ###")
+                except:
+                    print("### Error when trying to set path ###")
 
-            try:
-                self.import_target.parm('current_task').set(current_task)
-                self.import_target.parm('`asset_name`').set(str(asset_name))
+                try:
+                    self.import_target.parm('current_task').set(current_task)
+                    self.import_target.parm('`asset_name`').set(str(asset_name))
 
-            except:
-                pass
+                except:
+                    pass
 
+
+        if CT_MAYA:
+            M_USD_UTILS.import_usd_asset(asset_path=asset_path)
 
 
         # print(asset_path)
