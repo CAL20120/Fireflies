@@ -19,39 +19,9 @@ def export_usd(scene_path:str, node_path:hou, export_path:str, f_start:int, f_en
     export_dir = os.path.dirname(export_path)
     os.startfile(export_dir)
 
-
-    # if not os.path.exists(norm_scene):
-    #     print("CURRENT PATH: {}".format(scene_path))
-    #     print("Scene path is not correct, trying to load again...")
-        
-    #     time.sleep(350)
-
-    #     print("### Resume ###")
-
-    #     if not os.path.exists(norm_scene):
-    #         return
-        
-
-    # print("### Copying scene to local dir ###")
-
     # nas_path = scene_path.replace(os.sep, '/')
     scene_name = os.path.basename(norm_scene)
 
-    # local_scene_path = os.path.join(tmp_dir, scene_name)
-    # if os.path.exists(local_scene_path):
-    #     os.remove(local_scene_path)
-
-    # try:
-    #     shutil.copyfile(norm_scene, local_scene_path)
-
-    # except:
-    #     # time.sleep(5)
-    #     # shutil.copyfile(scene_path, local_scene_path)
-
-    #     print("### Couldn't copy scene onto local dir ###")
-    #     return
-
-    # local_scene_path = local_scene_path.replace(os.sep, '/')
 
     try:
         hou.hipFile.load(scene_path)
@@ -92,7 +62,7 @@ def export_usd(scene_path:str, node_path:hou, export_path:str, f_start:int, f_en
 
     for frame in range(f_start, f_end + 1):
         hou.setFrame(frame)
-        target_node.cook(force=True)
+        # target_node.cook()
 
         stage = target_node.stage()
         out_path = hou.text.expandStringAtFrame(export_path, frame)
@@ -100,6 +70,7 @@ def export_usd(scene_path:str, node_path:hou, export_path:str, f_start:int, f_en
         file_name = os.path.basename(out_path)
         tmp_export_path = os.path.join(tmp_dir, file_name).replace(os.sep, '/')
 
+        # stage = stage.Flatten()
         stage.Export(tmp_export_path)
 
         out_dir = os.path.dirname(export_path)

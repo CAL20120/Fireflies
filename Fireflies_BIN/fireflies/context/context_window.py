@@ -28,6 +28,8 @@ if prod_tracker.CT_MAYA:
 
     parent = maya_main_window()
 
+if prod_tracker.CT_HOU:
+    import hou
 
 
 class context_window(QtWidgets.QDialog):
@@ -443,7 +445,8 @@ class context_window(QtWidgets.QDialog):
 
 
     def open_scene(self):
-        open_path = f"{self.build_scene_path()}/{self.sel_changed()}"
+        self.build_scene_path()
+        open_path = f"{self.fullPath}/{self.sel_changed()}"
         print(open_path)
         
         hou.hipFile.load(open_path.replace("\\", "/"))
