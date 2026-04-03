@@ -14,7 +14,7 @@ class Usd_Validator_Hou(pyblish.api.InstancePlugin):
 
 
     def process(self, instance):
-        self.abstract_publish = abstract_hou_publish.hou_publish()
+        self.abstract_publish = abstract_hou_publish.Publish_checks()
 
         # node = instance.data.get('node')
         # current_layer = instance.data.get('current_layer')
