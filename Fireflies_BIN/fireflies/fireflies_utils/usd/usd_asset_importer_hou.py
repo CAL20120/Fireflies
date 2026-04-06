@@ -1,5 +1,6 @@
 import os 
 import sys 
+
 from datetime import datetime
 import subprocess
 import re
@@ -8,10 +9,13 @@ import random
 
 import collections
 
+from functools import cache, lru_cache
 
 # from fireflies.fireflies_utils.usd import fireflies_usd_viewer
 
 from fireflies.context import prod_tracker
+
+CURRENT_SCENE_PATH = None
 
 CT_HOU = prod_tracker.CT_HOU
 CT_MAYA = prod_tracker.CT_MAYA
@@ -43,7 +47,6 @@ get_prod_path = lambda path: path.replace('\\', '/').rsplit("/", 4)[0].replace("
 class importer_window(QtWidgets.QDialog):
     import_target = QtCore.Signal(str)
     target_input = QtCore.Signal(str)
-
 
     def __init__(self, parent=None, import_classic:bool=None, prod_path:str=None):
         try: 
@@ -471,10 +474,13 @@ class import_usd_asset():
 
         self.prod_path = prod_path
         
+        if not any([CURRENT_SCENE_PATH, prod_path]):
+            return
+
         if not prod_path:
             self.prod_path = get_prod_path(CURRENT_SCENE_PATH)
         
-
+    # @lru_cache(maxsize=None)
     def find_asset(self) -> str | collections.defaultdict:
         #the purpose here is to build a dict with each assets and its version to 
         #make the asset versions tracking easier 
@@ -531,8 +537,9 @@ class import_usd_asset():
                     self.asset_file.append(correct_path)
 
 
-        #time to build the dict
+        exclude_tasks = ['to_validate']
 
+        #time to build the dict
         for asset in self.asset_file:
             file = os.path.basename(asset)
 
@@ -556,13 +563,10 @@ class import_usd_asset():
 
             current_task = self.find_current_task(target_dir=target_dir)
 
-            # else:
-            #     print("No task found in asset path")
-            #     print(target_dir)
-            #     continue
+            if any([CT_HOU, CT_MAYA]):
+                if any(task for task in exclude_tasks if task in current_task):
+                    continue
 
-
-            # asset_id = random.randrange(0000, 9999)
 
             if asset_target and not anim_target:
                 name = asset_target.group(1)
