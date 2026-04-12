@@ -474,6 +474,7 @@ class hou_usd():
 
         else:
             print("### No comment found ###")
+            comment = "Undefined"
 
         #Format used in the hda
         comment_form = "Current Version comment: \n" \
@@ -482,6 +483,11 @@ class hou_usd():
 
         
         kt_infos = CONTEXT.get_full_ct(path=asset_path, asset=True)
+        
+        if kt_infos is None:
+            kt_info_form = 'Undefined'
+            return comment_form, kt_info_form
+
         print(kt_infos)
 
         map_users = map(str, kt_infos['assigned_users'])

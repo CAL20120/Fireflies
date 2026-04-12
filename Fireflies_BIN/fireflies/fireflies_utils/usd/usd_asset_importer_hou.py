@@ -74,6 +74,8 @@ class importer_window(QtWidgets.QDialog):
         self.get_asset_paths()
         # self.import_comment()
 
+
+    @cache
     def get_asset_paths(self):
         if not self.prod_path:
             self.prod_path = get_prod_path(CURRENT_SCENE_PATH)
@@ -665,8 +667,8 @@ class import_usd_asset():
         #     return current_task
 
         else:
-            print("no task found")
-
+            # print("no task found")
+            pass
 
 
 

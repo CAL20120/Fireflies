@@ -2,6 +2,8 @@ import os
 import sys
 import re
 
+from functools import cache
+
 import shutil
 from datetime import datetime
 
@@ -73,6 +75,7 @@ SHOT_TASKS = [
 TARGET_TASKS = ASSET_TASKS + SHOT_TASKS
 
 
+@cache
 def read_login_prefs():
     uesr_prefs_path = "C:\\Fireflies\\Common\\fmk_user_prefs\\login_prefs.txt"
 
@@ -168,6 +171,9 @@ class manage_context():
         
         if CT_HOU:
             current_path = hou.hipFile.path()
+
+        if CT_MAYA:
+            pass
 
         self.kt_prod = gazu.project.get_project_by_name(prod_name)
 
@@ -287,31 +293,64 @@ class manage_context():
     #mainly used in the asset resolver to set the correct
     #task status in kitsu
 
-    def set_to_validate(self, prod_name:str, asset_path:str, valid_state:bool) -> dict:
+    def set_to_validate(self, prod_name:str, asset_path:str, valid_state:bool, task_removed:bool=False) -> list[dict]:
+        """
+        Method to set the validation status on kitsu
         
+        Args:
+            prod_name(str): The production name (that will be queried on kitsu)
+            
+            asset_path(str): The task path related to the targeted asset that will be changed on kitsu
+            
+            valid_state(bool): The validation status that will be displayed on kitsu (False= to_valid, True=Valid)
+            
+            task_removed(bool): If the task was removed from the validate usd stage
+
+        Returns: 
+            kt_infos, new_status: A list of the dict of the kitsu asset, and the new status
+        """
+
         self.get_context_info(prod_name)
 
         CT_PATH = manage_paths(path=asset_path, is_asset=True)
 
-        version = CT_PATH.ct_version
+        version = CT_PATH.ct_version[-3:]
 
         kt_infos = self.get_full_ct(asset_path, asset=True)
 
         if valid_state:
             kt_validate_status = gazu.task.get_task_status_by_name('Validate')
-            comment = "### Fireflies - approved task in validate ###"
+            comment = "Fireflies - approved task in validate for version: {}".format(version)
 
         else:
-            kt_validate_status = gazu.task.get_task_status_by_name('Waiting For Validation')
-            comment = "### Fireflies - Task is waiting for validation \n for version: {} ###".format(version)
+            if task_removed:
+                kt_validate_status = gazu.task.get_task_status_by_name('Removed')
+                comment = "Fireflies - task removed from the validate version: {}".format(version)
 
+
+            else:
+                kt_validate_status = gazu.task.get_task_status_by_name('Waiting For Validation')
+                comment = "Fireflies - Task is waiting for validation for version: {}".format(version)
+            
 
         current_task = kt_infos['task_entity']
-        # current_entity = kt_infos['current_entity']
+        current_entity = kt_infos['current_entity']
 
         new_status = gazu.task.add_comment(current_task, kt_validate_status, comment)
 
-        return new_status
+        return kt_infos, new_status
+
+
+    def get_kt_to_valid_tasks(self, prod_name:str, asset_name:str) -> dict:
+        self.get_context_info(prod_name)
+
+        kt_asset = gazu.asset.get_asset_by_name(self.kt_prod, asset_name)
+
+        asset_data = kt_asset['data']
+        # print(asset_data)
+
+        return asset_data
+
 
 
     ### all methods related to gather / publish shot info ###
@@ -319,6 +358,8 @@ class manage_context():
     #we try to get all the possible data from a given shot / task path
     def get_full_ct(self, path:str, asset:bool=False) -> dict:
         check = check_path_type(path)
+
+        task_exclude_list = ['to_validate', 'validate', 'assembly']
 
         match asset:
             case True if asset and check:
@@ -335,6 +376,20 @@ class manage_context():
 
             case True if asset and not check:
                 CT_PATH = manage_paths(path=path, is_asset=True)
+
+                #temporary
+                if any(task for task in task_exclude_list if task == CT_PATH.ct_task):
+                    info_dict = {
+                        'status': 'Not tracked',
+                        'start_date': 'Not tracked',
+                        'end_date': 'Not tracked', 
+                        'assigned_users': ['Not tracked'], 
+                        'task_entity': 'Not tracked', 
+                        'current_entity': 'Not tracked'
+                    }
+
+                    return info_dict
+
                 self.get_context_info(CT_PATH.ct_prod)
 
                 asset = gazu.asset.get_asset_by_name(self.kt_prod, CT_PATH.ct_name)
@@ -349,22 +404,30 @@ class manage_context():
             target_entity = self.kt_shot
 
 
+        if CT_PATH.ct_task == 'validate':
+            print("### Not checking for validates ###")
+            return None
+
         target_task_type = gazu.task.get_task_type_by_name(CT_PATH.ct_task)
         
         kt_task_entity = gazu.task.get_task_by_entity(target_entity, target_task_type)
 
-        kt_start = kt_task_entity['start_date']
-        kt_end = kt_task_entity['due_date']
-        
-        out_date = lambda date: str(datetime.fromisoformat(date))
-        
-        if kt_start and kt_end:
-            start_date = out_date(kt_start)
-            end_date = out_date(kt_end)
 
-        else: 
-            start_date = 'Undefined'
-            end_date = 'Undefined'
+        start_date = 'Undefined'
+        end_date = 'Undefined'
+
+        try:
+            kt_start = kt_task_entity['start_date']
+            kt_end = kt_task_entity['due_date']
+            
+            out_date = lambda date: str(datetime.fromisoformat(date))
+            
+            if kt_start and kt_end:
+                start_date = out_date(kt_start)
+                end_date = out_date(kt_end)
+
+        except:
+            pass
 
 
         task_status = gazu.task.get_task_status(kt_task_entity['task_status_id'])
@@ -472,4 +535,4 @@ if __name__ == "__main__":
     path = "R:/Christopher_LUCAS/PRODS/test_dev_02/001/01/light/usd_published/rig_test_ASSET/rig_test_ASSET_003/rig_test_ASSET.usd"
     x = manage_paths(path=path, is_asset=True)
 
-    # print(x.ct_task)
+    print(x.ct_name)
