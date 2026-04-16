@@ -69,7 +69,8 @@ SHOT_TASKS = [
     "comp", 
     "env", 
     "fx", 
-    "previz"
+    "previz", 
+    'anim'
 ]
 
 TARGET_TASKS = ASSET_TASKS + SHOT_TASKS
@@ -135,6 +136,12 @@ class manage_paths():
         self.ct_prod = path_parts[-4]
 
         if is_asset: 
+            kt_tasks_dict = gazu.task.all_task_types()
+            kt_tasks = []
+            for val in kt_tasks_dict:
+                task = val['name']
+                kt_tasks.append(task)
+
             path = path.replace('/', os.sep)
 
             obj_path = pathlib.Path(path)
@@ -143,8 +150,9 @@ class manage_paths():
 
             self.ct_version = obj_path.stem
             self.ct_name = path_parts[-2]
-            self.ct_task = path_parts[-4]
+            self.ct_task = next((task for task in kt_tasks if task in path), None)
             self.ct_prod = path_parts[-7]
+
 
             if path_check:
                 self.ct_shot = path_parts[-5]
@@ -157,13 +165,17 @@ class manage_context():
         try:
             gazu.set_host('http://192.168.1.176:4875/api')
         
+            gazu.log_in(user_mail, password)
+
+            self.kt_user = gazu.client.get_current_user()
+
         except:
+            from PySide2 import QtWidgets
             print("### Please activate the vpn to use kitsu ###")
+
+            QtWidgets.QMessageBox.warning(self, 'warning', 'Please activate the vpn to use kitsu')
             return
 
-        gazu.log_in(user_mail, password)
-
-        self.kt_user = gazu.client.get_current_user()
 
 
     def get_context_info(self, prod_name:str, seq_name:str=None, shot_name:str=None):
@@ -352,6 +364,44 @@ class manage_context():
         return asset_data
 
 
+    
+    def check_current_prod(self, path:str) -> list[str, list]:
+        """
+        Checks if the current production is right (if manage_paths() fails)
+        and returns the right production name 
+
+        Args:
+            path(str): A given path that will be checked via a kitsu query
+
+        Returns: 
+            out_prod(list): 
+            A list of the current production name as a string, and the list of all the
+            current productions as a list
+
+        """
+
+        prods = gazu.project.all_projects()
+
+        current = []
+
+        for val in prods: 
+            current.append(val['name'])
+
+        print(current)
+
+        current_prod = next((prod for prod in current if prod in path), None)
+        print(current_prod)
+
+        if not current_prod:
+            print("### Couldn't find a production in the given path ###")
+            return
+        
+        out_prod = [current_prod, current]
+
+        return out_prod
+
+
+
 
     ### all methods related to gather / publish shot info ###
 
@@ -360,6 +410,9 @@ class manage_context():
         check = check_path_type(path)
 
         task_exclude_list = ['to_validate', 'validate', 'assembly']
+
+        current_prods = []
+        target_entity = None
 
         match asset:
             case True if asset and check:
@@ -373,9 +426,14 @@ class manage_context():
 
                 self.get_context_info(CT_PATH.ct_prod, CT_PATH.ct_seq, CT_PATH.ct_shot)
                 target_entity = self.kt_shot
+                target_prod = CT_PATH.ct_prod
 
             case True if asset and not check:
                 CT_PATH = manage_paths(path=path, is_asset=True)
+
+                current_prod, kt_prods = self.check_current_prod(path)
+
+                target_prod = current_prod if current_prod != CT_PATH.ct_prod else CT_PATH.ct_prod
 
                 #temporary
                 if any(task for task in task_exclude_list if task == CT_PATH.ct_task):
@@ -390,10 +448,17 @@ class manage_context():
 
                     return info_dict
 
-                self.get_context_info(CT_PATH.ct_prod)
+                print(target_prod)
+                self.get_context_info(target_prod)
 
-                asset = gazu.asset.get_asset_by_name(self.kt_prod, CT_PATH.ct_name)
-                target_entity = asset
+                asset_name = CT_PATH.ct_name
+
+                if not '_asset' in asset_name.lower():
+                    asset_name = asset_name + '_ASSET'
+
+                kt_asset = gazu.asset.get_asset_by_name(self.kt_prod, asset_name)
+                target_entity = kt_asset
+
 
         if not asset:
             print("### Looking for shot ###")
@@ -402,6 +467,11 @@ class manage_context():
 
             self.get_context_info(CT_PATH.ct_prod, CT_PATH.ct_seq, CT_PATH.ct_shot)
             target_entity = self.kt_shot
+
+
+        if not target_entity:
+            print("### Couldn't find the targeted entity ###")
+            return
 
 
         if CT_PATH.ct_task == 'validate':

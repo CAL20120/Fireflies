@@ -31,6 +31,7 @@ hou.session.dialog.show()]]></script>
     <memberTool name="hip_importer0"/>
     <memberTool name="fireflies_snapshots"/>
     <memberTool name="kitsu_frame_range"/>
+    <memberTool name="kt_preview"/>
     <memberTool name="pyblish_houdini"/>
   </toolshelf>
 
@@ -54,6 +55,8 @@ pyblish_houdini.setup()
 pyblish.api.register_plugin_path("C:\\Fireflies\\Fireflies_BIN\\fireflies\\publish_hou\\collector")
 pyblish.api.register_plugin_path("C:\\Fireflies\\Fireflies_BIN\\fireflies\\publish_hou\\validator")
 pyblish.api.register_plugin_path("C:\\Fireflies\\Fireflies_BIN\\fireflies\\publish_hou\\extractor")
+
+pyblish.api.register_plugin_path("C:\\Fireflies\\Fireflies_BIN\\fireflies\\publish_regular\\extractor")
 
 settings.WindowTitle = "Usd Publishing"
 settings.InitialTab = "artist"
@@ -107,5 +110,15 @@ CONTEXT = prod_tracker.manage_context()
 
 current_path = hou.hipFile.path().replace('/', '\\')
 CONTEXT.set_scene_range(current_path)]]></script>
+  </tool>
+
+  <tool name="kt_preview" label="Kitsu Batch Preview" icon="C:/Fireflies/Fireflies_BIN/fireflies/logos/batch_kt_preview.png">
+    <script scriptType="python"><![CDATA[from fireflies.houdini import abstract_hou_publish
+
+scene_path = hou.hipFile.path()
+
+x = abstract_hou_publish.hou_publish()
+
+x.batch_kt_preview(scene_path)]]></script>
   </tool>
 </shelfDocument>

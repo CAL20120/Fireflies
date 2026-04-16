@@ -12,13 +12,14 @@
     <memberTool name="quick_preview"/>
     <memberTool name="pyblish_houdini_dev"/>
     <memberTool name="hip_importer"/>
+    <memberTool name="open_hip"/>
   </toolshelf>
 
   <tool name="context" label="Context" icon="C:/Fireflies/Fireflies_BIN/fireflies/logos/set_context.png">
-    <script scriptType="python"><![CDATA[from fireflies.context import context_window_hou
+    <script scriptType="python"><![CDATA[from fireflies.context import context_window
 import hou
 
-hou.session.dialog = context_window_hou.context_window()
+hou.session.dialog = context_window.context_window()
 hou.session.dialog.show()]]></script>
   </tool>
 
@@ -58,6 +59,17 @@ pyblish_lite.show()]]></script>
   </tool>
 
   <tool name="lib_assets" label="LIB Asset" icon="C:/Fireflies/Fireflies_BIN/fireflies/logos/lib_asset.png">
-    <script scriptType="python"><![CDATA[]]></script>
+    <script scriptType="python"><![CDATA[from fireflies.fireflies_utils.usd import lib_importer_hou
+
+hou.session.dialog = lib_importer_hou.lib_importer_window(import_classic=True)
+hou.session.dialog.show()]]></script>
+  </tool>
+
+  <tool name="open_hip" label="Open hip" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[import os
+
+hip = os.environ.get('HIP')
+
+os.startfile(hip)]]></script>
   </tool>
 </shelfDocument>

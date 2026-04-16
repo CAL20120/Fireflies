@@ -19,6 +19,7 @@ try:
 except:
     pass
 
+
 from pxr import Usd, UsdGeom, Sdf, UsdUtils, UsdShade
 
 
@@ -299,16 +300,66 @@ class hou_publish():
         return preview_path
 
 
-    def export_video_preview(self, asset_name, scene_path=None):
-        export_dir, target_version = self.get_export_path(asset_name)
 
-        preview_dir = "{}/metadata/video_preview".format(target_version)
-        out_dir = os.path.join(export_dir, preview_dir)
+    def batch_kt_preview(self, scene_path:str):
+        """
+        Quick method to let create a preview and send it to kitsu without the publisher
+        """
+        
+        props_check = False
+        if 'props' in scene_path.lower():
+            props_check = True
 
-        preview_path = f"{out_dir}/{asset_name}_preview_$F4.jpg"
+        print(props_check)
+
+        scene_name = os.path.basename(os.path.splitext(scene_path)[0])
+
+        output = f"{os.path.dirname(scene_path)}/quick_preview/{scene_name}_$F4.jpg"
+
+        preview_path = self.export_video_preview(asset_name=scene_name, scene_path=scene_path,
+                                              is_asset=props_check, export_path=output)
+
+
+        print("### Sending preview to kitsu... ###")
+
+        comment = "Fireflies - Preview Published"
+
+        if props_check:
+            ct_scene = prod_tracker.manage_paths(scene_path, is_asset=True)
+            asset_name = f"{ct_scene.ct_name}_ASSET"
+            print(asset_name)
+
+            CONTEXT.publish_asset_task(asset_name=asset_name, scene_path=scene_path,
+                                       preview_path=preview_path, comment=comment)
+            
+            print("### PREVIEW SENT TO KITSU ###")
+            return
+
+        CONTEXT.publish_shot_task(preview_path=preview_path, scene_path=scene_path, 
+                                  comment=comment)
+
+        print("### PREVIEW SENT TO KITSU ###")
+
+
+
+    def export_video_preview(self, asset_name, scene_path=None,
+                             is_asset:bool=False, export_path:str=None):
+        
+        if not export_path:
+            export_dir, target_version = self.get_export_path(asset_name)
+
+            preview_dir = "{}/metadata/video_preview".format(target_version)
+            out_dir = os.path.join(export_dir, preview_dir)
+
+            preview_path = f"{out_dir}/{asset_name}_preview_$F4.jpg"
+
+        else:
+            preview_path = export_path
+            out_dir = os.path.dirname(preview_path)
 
         if not os.path.exists(out_dir):
             os.makedirs(out_dir)
+
 
         if prod_tracker.CT_HOU:
             f_start, f_end = hou.playbar.playbackRange()
@@ -320,7 +371,12 @@ class hou_publish():
 
         kt_infos = None
         if scene_path:
-            kt_infos = CONTEXT.get_full_ct(scene_path)
+            if is_asset:
+                kt_infos = CONTEXT.get_full_ct(scene_path, asset=True)
+            
+            else:                
+                kt_infos = CONTEXT.get_full_ct(scene_path)
+            
             print("### Fetched kt infos for preview ###")
 
             #we need to convert the dict to pass it to argparse
@@ -363,8 +419,8 @@ class hou_publish():
 
         print("### Preview video generated ###")
 
-        out_video_path = os.path.join(preview_dir.replace('/', '\\'), 'video_preview.mkv')
-        preview_full_path = os.path.join(export_dir.replace('/', '\\'), out_video_path)
+        preview_full_path = os.path.join(out_dir.replace('/', '\\'), 'video_preview.mkv')
+        # preview_full_path = os.path.join(export_dir.replace('/', '\\'), out_video_path)
         
         print("### out video: {} ###".format(preview_full_path))
 
@@ -382,8 +438,8 @@ class Publish_checks():
         pass
 
 
-    def resolve_relative_paths(self, stage_path:Usd) -> Usd.Stage:
-        if not stage_path:
+    def resolve_relative_paths(self, stage_path:str) -> Usd.Stage:
+        if not os.path.exists(stage_path):
             print("No stage found")
             return
 
