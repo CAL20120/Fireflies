@@ -1,0 +1,56 @@
+[
+{
+  "directory": "C:/Fireflies/build",
+  "command": "C:/Strawberry/c/bin/c++.exe  @CMakeFiles/ImGui.dir/includes_CXX.rsp -g -o CMakeFiles/ImGui.dir/include/third_party/imgui/imgui.cpp.obj -c C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui.cpp",
+  "file": "C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui.cpp",
+  "output": "CMakeFiles/ImGui.dir/include/third_party/imgui/imgui.cpp.obj"
+},
+{
+  "directory": "C:/Fireflies/build",
+  "command": "C:/Strawberry/c/bin/c++.exe  @CMakeFiles/ImGui.dir/includes_CXX.rsp -g -o CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_draw.cpp.obj -c C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui_draw.cpp",
+  "file": "C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui_draw.cpp",
+  "output": "CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_draw.cpp.obj"
+},
+{
+  "directory": "C:/Fireflies/build",
+  "command": "C:/Strawberry/c/bin/c++.exe  @CMakeFiles/ImGui.dir/includes_CXX.rsp -g -o CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_tables.cpp.obj -c C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui_tables.cpp",
+  "file": "C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui_tables.cpp",
+  "output": "CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_tables.cpp.obj"
+},
+{
+  "directory": "C:/Fireflies/build",
+  "command": "C:/Strawberry/c/bin/c++.exe  @CMakeFiles/ImGui.dir/includes_CXX.rsp -g -o CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_widgets.cpp.obj -c C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui_widgets.cpp",
+  "file": "C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/imgui_widgets.cpp",
+  "output": "CMakeFiles/ImGui.dir/include/third_party/imgui/imgui_widgets.cpp.obj"
+},
+{
+  "directory": "C:/Fireflies/build",
+  "command": "C:/Strawberry/c/bin/c++.exe  @CMakeFiles/ImGui.dir/includes_CXX.rsp -g -o CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_glfw.cpp.obj -c C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/backends/imgui_impl_glfw.cpp",
+  "file": "C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/backends/imgui_impl_glfw.cpp",
+  "output": "CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_glfw.cpp.obj"
+},
+{
+  "directory": "C:/Fireflies/build",
+  "command": "C:/Strawberry/c/bin/c++.exe  @CMakeFiles/ImGui.dir/includes_CXX.rsp -g -o CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_opengl3.cpp.obj -c C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/backends/imgui_impl_opengl3.cpp",
+  "file": "C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/imgui/backends/imgui_impl_opengl3.cpp",
+  "output": "CMakeFiles/ImGui.dir/include/third_party/imgui/backends/imgui_impl_opengl3.cpp.obj"
+},
+{
+  "directory": "C:/Fireflies/build",
+  "command": "C:/Strawberry/c/bin/c++.exe  @CMakeFiles/ImGui.dir/includes_CXX.rsp -g -o CMakeFiles/ImGui.dir/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp.obj -c C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp",
+  "file": "C:/Fireflies/Fireflies/Fireflies_fmk/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp",
+  "output": "CMakeFiles/ImGui.dir/include/third_party/ImGuiFileDialog/ImGuiFileDialog.cpp.obj"
+},
+{
+  "directory": "C:/Fireflies/build",
+  "command": "C:/Strawberry/c/bin/c++.exe  @CMakeFiles/Fireflies.dir/includes_CXX.rsp -g -o CMakeFiles/Fireflies.dir/source/main.cpp.obj -c C:/Fireflies/Fireflies/Fireflies_fmk/source/main.cpp",
+  "file": "C:/Fireflies/Fireflies/Fireflies_fmk/source/main.cpp",
+  "output": "CMakeFiles/Fireflies.dir/source/main.cpp.obj"
+},
+{
+  "directory": "C:/Fireflies/build",
+  "command": "C:/Strawberry/c/bin/c++.exe  @CMakeFiles/Fireflies.dir/includes_CXX.rsp -g -o CMakeFiles/Fireflies.dir/source/launch_softs.cpp.obj -c C:/Fireflies/Fireflies/Fireflies_fmk/source/launch_softs.cpp",
+  "file": "C:/Fireflies/Fireflies/Fireflies_fmk/source/launch_softs.cpp",
+  "output": "CMakeFiles/Fireflies.dir/source/launch_softs.cpp.obj"
+}
+]
