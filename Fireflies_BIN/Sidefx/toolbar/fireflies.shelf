@@ -113,12 +113,10 @@ CONTEXT.set_scene_range(current_path)]]></script>
   </tool>
 
   <tool name="kt_preview" label="Kitsu Batch Preview" icon="C:/Fireflies/Fireflies_BIN/fireflies/logos/batch_kt_preview.png">
-    <script scriptType="python"><![CDATA[from fireflies.houdini import abstract_hou_publish
+    <script scriptType="python"><![CDATA[from fireflies.publish_regular import abstract_publish as ab
 
 scene_path = hou.hipFile.path()
 
-x = abstract_hou_publish.hou_publish()
-
-x.batch_kt_preview(scene_path)]]></script>
+ab.batch_kt_preview(scene_path)]]></script>
   </tool>
 </shelfDocument>
