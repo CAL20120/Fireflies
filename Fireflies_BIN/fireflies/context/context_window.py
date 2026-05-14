@@ -1,6 +1,11 @@
-from PySide2 import QtCore
-from PySide2 import QtWidgets
-from PySide2 import QtGui
+try:
+    from PySide2 import QtCore, QtWidgets, QtGui
+    from shiboken2 import wrapInstance
+
+except:
+    from PySide6 import QtCore, QtWidgets, QtGui
+    from shiboken6 import wrapInstance
+
 
 from datetime import datetime
 
@@ -8,33 +13,47 @@ import os
 import sys
 import pathlib
 
-
 import gazu
 
 from fireflies.context import prod_tracker
+from fireflies.context.prod_tracker import CT_HOU, CT_MAYA, CT_NUKE
 
 CONTEXT = prod_tracker.manage_context()
 
 
-parent=None
-if prod_tracker.CT_MAYA:
+if CT_MAYA:
     import maya.cmds as cmds #type: ignore
     import maya.OpenMayaUI as omui #type: ignore
-    from shiboken2 import wrapInstance
+    import maya.mel as mel
+    # import maya.OpenMaya as maya_api 
 
-    def maya_main_window():
-        main_window_ptr = omui.MQtUtil.mainWindow()
-        return wrapInstance(int(main_window_ptr), QtWidgets.QWidget)
+    from fireflies.maya import maya_utils
 
-    parent = maya_main_window()
+    parent = maya_utils.maya_main_window()
 
-if prod_tracker.CT_HOU:
+if CT_HOU:
     import hou
 
 
+if __name__ == "__main__":
+    app = QtWidgets.QApplication()
+
+    import qdarktheme
+
+    qdarktheme.setup_theme(
+        theme='dark', 
+        corner_shape='rounded',
+        custom_colors= {
+            "primary": "#C00000FF"
+        } 
+
+    )
+
+
 class context_window(QtWidgets.QDialog):
-    def __init__(self):
-        super(context_window, self).__init__()
+    def __init__(self, parent=None):
+        super(context_window, self).__init__(parent)
+
         self.setWindowTitle("Set Context")
         self.setMinimumSize(702, 850)
         # self.setMaximumSize(702, 850)
@@ -418,6 +437,9 @@ class context_window(QtWidgets.QDialog):
 
         kt_infos = CONTEXT.get_full_ct(self.fullPath)
         
+        if not kt_infos:
+            return
+
         self.kt_status = kt_infos['status']
         self.kt_start = kt_infos['start_date']
         self.kt_end = kt_infos['end_date']
@@ -465,13 +487,14 @@ class context_window(QtWidgets.QDialog):
         self.close()
 
 
-
     def test(self):
         target_base = self.build_scene_path()
         # print(target_base)
         test_path = f"{self.tasks_path}\\{self.tasks_combo.currentText()}"
         
-        self.target_scene = [f for  f in os.listdir(test_path) if f.endswith(".hip") or f.endswith("hipnc") or f.endswith("hiplc")]
+        self.target_scene = [
+            f for  f in os.listdir(test_path) if f.endswith(".hip") or f.endswith("hipnc") or f.endswith("hiplc")
+        ]
 
         for path in self.target_scene:
             valid_path = os.path.join(target_base, path)
@@ -480,10 +503,18 @@ class context_window(QtWidgets.QDialog):
 
     def open_scene_maya(self):
         self.build_scene_path()
-        open_path = f"{self.fullPath}/{self.sel_changed()}"
+
+        init_path = self.fullPath.replace('\\', '/')
+        open_path = f"{init_path}/{self.sel_changed()}"
         print(open_path)
+
+        scene_dir = os.path.dirname(open_path)
         
+        os.environ['MIP'] = scene_dir
+        mel.eval(f'putenv "MIP" "{scene_dir}";')
+
         cmds.file(open_path, open=True, force=True)
+
         self.close()
 
 
@@ -632,3 +663,5 @@ class task_win(QtWidgets.QDialog):
 if __name__ == "__main__":
     x = context_window()
     x.show()
+
+    app.exec_()

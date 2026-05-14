@@ -112,6 +112,24 @@ def check_path_type(path:str) -> bool:
     return path_check
 
 
+def get_scene_path():
+    out_path = None
+
+    if CT_HOU:
+        out_path = hou.hipFile.path()
+    
+    if CT_MAYA:
+        out_path = cmds.file(q=True, sn=True)
+
+    if out_path is None:
+        print("### Error while trying to get the scene path ###")
+        return
+    
+    return out_path
+
+
+
+
 class manage_paths():
     def __init__(self, path:str, is_asset:bool=None, path_check:bool=False) -> object:
         super(manage_paths, self).__init__()
@@ -170,12 +188,11 @@ class manage_context():
             self.kt_user = gazu.client.get_current_user()
 
         except:
-            from PySide2 import QtWidgets
             print("### Please activate the vpn to use kitsu ###")
-
-            QtWidgets.QMessageBox.warning(self, 'warning', 'Please activate the vpn to use kitsu')
             return
 
+
+        self.kt_shot = None
 
 
     def get_context_info(self, prod_name:str, seq_name:str=None, shot_name:str=None):
@@ -411,8 +428,13 @@ class manage_context():
 
         task_exclude_list = ['to_validate', 'validate', 'assembly']
 
-        current_prods = []
         target_entity = None
+
+        if not asset:
+            if 'props' in path.lower():
+                print("### ASSET CONTEXT ###")
+                asset = True
+
 
         match asset:
             case True if asset and check:
@@ -466,6 +488,10 @@ class manage_context():
             CT_PATH = manage_paths(path)
 
             self.get_context_info(CT_PATH.ct_prod, CT_PATH.ct_seq, CT_PATH.ct_shot)
+
+            if self.kt_shot is None:
+                return
+
             target_entity = self.kt_shot
 
 
@@ -480,7 +506,12 @@ class manage_context():
 
         target_task_type = gazu.task.get_task_type_by_name(CT_PATH.ct_task)
         
-        kt_task_entity = gazu.task.get_task_by_entity(target_entity, target_task_type)
+        try:
+            kt_task_entity = gazu.task.get_task_by_entity(target_entity, target_task_type)
+        
+        except:
+            print("### Couldn't find the targeted task ###")
+            return
 
 
         start_date = 'Undefined'
@@ -532,7 +563,8 @@ class manage_context():
                 'frame_range': kt_frame_range,
                 'fps': kt_fps,
                 'task_entity': kt_task_entity,
-                'current_entity': target_entity
+                'current_entity': target_entity, 
+                'is_asset': asset
 
             }
 
@@ -544,7 +576,8 @@ class manage_context():
                 'end_date': end_date, 
                 'assigned_users': out_user_name, 
                 'task_entity': kt_task_entity, 
-                'current_entity': target_entity
+                'current_entity': target_entity, 
+                'is_asset': asset
             }
 
         return info_dict
@@ -599,7 +632,7 @@ class manage_context():
 
         print("### Frame range set to the server data")
 
-    #all methods related to assets
+
 
 if __name__ == "__main__":
     path = "R:/Christopher_LUCAS/PRODS/test_dev_02/001/01/light/usd_published/rig_test_ASSET/rig_test_ASSET_003/rig_test_ASSET.usd"
