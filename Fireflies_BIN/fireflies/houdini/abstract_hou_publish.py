@@ -13,6 +13,9 @@ from fireflies.houdini import hou_utils
 from fireflies.context import prod_tracker
 CONTEXT = prod_tracker.manage_context()
 
+from fireflies.publish_regular import abstract_publish as ab
+
+
 try:
     import hou
 
@@ -238,9 +241,7 @@ class hou_publish():
         stage.Export(export_path)
 
         return export_path
-
-
-
+    
 
     def get_export_path(self, asset_name):
         export_dir = f"{self.export_dir}/{asset_name}"
@@ -300,136 +301,6 @@ class hou_publish():
         return preview_path
 
 
-
-    def batch_kt_preview(self, scene_path:str):
-        """
-        Quick method to let create a preview and send it to kitsu without the publisher
-        """
-        
-        props_check = False
-        if 'props' in scene_path.lower():
-            props_check = True
-
-        print(props_check)
-
-        scene_name = os.path.basename(os.path.splitext(scene_path)[0])
-
-        output = f"{os.path.dirname(scene_path)}/quick_preview/{scene_name}_$F4.jpg"
-
-        preview_path = self.export_video_preview(asset_name=scene_name, scene_path=scene_path,
-                                              is_asset=props_check, export_path=output)
-
-
-        print("### Sending preview to kitsu... ###")
-
-        comment = "Fireflies - Preview Published"
-
-        if props_check:
-            ct_scene = prod_tracker.manage_paths(scene_path, is_asset=True)
-            asset_name = f"{ct_scene.ct_name}_ASSET"
-            print(asset_name)
-
-            CONTEXT.publish_asset_task(asset_name=asset_name, scene_path=scene_path,
-                                       preview_path=preview_path, comment=comment)
-            
-            print("### PREVIEW SENT TO KITSU ###")
-            return
-
-        CONTEXT.publish_shot_task(preview_path=preview_path, scene_path=scene_path, 
-                                  comment=comment)
-
-        print("### PREVIEW SENT TO KITSU ###")
-
-
-
-    def export_video_preview(self, asset_name, scene_path=None,
-                             is_asset:bool=False, export_path:str=None):
-        
-        if not export_path:
-            export_dir, target_version = self.get_export_path(asset_name)
-
-            preview_dir = "{}/metadata/video_preview".format(target_version)
-            out_dir = os.path.join(export_dir, preview_dir)
-
-            preview_path = f"{out_dir}/{asset_name}_preview_$F4.jpg"
-
-        else:
-            preview_path = export_path
-            out_dir = os.path.dirname(preview_path)
-
-        if not os.path.exists(out_dir):
-            os.makedirs(out_dir)
-
-
-        if prod_tracker.CT_HOU:
-            f_start, f_end = hou.playbar.playbackRange()
-            frame_range = (int(f_start), int(f_end))
-
-            self.utils.create_playblast(preview_path, frame_range)
-
-        print("### Playblast Done ###")
-
-        kt_infos = None
-        if scene_path:
-            if is_asset:
-                kt_infos = CONTEXT.get_full_ct(scene_path, asset=True)
-            
-            else:                
-                kt_infos = CONTEXT.get_full_ct(scene_path)
-            
-            print("### Fetched kt infos for preview ###")
-
-            #we need to convert the dict to pass it to argparse
-            kt_infos_json = json.dumps(kt_infos)
-            kt_infos_json = kt_infos_json.replace('""', '\\"')
-
-            kt_infos = kt_infos_json
-
-            print("### KT INFO converted to json schema ###")
-
-            kt_user = CONTEXT.kt_user['full_name']
-
-        first_frame = preview_path.replace('$F4', str(frame_range[0]))
-        print(first_frame)
-
-        local_appdata = os.environ.get('LOCALAPPDATA')
-
-        script_path = "C:\\Fireflies\\Fireflies_BIN\\fireflies\\fireflies_utils\\video_converter.py"
-        python_path = f"{local_appdata}\\Programs\\Python\\Python310\\python.exe"
-
-        #otherwise houdini with launch the process with hython
-        proc_env = os.environ.copy()
-        proc_env.pop("PYTHONPATH", None)
-        proc_env.pop("PYTHONHOME", None)
-
-        proc_cmd = [
-            python_path, script_path, '-first_image_path', first_frame, '-kt_infos', kt_infos, '-user', kt_user
-        ]
-
-        proc = subprocess.Popen(
-            proc_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=proc_env
-        )
-
-        stdout, stderr = proc.communicate()
-
-        print(stdout)
-        print("##############")
-        print(stderr)
-
-
-        print("### Preview video generated ###")
-
-        preview_full_path = os.path.join(out_dir.replace('/', '\\'), 'video_preview.mkv')
-        # preview_full_path = os.path.join(export_dir.replace('/', '\\'), out_video_path)
-        
-        print("### out video: {} ###".format(preview_full_path))
-
-        if not os.path.exists(preview_full_path):
-            raise FileExistsError("### Couldn't find the video preview -- Exiting ###")
-
-        return preview_full_path
-        
-    
 
 
 class Publish_checks():
@@ -531,7 +402,6 @@ class Publish_checks():
         # target_layer.Export(export_path)
 
         stage.GetRootLayer().Export(stage_path)
-
 
 
 
