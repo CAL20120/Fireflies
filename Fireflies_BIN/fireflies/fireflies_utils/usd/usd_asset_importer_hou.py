@@ -33,13 +33,17 @@ if CT_MAYA:
     import maya.cmds as cmds
     from fireflies.maya import maya_utils
     M_USD_UTILS = maya_utils.maya_usd()
+    M_REGULAR_UTILS = maya_utils.maya_regular()
 
     CURRENT_SCENE_PATH = cmds.file(q=True, sn=True)
 
+print(CURRENT_SCENE_PATH)
 
-from PySide2 import QtCore
-from PySide2 import QtWidgets
-from PySide2 import QtGui
+try:
+    from PySide2 import QtCore, QtWidgets, QtGui
+
+except:
+    from PySide6 import QtCore, QtWidgets, QtGui
 
 
 get_prod_path = lambda path: path.replace('\\', '/').rsplit("/", 4)[0].replace("/", os.sep)
@@ -57,8 +61,11 @@ class importer_window(QtWidgets.QDialog):
 
         super(importer_window, self).__init__(parent)
 
-        self.prod_path= prod_path
+        self.prod_path = prod_path
         print(self.prod_path)
+
+        if self.prod_path is None:
+            print("Couldn't resolve the production path")
 
         self.import_classic = import_classic
         self.target_input = None
@@ -75,7 +82,6 @@ class importer_window(QtWidgets.QDialog):
         # self.import_comment()
 
 
-    @cache
     def get_asset_paths(self):
         if not self.prod_path:
             self.prod_path = get_prod_path(CURRENT_SCENE_PATH)
@@ -374,7 +380,16 @@ class importer_window(QtWidgets.QDialog):
 
 
         if CT_MAYA:
-            M_USD_UTILS.import_usd_asset(asset_path=asset_path)
+
+            
+            if current_task == 'rig':
+                M_REGULAR_UTILS.reference_maya_scene(scene_path=asset_path)
+
+            if asset_type == "sequence":
+                M_USD_UTILS.import_usd_animation(animation_path=asset_path, asset_name=asset_name)
+
+            else:
+                M_USD_UTILS.import_usd_asset(asset_path=asset_path, asset_name=asset_name)
 
 
         # print(asset_path)
@@ -484,20 +499,40 @@ class import_usd_asset():
         
     # @lru_cache(maxsize=None)
     def find_asset(self) -> str | collections.defaultdict:
-        #the purpose here is to build a dict with each assets and its version to 
-        #make the asset versions tracking easier 
+        """
+        the purpose here is to build a dict with each assets and its version to 
+        make the asset versions tracking easier 
+        """
+
         self.assets_vars = collections.defaultdict(dict)
 
 
         # self.result_dirs = []
         # self.result_published = []
         # self.result_usd_path = []
-        
+
+
+        target_ext = [".usd", ".mb"] if CT_MAYA else [".usd"]
+        exclude_tasks = ['to_validate']
+
+        #important usd files but we import them if needed, we only want to get
+        #or display the main tasks and assets
+        exclude_names = ['topology', 'manifest', 'master']
 
         self.usd_publied_dir = []
         for root, subdir, files in os.walk(self.prod_path):
-            if "usd_published" in subdir:
-                self.usd_publied_dir.append(os.path.join(root, "usd_published"))
+            if CT_MAYA:
+                target_fld = next(
+                    (target for target in ["usd_published", "mb_published"] if target in subdir), None
+                )
+
+                if target_fld in subdir:
+                    self.usd_publied_dir.append(os.path.join(root, target_fld))
+
+            else:
+                if "usd_published" in subdir:
+                    self.usd_publied_dir.append(os.path.join(root, "usd_published"))
+
 
         self.assets = []
         for dirs in self.usd_publied_dir:
@@ -530,16 +565,15 @@ class import_usd_asset():
 
         self.asset_file = []
         for version_dir in self.asset_versions:
-            # print(version_dir)
+            # print(version_dir) 
             for file in os.listdir(version_dir):
-                if file.endswith(".usd"):
+                # print(target_ext)
+                if any(ext for ext in target_ext if file.endswith(ext)):
                     asset_path = os.path.join(version_dir, file)
                     correct_path = asset_path.replace("\\", "/")
                     
                     self.asset_file.append(correct_path)
 
-
-        exclude_tasks = ['to_validate']
 
         #time to build the dict
         for asset in self.asset_file:
@@ -551,28 +585,34 @@ class import_usd_asset():
             if not target_version:
                 continue
 
+            target_dir = os.path.dirname(asset)
+            current_task = self.find_current_task(target_dir=target_dir)
+
             version_path = f"{int(target_version.group()):03d}"
 
             asset_pattern = re.compile(r'(.*)\.usd$')
             anim_pattern = re.compile(r'(.+?)_(\d+)\.usd$')
 
+            if current_task == 'rig':
+                asset_pattern = re.compile(r'(.*)\.mb$')
+
+
             asset_target = asset_pattern.match(file)
             anim_target = anim_pattern.match(file)
 
             #we need to find the related task
-            target_dir = os.path.dirname(asset)
-
-
-            current_task = self.find_current_task(target_dir=target_dir)
 
             if any([CT_HOU, CT_MAYA]):
                 if any(task for task in exclude_tasks if task in current_task):
                     continue
 
-
+            
             if asset_target and not anim_target:
                 name = asset_target.group(1)
                 
+                if any(substr in name for substr in exclude_names):
+                    continue
+
                 # if version_path not in self.assets_vars[name]:
                 #     self.assets_vars[name][version_path] = {}
 
