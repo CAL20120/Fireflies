@@ -228,6 +228,7 @@ class hou_publish():
             stage.Export(export_path)
 
 
+
     def debug_export(self, root_prim:Usd, node):
         if not os.path.exists(self.export_dir):
             os.makedirs(self.export_dir)
