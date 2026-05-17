@@ -27,9 +27,8 @@ if CT_HOU:
 
 
 def get_export_path(asset_name, is_rig:bool=False):
+    scene_path = prod_tracker.get_scene_path()
 
-    if CT_MAYA:
-        scene_path = cmds.file(q=True, sn=True)
     scene_dir = os.path.dirname(scene_path)
 
     out_dir = 'mb_published' if is_rig else 'usd_published'
@@ -37,7 +36,9 @@ def get_export_path(asset_name, is_rig:bool=False):
 
     publish_dir = os.path.join(scene_dir, out_dir).replace('\\', '/')
 
-    export_dir = publish_dir
+    versions_dir = os.path.join(publish_dir, asset_name)
+
+    export_dir = versions_dir
 
     target_versions = sorted(
         [d for d in os.listdir(export_dir) if os.path.isdir(os.path.join(export_dir, d))]
@@ -65,7 +66,7 @@ def write_commentary(text, asset_name):
         export_dir, target_version = get_export_path(asset_name, is_rig=True)
 
     else:
-        export_dir, target_version = get_export_path(asset_name)
+        export_dir, target_version = get_export_path(asset_name=asset_name)
 
     comment_dir = "{}/metadata/commentary".format(target_version)
     comment_dir = os.path.join(export_dir, comment_dir)
@@ -139,7 +140,12 @@ def export_video_preview(asset_name, scene_path=None,
         preview_dir = "{}/metadata/video_preview".format(target_version)
         out_dir = os.path.join(export_dir, preview_dir)
 
-        preview_path = f"{out_dir}/{asset_name}_preview_$F4.jpg"
+        if CT_HOU:
+            preview_path = f"{out_dir}/{asset_name}_preview_$F4.jpg"
+        
+        if CT_MAYA:
+            preview_path = f"{out_dir}/{asset_name}_preview_####.jpg"
+
 
     else:
         preview_path = export_path
@@ -243,3 +249,53 @@ def export_video_preview(asset_name, scene_path=None,
         raise FileExistsError("### Couldn't find the video preview -- Exiting ###")
 
     return preview_full_path
+
+
+
+def export_preview(asset_name:str) -> str:
+    export_dir, target_version = get_export_path(asset_name)
+
+    preview_dir = "{}/metadata/preview".format(target_version)
+
+    preview_dir = os.path.join(export_dir, preview_dir)
+    preview_path = f"{preview_dir}/{asset_name}_preview.jpg"
+
+    if not os.path.exists(preview_dir):
+        os.makedirs(preview_dir)
+
+    f_start = cmds.playbackOptions(q=True, min=True)
+
+    f_range = (f_start, f_start)
+
+    M_UTILS.create_playblast(f_range=f_range, output_path=preview_path)
+    
+    print("### PREVIEW: {} ###".format(preview_path))
+    
+    return preview_path
+
+
+
+def build_shot_name(scene_path:str=None):
+    """
+    Used to build the asset name of a shot to verify the nomenclature 
+    when publishing
+    """
+    
+    if not scene_path:
+        scene_path = prod_tracker.get_scene_path()
+
+    curr_context = CONTEXT.get_full_ct(scene_path)
+
+    if curr_context['is_asset']: 
+        raise Exception(
+            "### Cannot get a shot name within an asset context ###"
+        )
+        
+    
+    curr_entity = curr_context['current_entity']
+    shot_name = curr_entity['name']
+    sequence_name = curr_entity['sequence_name']
+
+    out_shot_name = f"_{sequence_name}_{shot_name}_SHOT"
+
+    return out_shot_name
