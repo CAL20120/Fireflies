@@ -104,7 +104,7 @@ global proc shelf_Fireflies () {
         -style "iconOnly" 
         -marginWidth 0
         -marginHeight 1
-        -command "from PySide2 import QtWidgets\n\nfrom fireflies.fireflies_utils.usd import usd_asset_importer_hou\n\nwin = usd_asset_importer_hou.importer_window()\n\nif win.exec_() == QtWidgets.QDialog.Accepted:\n\tpass\n" 
+        -command "from fireflies.fireflies_utils.usd import usd_asset_importer_hou\n\nx = usd_asset_importer_hou.importer_window(import_classic=True)\nx.show()" 
         -sourceType "python" 
         -commandRepeatable 1
         -flat 1
@@ -140,6 +140,76 @@ global proc shelf_Fireflies () {
         -marginWidth 0
         -marginHeight 1
         -command "from fireflies.context import prod_tracker\n\nimport maya.cmds as cmds\n\nCONTEXT = prod_tracker.manage_context()\n\ncurrent_path = cmds.file(q=True, sn=True).replace('/', '\\\\')\nCONTEXT.set_scene_range(current_path)" 
+        -sourceType "python" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "batch_kt_preview" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "batch_kt_preview" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "Batch kt preview" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "C:/Fireflies/Fireflies_BIN/fireflies/logos/batch_kt_preview.png" 
+        -image1 "C:/Fireflies/Fireflies_BIN/fireflies/logos/batch_kt_preview.png" 
+        -style "iconOnly" 
+        -marginWidth 0
+        -marginHeight 1
+        -command "from fireflies.publish_regular import abstract_publish as ab\n\nimport maya.cmds as cmds \n\nscene_path = cmds.file(q=True, sn=True)\n\nab.batch_kt_preview(scene_path)" 
+        -sourceType "python" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Publish" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "publish" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "Publish" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "C:/Fireflies/Fireflies_BIN/fireflies/logos/publish_logo.png" 
+        -image1 "C:/Fireflies/Fireflies_BIN/fireflies/logos/publish_logo.png" 
+        -style "iconOnly" 
+        -marginWidth 0
+        -marginHeight 1
+        -command "import pyblish\nfrom pyblish import api \nimport pyblish_lite\n\nimport pyblish_maya\npyblish_maya.setup()\n\nimport maya.cmds as cmds\nscene_path = cmds.file(q=True, sn=True)\n\nfrom fireflies.context import prod_tracker\nCT_PATH = prod_tracker.manage_paths(scene_path)\n#pyblish.util.publish(targets=[CT_PATH.ct_task])\n\npublish_name = \"Usd Publishing\"\nif 'rig' in scene_path.lower():\n\tpublish_name = \"Rig Publishing\"\n\tpyblish.api.register_plugin_path(r\"C:\\Fireflies\\Fireflies_BIN\\fireflies\\publish_usd\\collector\")\n\tpyblish.api.register_plugin_path(r\"C:\\Fireflies\\Fireflies_BIN\\fireflies\\publish_rig\\extractor\")\t\n\nelse:\t\n\tpyblish.api.register_plugin_path(r\"C:\\Fireflies\\Fireflies_BIN\\fireflies\\publish_usd\\validator\")\n\tpyblish.api.register_plugin_path(r\"C:\\Fireflies\\Fireflies_BIN\\fireflies\\publish_usd\\extractor\")\n\tpyblish.api.register_plugin_path(r\"C:\\Fireflies\\Fireflies_BIN\\fireflies\\publish_usd\\collector\")\n\tpyblish.api.register_plugin_path(r\"C:\\Fireflies\\Fireflies_BIN\\fireflies\\publish_maya\\extractor\")\n\n\npyblish.api.register_plugin_path(r\"C:\\Fireflies\\Fireflies_BIN\\fireflies\\publish_maya\\collector\")\npyblish.api.register_plugin_path(r\"C:\\Fireflies\\Fireflies_BIN\\fireflies\\publish_regular\\extractor\")\npyblish.api.register_plugin_path(r\"C:\\Fireflies\\Fireflies_BIN\\fireflies\\publish_regular\\collector\")\n\npyblish_lite.settings.WindowTitle = publish_name\npyblish_lite.settings.InitialTab = \"artist\"\npyblish_lite.settings.UsdLabel = True\n\npyblish_lite.show()" 
         -sourceType "python" 
         -commandRepeatable 1
         -flat 1

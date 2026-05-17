@@ -8,7 +8,7 @@ class Kt_Integrate_Asset(pyblish.api.InstancePlugin):
 
     order = 3.2
     optional = False
-    active = False
+    active = True
     label = "Kitsu - Add / Update Asset"
 
     def process(self, instance):
