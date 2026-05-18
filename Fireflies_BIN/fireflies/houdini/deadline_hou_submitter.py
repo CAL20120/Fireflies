@@ -44,7 +44,7 @@ class hou_deadline_submitter():
         return file_path
 
 
-    def get_job_info(self, target_node:hou, scene_path:str) -> list:
+    def get_job_info(self, target_node:str, scene_path:str) -> list:
         # node = target_node
         # if isinstance(target_node, str):
         node = hou.node(target_node)
@@ -193,8 +193,8 @@ class hou_deadline_submitter():
         return out
 
 
-    def hou_render_plugin_info(self, usd_file:os.path, out_images) -> str:
-        args = f'-R HdPrmanXpuLoaderRendererPlugin -V 1 -o {out_images} {usd_file}'
+    def hou_render_plugin_info(self, usd_file:str, out_images) -> str:
+        args = f'-R HdPrmanXpuLoaderRendererPlugin -V 1 -s /Render/rendersettings -o {out_images} {usd_file}'
 
         plugin_txt = 'Executable={}\n' \
                     'Arguments={}\n' \
