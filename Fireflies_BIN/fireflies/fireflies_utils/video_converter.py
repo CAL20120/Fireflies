@@ -38,7 +38,7 @@ def convert_to_video(
 
     print(target_images)
 
-    out_path = os.path.join(image_dir, 'video_preview.mkv')
+    out_path = os.path.join(image_dir, 'video_preview.mp4')
 
 
     first_image_cv = cv2.imread(first_image_path)
@@ -47,7 +47,7 @@ def convert_to_video(
     out_resolution = (first_w, first_h + 230)
 
 
-    fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+    fourcc = cv2.VideoWriter_fourcc(*"avc1")
     out_video = cv2.VideoWriter(out_path, fourcc, 24, out_resolution)
 
     test_text = "Fireflies"

@@ -240,7 +240,7 @@ def export_video_preview(asset_name, scene_path=None,
 
     print("### Preview video generated ###")
 
-    preview_full_path = os.path.join(out_dir.replace('/', '\\'), 'video_preview.mkv')
+    preview_full_path = os.path.join(out_dir.replace('/', '\\'), 'video_preview.mp4')
     # preview_full_path = os.path.join(export_dir.replace('/', '\\'), out_video_path)
     
     print("### out video: {} ###".format(preview_full_path))
