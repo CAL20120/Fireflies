@@ -346,7 +346,9 @@ class context_window(QtWidgets.QDialog):
         
         print(self.tasks_path)
         
-        target_tasks = os.listdir(self.tasks_path)
+        target_tasks = [
+            task for task in os.listdir(self.tasks_path) if task in prod_tracker.TARGET_TASKS
+        ]
         
         for fld in target_tasks:
             self.tasks_combo.addItem(fld)
