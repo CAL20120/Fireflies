@@ -498,7 +498,7 @@ class import_usd_asset():
             self.prod_path = get_prod_path(CURRENT_SCENE_PATH)
         
     # @lru_cache(maxsize=None)
-    def find_asset(self) -> str | collections.defaultdict:
+    def find_asset(self, shot_filter:bool=False) -> str | collections.defaultdict:
         """
         the purpose here is to build a dict with each assets and its version to 
         make the asset versions tracking easier 
@@ -540,8 +540,13 @@ class import_usd_asset():
             for asset in os.listdir(dirs):
                 asset_dir = os.path.join(dirs, asset)
 
+                if shot_filter:
+                    if '_ASSET' in asset_dir:
+                        continue
+
                 if os.path.isdir(asset_dir):
                     self.assets.append(asset_dir)
+
 
 
         self.asset_versions = []
@@ -709,6 +714,8 @@ class import_usd_asset():
         else:
             # print("no task found")
             pass
+
+
 
 
 
