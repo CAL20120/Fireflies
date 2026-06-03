@@ -55,7 +55,6 @@ ASSET_TASKS = [
     "lookdev",
     "rig",
     "groom",
-    "anim",
     "validate", #Only under Alice's supervision
     "to_validate", 
     "retopo", 
@@ -67,13 +66,32 @@ SHOT_TASKS = [
     "layout", 
     "light",
     "comp", 
-    "env", 
+    # "env", 
     "fx", 
     "previz", 
-    'anim'
+    "anim", 
+    "validate", 
+    "delivery"
 ]
 
+
 TARGET_TASKS = ASSET_TASKS + SHOT_TASKS
+
+
+SHOT_TASKS_ICONS = {
+    'light': "C:\\Fireflies\\Fireflies\\softs_logo\\resolver\\tasks\\light_task.png",
+    'fx': "C:\\Fireflies\\Fireflies\\softs_logo\\resolver\\tasks\\fx_task.png", 
+    'layout': "C:\\Fireflies\\Fireflies\\softs_logo\\resolver\\tasks\\layout_task.png", 
+    'comp': "C:\\Fireflies\\Fireflies\\softs_logo\\resolver\\tasks\\comp_task.png", 
+    'anim': "C:\\Fireflies\\Fireflies\\softs_logo\\resolver\\tasks\\anim_task.png",
+    'to_validate': "C:\\Fireflies\\Fireflies\\softs_logo\\resolver\\tasks\\validate_task.png", 
+    'validate': "C:\\Fireflies\\Fireflies\\softs_logo\\resolver\\tasks\\delivery_task.png", 
+}
+
+
+shot_layers_order = ['fx', 'anim', 'light', 'layout']
+asset_layers_order = ['model', 'groom', 'lookdev']
+
 
 
 @cache
@@ -98,6 +116,22 @@ def read_login_prefs():
 
 
 read_login_prefs()
+
+
+
+def get_local_prod_path():
+    target_file = r"C:\\Fireflies\\Common\\fmk_user_prefs\\user_prefs_dir.txt"
+
+    if not os.path.exists(target_file):
+        print("### Please fill the production path in the framework ###")
+        return
+
+    with open(target_file, 'r') as f:
+        path = os.path.normpath(f.read())
+
+    return path
+        
+
 
 def check_path_type(path:str) -> bool:
     path_check = False
@@ -322,7 +356,9 @@ class manage_context():
     #mainly used in the asset resolver to set the correct
     #task status in kitsu
 
-    def set_to_validate(self, prod_name:str, asset_path:str, valid_state:bool, task_removed:bool=False) -> list[dict]:
+    def set_to_validate(self, prod_name:str, asset_path:str,
+                        valid_state:bool, kt_task_entity:dict, 
+                        version:str=None) -> list[dict]:
         """
         Method to set the validation status on kitsu
         
@@ -341,33 +377,26 @@ class manage_context():
 
         self.get_context_info(prod_name)
 
-        CT_PATH = manage_paths(path=asset_path, is_asset=True)
+        if not version:
+            CT_PATH = manage_paths(path=asset_path, is_asset=True)
+            version = CT_PATH.ct_version[-3:]
 
-        version = CT_PATH.ct_version[-3:]
-
-        kt_infos = self.get_full_ct(asset_path, asset=True)
 
         if valid_state:
             kt_validate_status = gazu.task.get_task_status_by_name('Validate')
             comment = "Fireflies - approved task in validate for version: {}".format(version)
 
         else:
-            if task_removed:
-                kt_validate_status = gazu.task.get_task_status_by_name('Removed')
-                comment = "Fireflies - task removed from the validate version: {}".format(version)
-
-
-            else:
-                kt_validate_status = gazu.task.get_task_status_by_name('Waiting For Validation')
-                comment = "Fireflies - Task is waiting for validation for version: {}".format(version)
+            kt_validate_status = gazu.task.get_task_status_by_name('Waiting For Validation')
+            comment = "Fireflies - Task is waiting for validation for version: {}".format(version)
             
 
-        current_task = kt_infos['task_entity']
-        current_entity = kt_infos['current_entity']
+        # current_task = kt_infos['task_entity']
+        # current_entity = kt_infos['current_entity']
 
-        new_status = gazu.task.add_comment(current_task, kt_validate_status, comment)
+        new_status = gazu.task.add_comment(kt_task_entity, kt_validate_status, comment)
 
-        return kt_infos, new_status
+        return kt_task_entity, new_status
 
 
     def get_kt_to_valid_tasks(self, prod_name:str, asset_name:str) -> dict:
@@ -583,6 +612,45 @@ class manage_context():
         return info_dict
 
 
+    def get_shots_hierarchy(self, prod_name:str):
+        """
+        Used to get a dict of the sequences and shot names
+        """
+
+        current_production = gazu.project.get_project_by_name(prod_name)
+
+        seqs = gazu.shot.all_sequences_for_project(current_production)
+        # print(shots)
+
+        out_dict = {}
+
+        for val in seqs:
+            seq_name = val['name']
+            shots = gazu.shot.all_shots_for_sequence(val)
+
+            shot_list = [shot['name'] for shot in shots]
+
+            for x in range(len(shot_list)):
+                current_shot_name = shot_list[x]
+                tasks = gazu.task.all_tasks_for_shot(shots[x])
+
+                out_dict.setdefault(seq_name, {})[current_shot_name] = tasks
+
+            # for x in range(len(shot_list)):
+            #     current_shot_name = shot_list[x]
+
+            #     tasks = gazu.task.all_tasks_for_shot(shots[x])
+
+            #     out_dict.setdefault(
+            #         seq_name, {current_shot_name: tasks}
+            #     )
+
+
+
+        return out_dict
+
+
+
     def publish_shot_task(self, comment, preview_path, scene_path):
         if not os.path.exists(preview_path):
             preview_path = "Z:\\VFX_LIB\\06_USD_DEV\\debug_tex.png"
@@ -635,7 +703,6 @@ class manage_context():
 
 
 if __name__ == "__main__":
-    path = "R:/Christopher_LUCAS/PRODS/test_dev_02/001/01/light/usd_published/rig_test_ASSET/rig_test_ASSET_003/rig_test_ASSET.usd"
-    x = manage_paths(path=path, is_asset=True)
-
-    print(x.ct_name)
+    path = "R:/Christopher_LUCAS/PRODS/test_dev_02/001/01/to_validate/usd_published/_001_01_SHOT/_001_01_SHOT_001/_001_01_SHOT.usd"
+    x = manage_paths(path, is_asset=True)
+    print(x.ct_version)
