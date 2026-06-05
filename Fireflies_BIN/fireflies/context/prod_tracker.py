@@ -78,14 +78,23 @@ SHOT_TASKS = [
 TARGET_TASKS = ASSET_TASKS + SHOT_TASKS
 
 
+task_icon_dir = "C:\\Fireflies\\Fireflies\\softs_logo\\resolver\\tasks"
+get_icon_path = lambda name: os.path.join(task_icon_dir, name)
+
 SHOT_TASKS_ICONS = {
-    'light': "C:\\Fireflies\\Fireflies\\softs_logo\\resolver\\tasks\\light_task.png",
-    'fx': "C:\\Fireflies\\Fireflies\\softs_logo\\resolver\\tasks\\fx_task.png", 
-    'layout': "C:\\Fireflies\\Fireflies\\softs_logo\\resolver\\tasks\\layout_task.png", 
-    'comp': "C:\\Fireflies\\Fireflies\\softs_logo\\resolver\\tasks\\comp_task.png", 
-    'anim': "C:\\Fireflies\\Fireflies\\softs_logo\\resolver\\tasks\\anim_task.png",
-    'to_validate': "C:\\Fireflies\\Fireflies\\softs_logo\\resolver\\tasks\\validate_task.png", 
-    'validate': "C:\\Fireflies\\Fireflies\\softs_logo\\resolver\\tasks\\delivery_task.png", 
+    'light': get_icon_path("light_task.png"),
+    'fx': get_icon_path("fx_task.png"), 
+    'layout': get_icon_path("layout_task.png"), 
+    'comp': get_icon_path("comp_task.png"), 
+    'anim': get_icon_path("anim_task.png"),
+    'to_validate': get_icon_path("validate_task.png"), 
+    'validate': get_icon_path("delivery_task.png"), 
+}
+
+ASSET_TASKS_ICONS = {
+    'model': get_icon_path('model_task.png'), 
+    'groom': get_icon_path('groom_task.png'), 
+    'lookdev': get_icon_path('lookdev_task.png')
 }
 
 
