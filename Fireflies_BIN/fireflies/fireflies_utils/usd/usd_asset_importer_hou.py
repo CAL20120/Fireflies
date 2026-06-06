@@ -61,6 +61,13 @@ class importer_window(QtWidgets.QDialog):
 
         super(importer_window, self).__init__(parent)
 
+
+        self.setWindowFlags(
+            QtCore.Qt.Window | QtCore.Qt.WindowMinimizeButtonHint
+            | QtCore.Qt.WindowMaximizeButtonHint | QtCore.Qt.WindowCloseButtonHint
+        )
+
+
         self.prod_path = prod_path
         print(self.prod_path)
 
@@ -88,7 +95,8 @@ class importer_window(QtWidgets.QDialog):
             print(self.prod_path)
 
         x = import_usd_asset(prod_path=self.prod_path)
-        self.assets_name, self.assets_vars = x.find_asset()
+        
+        self.assets_name, self.assets_vars = x.find_asset(shot_filter=self.show_shots_action.isChecked())
 
         # self.assets_time = []
         # for path in self.paths:
@@ -101,53 +109,68 @@ class importer_window(QtWidgets.QDialog):
 
 
     def create_widgets(self):
+        self.top_menu_bar = QtWidgets.QMenuBar()
+        options_menu = self.top_menu_bar.addMenu('Options')
+
+        self.show_shots_action = QtWidgets.QAction("Shot Filter", self)
+        self.show_shots_action.setCheckable(True)
+        options_menu.addAction(self.show_shots_action)
+
+        
         self.asset_table = QtWidgets.QTreeWidget()
         self.asset_table.setColumnCount(5)
         
         # self.header = self.asset_table.horizontalHeader()
-        self.asset_table.setHeaderLabels(["Asset", "Version", "Type", "Path", "Date"])
+        self.asset_table.setHeaderLabels(["Entity", "Version", "Type", "Local Path", "Modified Date"])
         self.asset_table.header().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
         
-        # self.preview_btn = QtWidgets.QPushButton("Preview Asset")
-        
-        # self.refresh_btn = QtWidgets.QPushButton("Refresh")
-        # self.asset_info_table = QtWidgets.QTableWidget()
-        # self.asset_info_table.setColumnCount(4)
-        # self.vertical_header = self.asset_info_table.verticalHeader()
-        # self.asset_info_table.setHorizontalHeaderLabels(["Asset", "test", "4", "8"])
+        self.text_edit_comment = QtWidgets.QTextEdit()
+        self.text_edit_comment.setReadOnly(True)
+        self.preview_label = QtWidgets.QLabel()
 
-        # self.debug_btn = QtWidgets.QPushButton("debug")
+
         self.import_btn = QtWidgets.QPushButton("Import")
         self.close_btn = QtWidgets.QPushButton("Close")
 
 
     def create_layout(self):
-        self.table_layout = QtWidgets.QVBoxLayout()
+        self.table_widget = QtWidgets.QGroupBox("PUBLISHED ENTITIES")
+
+        self.table_layout = QtWidgets.QVBoxLayout(self.table_widget)
         self.table_layout.addWidget(self.asset_table)
-        # self.table_layout.addWidget(self.preview_btn)
-        # self.table_layout.addWidget(self.refresh_btn)
 
         self.asset_info_layout = QtWidgets.QHBoxLayout()
-        # self.asset_info_layout.addWidget(self.asset_info_table)
 
-        # self.metadata_layout = QtWidgets.QHBoxLayout()
-        self.comment_layout = QtWidgets.QHBoxLayout()
-        self.preview_layout = QtWidgets.QHBoxLayout()
+        self.metadata_widget = QtWidgets.QGroupBox("METADATA")
+        self.metadata_layout = QtWidgets.QVBoxLayout(self.metadata_widget)
 
+        self.metadata_splitter = QtWidgets.QSplitter(QtCore.Qt.Horizontal)
+        self.metadata_splitter.addWidget(self.text_edit_comment)
+        self.metadata_splitter.addWidget(self.preview_label)
+
+        self.metadata_layout.addWidget(self.metadata_splitter)
+
+        self.metadata_splitter.setStretchFactor(0, 1)
+        self.metadata_splitter.setStretchFactor(1, 1)
 
         self.bottom_btn_layout = QtWidgets.QHBoxLayout()
         self.bottom_btn_layout.addWidget(self.import_btn)
         self.bottom_btn_layout.addWidget(self.close_btn)
         # self.bottom_btn_layout.addWidget(self.debug_btn)
-            
-        self.main_layout = QtWidgets.QVBoxLayout(self)
-        self.main_layout.addLayout(self.table_layout)
-        self.main_layout.addLayout(self.asset_info_layout)
-        self.main_layout.addLayout(self.comment_layout)
-        self.main_layout.addLayout(self.preview_layout)
 
-        # self.main_layout.addStretch()
+        self.main_splitter = QtWidgets.QSplitter(QtCore.Qt.Vertical)
+        self.main_splitter.addWidget(self.table_widget)
+        self.main_splitter.addWidget(self.metadata_widget)
+
+        self.main_splitter.setStretchFactor(0, 2)
+        self.main_splitter.setContentsMargins(0, 0, 0, 0)
+
+        self.main_layout = QtWidgets.QVBoxLayout(self)
+        self.main_layout.addWidget(self.top_menu_bar)
+        self.main_layout.addWidget(self.main_splitter)
         self.main_layout.addLayout(self.bottom_btn_layout)
+
+        self.main_layout.setContentsMargins(3, 3, 3, 3)
 
 
     def create_connections(self):
@@ -159,6 +182,8 @@ class importer_window(QtWidgets.QDialog):
         # self.asset_table.selectionModel().selectionChanged.connect(self.sel_changed)
         self.asset_table.selectionModel().selectionChanged.connect(self.import_comment)
         self.asset_table.selectionModel().selectionChanged.connect(self.import_preview)
+
+        self.show_shots_action.triggered.connect(self.get_asset_paths)
 
 
     def refresh_asset_table(self):
@@ -408,24 +433,22 @@ class importer_window(QtWidgets.QDialog):
 
 
     def import_comment(self):
-        children = []
-        for x in range(self.comment_layout.count()):
-            child = self.comment_layout.itemAt(x).widget()
+        # children = []
+        # for x in range(self.comment_layout.count()):
+        #     child = self.comment_layout.itemAt(x).widget()
             
-            if child:
-                children.append(child)
+        #     if child:
+        #         children.append(child)
         
 
-        for child in children:
-            child.deleteLater()
+        # for child in children:
+        #     child.deleteLater()
 
         current_sel = self.asset_table.selectedItems()
         current_task  = current_sel[0]
         parent = current_task.parent()
         name = parent.text(0)
 
-        self.text_edit_comment = QtWidgets.QTextEdit()
-        self.text_edit_comment.setReadOnly(True)
 
         # asset_path = self.get_asset_path()
         # path = os.path.dirname(asset_path)
@@ -441,8 +464,6 @@ class importer_window(QtWidgets.QDialog):
         
         self.text_edit_comment.setPlainText(comment)
 
-        self.comment_layout.addWidget(self.text_edit_comment)
-
 
     # def show_preview(self):
     #     _, index = self.sel_changed()
@@ -454,16 +475,16 @@ class importer_window(QtWidgets.QDialog):
 
 
     def import_preview(self):
-        children = []
-        for x in range(self.preview_layout.count()):
-            child = self.preview_layout.itemAt(x).widget()
+        # children = []
+        # for x in range(self.preview_layout.count()):
+        #     child = self.preview_layout.itemAt(x).widget()
             
-            if child:
-                children.append(child)
+        #     if child:
+        #         children.append(child)
         
         
-        for child in children:
-            child.deleteLater()
+        # for child in children:
+        #     child.deleteLater()
 
         current_sel = self.asset_table.selectedItems()
         current_task  = current_sel[0]
@@ -475,14 +496,10 @@ class importer_window(QtWidgets.QDialog):
         target_file = f"{version_path}/metadata/preview/{name}_preview.jpg"
 
         if os.path.exists(target_file):
-            label = QtWidgets.QLabel()
-
             texture = QtGui.QPixmap(target_file)
-            label.setPixmap(
+            self.preview_label.setPixmap(
                 texture.scaled(426, 240, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
             )
-
-            self.preview_layout.addWidget(label)
 
 
 class import_usd_asset():
@@ -542,6 +559,10 @@ class import_usd_asset():
 
                 if shot_filter:
                     if '_ASSET' in asset_dir:
+                        continue
+
+                else: 
+                    if '_SHOT' in asset_dir:
                         continue
 
                 if os.path.isdir(asset_dir):
@@ -707,13 +728,8 @@ class import_usd_asset():
 
             return target_match[0][1]
 
-        # if tasks_iter:
-        #     current_task = tasks_iter
-        #     return current_task
-
         else:
-            # print("no task found")
-            pass
+            return None
 
 
 
