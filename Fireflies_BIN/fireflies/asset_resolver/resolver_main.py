@@ -1563,8 +1563,9 @@ class MAIN_Asset_Mode_Scheme(Resolver_Mode_Methods):
                 #     status_pix.scaled(24, 24, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
                 # )
 
+                last_version = target_tasks_version[-1]
 
-                published_path = self.asset_vars[current_name]['001'][task]['path']
+                published_path = self.asset_vars[current_name][last_version][task]['path']
 
                 if not published_path:
                     logger.error("Couldn't find the published_path for: {}".format(task))
