@@ -12,6 +12,8 @@ from datetime import datetime
 
 import json
 
+from functools import cache
+
 from fireflies.fireflies_utils.usd import usd_asset_importer_hou
 
 from fireflies.context import prod_tracker
@@ -457,7 +459,7 @@ class hou_usd():
 
         return target_path
 
-
+    @cache
     def update_metadata_info(self, asset_path) -> str:
         asset_path = os.path.normpath(asset_path).replace('\\', '/')
         print("### ASSET_PATH: {} ###".format(asset_path))
@@ -516,6 +518,71 @@ class hou_usd():
         )
 
         proc.communicate()
+
+
+def save_preset(node_path:str, export_path:str) -> dict:
+    node = hou.node(node_path)
+    parms = node.parms()
+
+    out_dict = {}
+
+    for parm in parms: 
+        value = parm.eval()
+
+        if isinstance(value, hou.Ramp):
+            value = {
+                "is_ramp": True, 
+                "is_color": value.isColor(), 
+                "basis": [t.name() for t in value.basis()],
+                "keys": list(value.keys()), 
+                "valueues": list(value.values())
+            }
+
+        elif hasattr(value, '__class__'): 
+            value = str(value)
+
+        out_dict[parm.name()] = value
+
+    with open(export_path, 'w') as f:
+        json.dump(out_dict, f, indent=4)
+
+    return out_dict
+
+
+
+def load_preset(node_path:str, import_path:str):
+    if not os.path.exists(import_path):
+        raise FileNotFoundError("### Couldn't find the json file") 
+    
+    node = hou.node(node_path)
+
+    if node is None:
+        raise ValueError("### Targeted node doesn't exist ###")
+
+    with open(import_path, 'r') as f:
+        in_data = json.load(f)
+
+    for parm, value in in_data.items(): 
+        parm = node.parm(parm)
+
+        if parm is None:
+            pass
+
+        try:
+            if isinstance(value, dict) and value.get("is_ramp"): 
+                enums = [getattr(hou.rampBasis, t) for t in value["basis"]]
+
+                ramp = hou.Ramp(enums, value['keys'], value['values'])
+
+                parm.set(ramp)
+
+            else: 
+                parm.set(value)
+    
+        except: 
+            pass
+
+
 
 
 if __name__ == "__main__":
