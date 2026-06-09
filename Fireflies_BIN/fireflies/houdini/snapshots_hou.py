@@ -26,6 +26,12 @@ class snapshots_window(QtWidgets.QDialog):
 
         super(snapshots_window, self).__init__(parent)
 
+        self.setWindowFlags(
+            QtCore.Qt.Window | QtCore.Qt.WindowMinimizeButtonHint | 
+            QtCore.Qt.WindowMaximizeButtonHint | QtCore.Qt.WindowCloseButtonHint
+        )
+
+
         self.setWindowTitle("Fireflies Snapshots")
         self.setMinimumSize(800, 550)
 
