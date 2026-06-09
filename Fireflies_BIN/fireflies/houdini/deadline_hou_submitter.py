@@ -134,8 +134,8 @@ class hou_deadline_submitter():
                     'Priority={}\n' \
                     'Department=Usd generation\n' \
                     'Frames={}\n' \
-                    'ChunkSize=24\n' \
-                    'MachineLimit=3\n' \
+                    'ChunkSize=64\n' \
+                    'MachineLimit=0\n' \
                     'ConcurrentTasks=1\n'.format(job_name, job_name, comment, priority, frames)
 
 
@@ -150,11 +150,12 @@ class hou_deadline_submitter():
         return out
 
 
-    def hou_plugin_info(self, scene_path, target_node, export_path) -> str:
+    def hou_plugin_info(self, scene_path, target_node, export_path,
+                        local_scene_path, local_usd_path) -> str:
         generate_usd_script = "C:\\Fireflies\\Fireflies_BIN\\fireflies\\houdini\\usd_render_call.py"
         
 
-        args = f'{generate_usd_script} -scene_path "{scene_path}" -node_path "{target_node}" -export_path "{export_path}" -f_start <STARTFRAME> -f_end <ENDFRAME>'
+        args = f'{generate_usd_script} -scene_path "{scene_path}" -node_path "{target_node}" -export_path "{export_path}" -f_start <STARTFRAME> -f_end <ENDFRAME> -local_scene_path "{local_scene_path}" -local_usd_path "{local_usd_path}"'
                         
         plugin_txt = 'Executable={}\n' \
                      'Arguments={}\n' \
@@ -194,7 +195,7 @@ class hou_deadline_submitter():
 
 
     def hou_render_plugin_info(self, usd_file:str, out_images) -> str:
-        args = f'-R HdPrmanXpuLoaderRendererPlugin -V 1 -s /Render/rendersettings -o {out_images} {usd_file}'
+        args = f'-R HdPrmanXpuLoaderRendererPlugin -V 1 -s /Render/rendersettings -o {out_images} {usd_file} --frame <STARTFRAME>'
 
         plugin_txt = 'Executable={}\n' \
                     'Arguments={}\n' \
@@ -218,9 +219,11 @@ class hou_deadline_submitter():
             target_node = hou.node(target_node_path)
 
         scene_path = hou.hipFile.path()
+        local_scene_path = scene_path
 
 
-        out_images, dl_priority, job_name, dl_comment, departement, machine_sel, f_start, f_end, new_scene = self.get_job_info(target_node.path(), scene_path)
+        (out_images, dl_priority, job_name, dl_comment,
+        departement, machine_sel, f_start, f_end, new_scene) = self.get_job_info(target_node.path(), scene_path)
 
         print(out_images)
 
@@ -265,6 +268,20 @@ class hou_deadline_submitter():
 
         out_images = os.path.join(fld, fixed_name).replace('\\', '/')
 
+
+        local_scene_dir = os.path.dirname(local_scene_path)
+        print(local_scene_dir)
+
+        local_basename = os.path.basename(local_scene_dir)
+
+        render_path_stem = export_dir.split(local_basename)[-1].lstrip('\\')
+        print(render_path_stem)
+
+        local_usd_path = os.path.normpath(
+            os.path.join(local_scene_dir, render_path_stem, '__render__.$F4.usdc')
+        )
+
+
         print(f"### EXPORT PATH: {out_images} ###")
 
         dl_path = out_images.replace('$F', '__target_frames__')
@@ -297,7 +314,8 @@ class hou_deadline_submitter():
 
 
         usd_export_job = self.hou_job_info(job_name, dl_frames, dl_priority, dl_comment, machine_sel)
-        usd_export_plugin = self.hou_plugin_info(scene_path, target_node.path(), export_path)
+        usd_export_plugin = self.hou_plugin_info(scene_path, target_node.path(), export_path,
+                                                local_scene_path, local_usd_path)
 
         job_cmd = [self.deadline_ex, usd_export_job, usd_export_plugin]
         
@@ -385,6 +403,7 @@ class hou_deadline_submitter():
         out = self.write_target_file(target_path, info_txt)
 
         return out
+
 
 
     def hou_cache_plugin(self, scene_path:str, target_node:hou, render_dir:str, render_path:str):
@@ -521,6 +540,27 @@ class hou_deadline_submitter():
         
 
 
+rm_render_parms_main = {
+    "main1": "0",
+    "trange": "1",
+    "f1": "1001.0",
+    "f2": "1096.0",
+    "f3": "1.0",
+
+    "cam": "/cameras/camera2",
+    "resolution1": "2560",
+    "resolution2": "1440",
+    "unlock_path": "1",
+
+    "xn__rihiderminsamples_control_ohbf": "set",
+    "xn__rihiderminsamples_n3af": "64",
+    
+    "xn__riRiPixelVariance_control_ohbc": "set",
+    "xn__riRiPixelVariance_n3ac": "0.01",
+}
+
+
 
 if __name__ == "__main__":
     pass
+
