@@ -59,8 +59,8 @@ class context_window(QtWidgets.QDialog):
         # self.setMaximumSize(702, 850)
 
         self.f = open(r"C:\\Fireflies\\Common\\fmk_user_prefs\\user_prefs_dir.txt")
-        # self.path = r"R:\\Christopher_LUCAS"
         self.path = os.path.normpath(self.f.read())
+        # self.path = r"R:\\Christopher_LUCAS"
 
         self.create_widgets()
 
@@ -130,8 +130,9 @@ class context_window(QtWidgets.QDialog):
         self.kt_info_table.setRowCount(4)
         self.kt_info_table.setVerticalHeaderLabels(['Status', 'Start Date', 'Due Date', 'Assigned Artists'])
         self.kt_info_table.horizontalHeader().hide()
-        kt_header_view = self.kt_info_table.verticalHeader()
         self.kt_info_table.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
+        kt_header_view = self.kt_info_table.verticalHeader()
+        kt_header_view.setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
 
         for x in range(5):
             self.kt_info_table.setItem(0, x, QtWidgets.QTableWidgetItem('Waiting'))
@@ -144,48 +145,66 @@ class context_window(QtWidgets.QDialog):
 
 
     def create_layout(self):
-        self.set_shots_layout = QtWidgets.QHBoxLayout()
+        self.set_shots_widget = QtWidgets.QWidget()
+
+        self.set_shots_layout = QtWidgets.QHBoxLayout(self.set_shots_widget)
         self.set_shots_layout.addWidget(self.prod_combo)
         self.set_shots_layout.addWidget(self.sequence_combo)
         self.set_shots_layout.addWidget(self.shots_combo)
         self.set_shots_layout.addWidget(self.tasks_combo)
 
-        self.ct_layout = QtWidgets.QHBoxLayout()
-        self.ct_layout.addWidget(self.ct_prod_btn)
+
+        self.ct_widget = QtWidgets.QGroupBox("Create Element")
+
+        self.ct_layout = QtWidgets.QHBoxLayout(self.ct_widget)
+        # self.ct_layout.addWidget(self.ct_prod_btn)
         self.ct_layout.addWidget(self.ct_seq_btn)
         self.ct_layout.addWidget(self.ct_shot_btn)
         self.ct_layout.addWidget(self.ct_task_btn)
-
-        self.kt_info_layout = QtWidgets.QVBoxLayout()
-        self.kt_info_layout.addWidget(self.kt_info_table)
 
         self.bottom_btn_layout = QtWidgets.QHBoxLayout()
         self.bottom_btn_layout.addWidget(self.start_shot_btn)
         self.bottom_btn_layout.addWidget(self.open_btn)
         self.bottom_btn_layout.addWidget(self.close_btn)
         # self.bottom_btn_layout.addWidget(self.debug_btn)
+        # self.preview_layout = QtWidgets.QHBoxLayout()
 
 
-        self.preview_layout = QtWidgets.QHBoxLayout()
-
-
-        self.line_layout = QtWidgets.QFormLayout()
+        self.custom_name_widget = QtWidgets.QGroupBox("CUSTOM NAME")
+        self.line_layout = QtWidgets.QFormLayout(self.custom_name_widget)
         self.line_layout.addRow("Custom name: ", self.custom_name_line)
 
+        self.manage_entity_splitter = QtWidgets.QSplitter(QtCore.Qt.Vertical)
+        self.manage_entity_splitter.addWidget(self.custom_name_widget)
+        self.manage_entity_splitter.addWidget(self.ct_widget)
+
+
+        self.main_splitter = QtWidgets.QSplitter(QtCore.Qt.Vertical)
+        self.main_splitter.addWidget(self.context_info)
+        self.main_splitter.addWidget(self.manage_entity_splitter)
+        self.main_splitter.addWidget(self.kt_info_table)
+        
+        self.main_splitter.setStretchFactor(0, 3)
 
         self.main_layout = QtWidgets.QVBoxLayout(self)
-        self.main_layout.addLayout(self.set_shots_layout)
-        self.main_layout.addWidget(self.context_info)
-
-        self.main_layout.addLayout(self.line_layout)
-        self.main_layout.addLayout(self.ct_layout)
-        self.main_layout.addLayout(self.preview_layout)
-        # self.main_layout.addWidget(self.refresh_btn)
-
-        self.main_layout.addLayout(self.kt_info_layout)
-
-        self.main_layout.addStretch()
+        self.main_layout.addWidget(self.set_shots_widget)
+        self.main_layout.addWidget(self.main_splitter)
         self.main_layout.addLayout(self.bottom_btn_layout)
+
+        self.main_layout.setContentsMargins(5, 5, 5, 5)
+
+        # self.main_layout.addLayout(self.set_shots_layout)
+        # self.main_layout.addWidget(self.context_info)
+
+        # self.main_layout.addLayout(self.line_layout)
+        # self.main_layout.addLayout(self.ct_layout)
+        # self.main_layout.addLayout(self.preview_layout)
+        # # self.main_layout.addWidget(self.refresh_btn)
+
+        # self.main_layout.addLayout(self.kt_info_layout)
+
+        # self.main_layout.addStretch()
+        # self.main_layout.addLayout(self.bottom_btn_layout)
 
 
     def create_connections(self):
