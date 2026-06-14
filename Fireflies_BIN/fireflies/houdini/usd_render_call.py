@@ -9,19 +9,45 @@ import hou
 
 from datetime import datetime
 
+from fireflies.context import prod_tracker
+
+
 def export_usd(scene_path:str, node_path:hou, export_path:str,
-               f_start:int, f_end:int, local_scene_path:str, 
-               local_usd_path:str):
+               f_start:int, f_end:int):
     
-    tmp_dir = os.environ.get('TMP')
+
+    local_prod_dir = prod_tracker.get_local_prod_path()
+    print("### LOCAL PROD DIR {} ###".format(local_prod_dir))
+
+    nas_export_path = export_path
 
     norm_scene = os.path.normpath(scene_path)
 
     norm_dir = os.path.dirname(norm_scene)
     os.startfile(norm_dir)
 
-    export_dir = os.path.dirname(export_path)
+    export_dir = os.path.dirname(export_path).replace('\\', '/')
     os.startfile(export_dir)
+
+
+    local_scene_path = os.path.join(local_prod_dir, scene_path.split('PRODS')[-1].lstrip('/'))
+    print("### LOCAL SCENE PATH: {} ###".format(local_scene_path))
+
+    original_scene = local_scene_path
+
+    local_scene_dir = os.path.dirname(local_scene_path)
+    print(local_scene_dir)
+
+
+    local_basename = os.path.basename(local_scene_path)
+
+    render_path_stem = export_dir.split('PRODS')[-1].lstrip('/')
+    
+    print(render_path_stem)
+
+    local_usd_path = os.path.normpath(
+        os.path.join(local_prod_dir, render_path_stem, '__render__.$F4.usdc')
+    ).replace('\\', '/')
 
 
     farm_dir = os.path.join(os.path.dirname(local_scene_path), 'farm_scenes')
@@ -38,32 +64,27 @@ def export_usd(scene_path:str, node_path:hou, export_path:str,
 
     local_scene_path = farm_scene_path
 
-
-    # nas_path = scene_path.replace(os.sep, '/')
-    scene_name = os.path.basename(norm_scene)
-
-    nas_export_path = export_path
-
-    export_path = local_usd_path.replace('\\', '/')
-    master_path = os.path.join(os.path.dirname(export_path), f'master_anim_{f_start}.usdc')
+    master_path = os.path.join(
+        os.path.dirname(local_usd_path), f'master_anim_{f_start}.usdc'
+    ).replace('\\', '/')
 
 
     try:
         hou.hipFile.load(local_scene_path)
 
     except:
-        time.sleep(60)
-        print("### Trying to reload scene ###")
-        hou.hipFile.load(local_scene_path)
-
+        raise FileExistsError("### Couldn't load the houdini scene file at: {} ###".format(local_scene_path))
 
     print("### Scene loaded at: {} ###".format(local_scene_path))
 
 
-    nas_dir = os.path.dirname(scene_path)
-    hou.hscript(f"set -g HIP = '{nas_dir}'")
-    hou.hscript(f"set -g JOB = '{nas_dir}'")
+    hip_dir = os.path.dirname(original_scene)
+    hou.hscript(f"set -g HIP = '{hip_dir}'")
+    hou.hscript(f"set -g JOB = '{hip_dir}'")
 
+
+    render_node = hou.node(node_path)
+    render_node.allowEditingOfContents()
 
     target_rop = hou.node(f"{node_path}/rop_dd")
     current_network = target_rop.parent()
@@ -88,6 +109,8 @@ def export_usd(scene_path:str, node_path:hou, export_path:str,
     target_rop.parm('flattensoplayers').set(1)
 
     target_rop.parm('fileperframe').set(1)
+
+    print("### EXPORTING MASTER TO: {} ###".format(master_path))
 
     target_rop.render()
 
@@ -153,8 +176,7 @@ def main():
     args = parser.parse_args()
 
     export_usd(args.scene_path, args.node_path, args.export_path,
-               args.f_start, args.f_end, args.local_scene_path,
-               args.local_usd_path)
+               args.f_start, args.f_end)
 
 
 main()
