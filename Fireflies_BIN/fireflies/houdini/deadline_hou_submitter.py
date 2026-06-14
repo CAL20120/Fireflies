@@ -1,17 +1,33 @@
 import os 
 import sys
+
 import re
 import shutil
 import time
+
+import json
 
 import subprocess 
 
 from datetime import date
 import random
 
-import hou 
+from dataclasses import dataclass
 
-from fireflies.houdini import hou_utils
+
+import gazu
+
+from fireflies.context import prod_tracker
+CONTEXT = prod_tracker.manage_context()
+
+
+try:
+    import hou 
+    from fireflies.houdini import hou_utils
+
+except:
+    pass
+
 # from fireflies.context.prod_tracker import get_context
 # from fireflies.fireflies_utils import fireflies_requests
 
@@ -134,7 +150,7 @@ class hou_deadline_submitter():
                     'Priority={}\n' \
                     'Department=Usd generation\n' \
                     'Frames={}\n' \
-                    'ChunkSize=64\n' \
+                    'ChunkSize=128\n' \
                     'MachineLimit=0\n' \
                     'ConcurrentTasks=1\n'.format(job_name, job_name, comment, priority, frames)
 
@@ -150,12 +166,12 @@ class hou_deadline_submitter():
         return out
 
 
-    def hou_plugin_info(self, scene_path, target_node, export_path,
-                        local_scene_path, local_usd_path) -> str:
+    def hou_plugin_info(self, scene_path, target_node, export_path) -> str:
+
         generate_usd_script = "C:\\Fireflies\\Fireflies_BIN\\fireflies\\houdini\\usd_render_call.py"
         
 
-        args = f'{generate_usd_script} -scene_path "{scene_path}" -node_path "{target_node}" -export_path "{export_path}" -f_start <STARTFRAME> -f_end <ENDFRAME> -local_scene_path "{local_scene_path}" -local_usd_path "{local_usd_path}"'
+        args = f'{generate_usd_script} -scene_path "{scene_path}" -node_path "{target_node}" -export_path "{export_path}" -f_start <STARTFRAME> -f_end <ENDFRAME>'
                         
         plugin_txt = 'Executable={}\n' \
                      'Arguments={}\n' \
@@ -169,7 +185,11 @@ class hou_deadline_submitter():
         return out
     
 
-    def hou_render_job_info(self, job_name, priority:str, frames, id, department, comment, machine_sel:str) -> str:
+    def hou_render_job_info(self, job_name, priority:str, frames, id,
+                            department, comment, machine_sel:str, nas_usd_dir:str) -> str:
+        
+        raidrive_pre_script = "C:\\Fireflies\\Fireflies_BIN\\fireflies\\fireflies_utils\\pre_render_raidrive.py"
+
         info_txt = 'Plugin=CommandLine\n' \
                     'Name={} [Render]\n' \
                     'BatchName={}\n' \
@@ -180,7 +200,11 @@ class hou_deadline_submitter():
                     'Department={}\n' \
                     'Frames={}\n' \
                     'ChunkSize=1\n' \
-                    'JobDependency0={}\n'.format(job_name, job_name, comment, priority, department, frames, id)
+                    'JobDependency0={}\n' \
+                    'PreTaskScript={}\n' \
+                    'EnvironmentKeyValue0=NAS_USD_DIR={}\n'.format(job_name, job_name, comment,
+                                                                   priority, department, frames,
+                                                                   id, raidrive_pre_script, nas_usd_dir)
         
 
         if machine_sel:
@@ -267,20 +291,7 @@ class hou_deadline_submitter():
         fixed_name = file.replace(target_frame.group(), '$F')
 
         out_images = os.path.join(fld, fixed_name).replace('\\', '/')
-
-
-        local_scene_dir = os.path.dirname(local_scene_path)
-        print(local_scene_dir)
-
-        local_basename = os.path.basename(local_scene_dir)
-
-        render_path_stem = export_dir.split(local_basename)[-1].lstrip('\\')
-        print(render_path_stem)
-
-        local_usd_path = os.path.normpath(
-            os.path.join(local_scene_dir, render_path_stem, '__render__.$F4.usdc')
-        )
-
+        
 
         print(f"### EXPORT PATH: {out_images} ###")
 
@@ -300,8 +311,6 @@ class hou_deadline_submitter():
 
         dl_frames = f"{f_start}-{f_end}"
 
-
-
         print("####### EXPORT DIR: {} ######".format(export_dir))
 
         export_dir = export_dir.replace(os.sep, '/')
@@ -314,8 +323,7 @@ class hou_deadline_submitter():
 
 
         usd_export_job = self.hou_job_info(job_name, dl_frames, dl_priority, dl_comment, machine_sel)
-        usd_export_plugin = self.hou_plugin_info(scene_path, target_node.path(), export_path,
-                                                local_scene_path, local_usd_path)
+        usd_export_plugin = self.hou_plugin_info(scene_path, target_node.path(), export_path)
 
         job_cmd = [self.deadline_ex, usd_export_job, usd_export_plugin]
         
@@ -345,7 +353,8 @@ class hou_deadline_submitter():
 
         husk_render_input = export_path.replace('$F4', "<STARTFRAME%4>").replace('$F', '<STARTFRAME>')
 
-        render_job = self.hou_render_job_info(job_name, dl_priority, dl_frames, usd_job_id, departement, dl_comment, machine_sel)
+        render_job = self.hou_render_job_info(job_name, dl_priority, dl_frames, usd_job_id,
+                                              departement, dl_comment, machine_sel, export_dir)
         render_plugin = self.hou_render_plugin_info(usd_file=husk_render_input, out_images=husk_out_images)
 
         render_job_cmd = [self.deadline_ex, render_job, render_plugin]
@@ -406,7 +415,7 @@ class hou_deadline_submitter():
 
 
 
-    def hou_cache_plugin(self, scene_path:str, target_node:hou, render_dir:str, render_path:str):
+    def hou_cache_plugin(self, scene_path:str, target_node, render_dir:str, render_path:str):
         generate_usd_script = "C:\\Fireflies\\Fireflies_BIN\\fireflies\\houdini\\cache_render_call.py"
         
 
@@ -540,25 +549,89 @@ class hou_deadline_submitter():
         
 
 
-rm_render_parms_main = {
-    "main1": "0",
-    "trange": "1",
-    "f1": "1001.0",
-    "f2": "1096.0",
-    "f3": "1.0",
+class Resolver_Renders():
+    def __init__(self, context:dataclass):
+        self.curr_context = context
+        self.deadline_hython = "C:\\Fireflies\\Fireflies_BIN\\Sidefx\\env\\deadline_hython_310.bat"
 
-    "cam": "/cameras/camera2",
-    "resolution1": "2560",
-    "resolution2": "1440",
-    "unlock_path": "1",
+        self.get_render_parms()
 
-    "xn__rihiderminsamples_control_ohbf": "set",
-    "xn__rihiderminsamples_n3af": "64",
-    
-    "xn__riRiPixelVariance_control_ohbc": "set",
-    "xn__riRiPixelVariance_n3ac": "0.01",
-}
 
+    def get_render_parms(self):
+        kt_curr_entity = self.curr_context.kt_entity_sel
+
+        kt_task = gazu.task.get_task(kt_curr_entity['id'])
+        kt_task_data = kt_task['entity']['data']        
+
+        f_start = kt_task_data['frame_in']
+        f_end = kt_task_data['frame_out']
+
+        resolution_str = kt_task['project']['resolution']
+        res_w, res_h = resolution_str.split('x')
+
+        shot_name = kt_task['entity']['name']
+
+        self.rm_render_parms_main = {
+            "trange": {
+                'value': "1", 
+                'name': "Frame Range",
+                'choices': [("0", "Render Current Frame"), ("1", "Render Frame Range")], 
+                'type': 'menu'
+            },
+            "f1": {'value': f_start, 'name': 'Start Frame', 'type': 'float'},
+            "f2": {'value': f_end, 'name': 'End Frame', 'type': 'float'},
+
+            "cam": {'value': "/cameras/camera2", 'name': 'Camera', 'type': 'camera'},
+            "resolution1": {'value': res_w, 'name': 'Resolution Width', 'type': 'int'},
+            "resolution2": {'value': res_h, 'name': 'Resolution Height', 'type': 'int'},
+
+            "xn__rihiderminsamples_n3af": {'value': "128", 'name': 'Min Samples', 'type': 'int'},
+            "xn__rihidermaxsamples_n3af": {'value': "256", 'name': 'Max Samples', 'type': 'int'},
+   
+            "xn__riRiPixelVariance_n3ac": {'value': "0.01", 'name': 'Pixel Variance', 'type': 'float'},
+
+            "dl_job_name": {'value': f"DELIVERY - {shot_name}", 'name': 'Job Name', 'type': 'str'},
+            "dl_machine_list": {'value': "", 'name': 'Assign Workers', 'type': 'str'}
+        }
+
+        self.rm_render_parms_locked = {
+            "unlock_path": 1,
+            "output": "",
+            "xn__rihiderminsamples_control_ohbf": "set",
+            "xn__riRiPixelVariance_control_ohbc": "set",
+            "xn__rihidermaxsamples_control_ohbf": "set",
+            "dl_machine_sel": "1"
+        }
+
+
+    def submit_delivery(self, scene_path:str, render_settings_path:str,
+                        validate_path:str):
+        """
+        Launches the script that creates the delivery scene 
+        and sends the render jobs.
+        """
+
+        script_path = "C:\\Fireflies\\Fireflies_BIN\\fireflies\\houdini\\submit_delivery_job.py"
+
+        proc_env = os.environ.copy()
+        proc_env.pop("PYTHONPATH", None)
+        proc_env.pop("PYTHONHOME", None)
+
+        cmd = [self.deadline_hython, script_path, 
+               '-scene_path', scene_path,
+               '-render_settings', render_settings_path, 
+               '-validate_path', validate_path
+            ]
+
+        proc = subprocess.Popen(
+            cmd, 
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            text=True, env=proc_env
+        )
+
+        stdout, stderr = proc.communicate()
+
+        print(stdout, stderr)
 
 
 if __name__ == "__main__":

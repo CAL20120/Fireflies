@@ -33,6 +33,9 @@ ABS_PUBLISH = abstract_hou_publish.hou_publish
 PUBLISH_CHECKS = abstract_hou_publish.Publish_checks()
 
 
+from fireflies.houdini import deadline_hou_submitter
+
+
 from PySide2 import (QtCore, QtWidgets, QtGui, 
                      QtMultimedia, QtMultimediaWidgets)
 
@@ -426,7 +429,8 @@ class Resolver_window(QtWidgets.QMainWindow):
         self.top_menu_bar = QtWidgets.QMenuBar()
         main_menu = self.top_menu_bar.addMenu('Options')
         validate_menu = self.top_menu_bar.addMenu('Validates')
-        dev_menu = self.top_menu_bar.addMenu('Dev / Debug')
+        # dev_menu = self.top_menu_bar.addMenu('Dev / Debug')
+        # dev_menu.hide()
 
 
 
@@ -448,8 +452,8 @@ class Resolver_window(QtWidgets.QMainWindow):
         self.validate_target_task = QtWidgets.QAction("Validate selected task", self)
         validate_menu.addAction(self.validate_target_task)
 
-        self.debug_asset_finder = QtWidgets.QAction("Get Asset Vars", self)
-        dev_menu.addAction(self.debug_asset_finder)
+        # self.debug_asset_finder = QtWidgets.QAction("Get Asset Vars", self)
+        # dev_menu.addAction(self.debug_asset_finder)
 
         # info_header = self.asset_info_table.verticalHeader()
         # info_header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
@@ -500,7 +504,7 @@ class Resolver_window(QtWidgets.QMainWindow):
         self.add_validate_task_btn.triggered.connect(self.current_mode.add_to_valid_task)
         self.validate_target_task.triggered.connect(self.current_mode.validate_task)
 
-        self.debug_asset_finder.triggered.connect(self.current_mode.debug_func)
+        # self.debug_asset_finder.triggered.connect(self.current_mode.debug_func)
 
         # self.render_task_action.triggered.connect(self.current_mode.submit_task_render)
 
@@ -1045,7 +1049,6 @@ class MAIN_Asset_Mode_Scheme(Resolver_Mode_Methods):
         self.task_preview = None
         self.task_comment = self.resolver_asset_ui.task_comment
 
-
         self.resolver_asset_ui.request_mode_change.connect(lambda: self.check_current_mode())
         self.resolver_asset_ui.request_asset_meta.connect(lambda: self.update_meta())
 
@@ -1054,7 +1057,6 @@ class MAIN_Asset_Mode_Scheme(Resolver_Mode_Methods):
 
         self.published_entity_widget = self.resolver_asset_ui.published_entity_widget
 
-        # self.init_windows()
 
 
 
@@ -1088,6 +1090,13 @@ class MAIN_Asset_Mode_Scheme(Resolver_Mode_Methods):
 
 
     def update_meta(self):
+        print("### UPDATING META ###")
+
+        asset_sel = self.resolver_asset_ui.published_entity_widget.currentRow()
+        asset_name = self.target_name[asset_sel]
+
+        self.scheme_context.current_asset_name = asset_name
+
         self.manage_asset_tree()
 
 
@@ -1236,6 +1245,7 @@ class MAIN_Asset_Mode_Scheme(Resolver_Mode_Methods):
         )
 
         print(published_date)
+
         self.manage_asset_tree()
 
 
@@ -1426,6 +1436,7 @@ class MAIN_Asset_Mode_Scheme(Resolver_Mode_Methods):
 
 
     def debug_func(self):
+        print(self.scheme_context)
         pass
 
 
@@ -1742,6 +1753,7 @@ class MAIN_Asset_Mode_Scheme(Resolver_Mode_Methods):
 
     def add_validate_task(self):
         asset_name = self.scheme_context.current_asset_name
+        print(asset_name)
 
         to_validate_path, validate_path = self.get_validate_path(asset_name)
 
@@ -1966,6 +1978,7 @@ class MAIN_Shot_Mode_Scheme(Resolver_Mode_Methods):
 
         self.resolver_shot_ui.request_shot_meta.connect(self.update_metadata)
         self.resolver_shot_ui.request_context_update.connect(self.update_scheme_context)
+        self.resolver_shot_ui.request_delivery_render.connect(self.render_delivery)
         # self.resolver_shot_ui.request_video_update.connect(self.load_meta_preview)
 
 
@@ -2012,6 +2025,9 @@ class MAIN_Shot_Mode_Scheme(Resolver_Mode_Methods):
 
         target_items:tuple = self.get_tree_seq_elements(self.resolver_shot_ui.published_entity_widget)
         self.scheme_context.seq_elements = target_items
+
+        to_valid_path, valid_path = self.validation_process.check_validate_files(self.scheme_context.seq_elements)
+        self.scheme_context.current_validate_path = valid_path
 
 
 
@@ -2388,6 +2404,30 @@ class MAIN_Shot_Mode_Scheme(Resolver_Mode_Methods):
         self.update_metadata()
 
 
+
+
+    def render_delivery(self):
+        print("# Delivery")
+
+        validate_path = self.scheme_context.current_validate_path
+        kt_entity_sel = self.scheme_context.kt_entity_sel
+
+        if not kt_entity_sel or not validate_path: 
+            QtWidgets.QMessageBox.warning(self.resolver_shot_ui, 'warning', 'Please Select A Shot')
+            return
+        
+        if not os.path.exists(validate_path): 
+            QtWidgets.QMessageBox.warning(self.resolver_shot_ui, 'warning', "Validate for this shot doesn't exists")
+            return
+
+
+        DELIVERY_UI = Resolver_Render_Dialog(self.scheme_context)
+        if DELIVERY_UI.exec_() == QtWidgets.QDialog.Accepted:
+            QtWidgets.QMessageBox.information(self.resolver_shot_ui, 'information', "Delivery sent for rendering !")
+            
+
+
+
     def debug_func(self):
         print('\n' * 10)
         print(self.scheme_context)
@@ -2460,8 +2500,11 @@ class Shot_Validation(Validation_Methods):
 
 
         if create_stage:
-            valid_stage = Usd.Stage.CreateNew(valid_version_path)
-            to_valid_stage = Usd.Stage.CreateNew(to_valid_version_path)
+            if not os.path.exists(valid_version_path):
+                valid_stage = Usd.Stage.CreateNew(valid_version_path)
+
+            if not os.path.exists(to_valid_version_path):
+                to_valid_stage = Usd.Stage.CreateNew(to_valid_version_path)
 
         
         return [to_valid_version_path, valid_version_path]
@@ -2716,11 +2759,13 @@ class Shot_Validation(Validation_Methods):
 
 
 
+
 class MAIN_Shot_Mode_Widgets(QtWidgets.QWidget):
     request_shot_meta = QtCore.Signal()
     request_shot_asset_meta = QtCore.Signal()
 
     request_context_update = QtCore.Signal(QtWidgets)
+    request_delivery_render = QtCore.Signal()
 
     def __init__(self, parent=None):
         super(MAIN_Shot_Mode_Widgets, self).__init__(parent)
@@ -2797,9 +2842,6 @@ class MAIN_Shot_Mode_Widgets(QtWidgets.QWidget):
         
         render_menu = self.resolver_window.top_menu_bar.addMenu('Render')
 
-        self.render_task_action = QtWidgets.QAction("Render selected task", self)
-        render_menu.addAction(self.render_task_action)
-
         self.render_delivery_action = QtWidgets.QAction("Render delivery", self)
         render_menu.addAction(self.render_delivery_action)
 
@@ -2867,6 +2909,8 @@ class MAIN_Shot_Mode_Widgets(QtWidgets.QWidget):
 
         self.media_player.durationChanged.connect(self.update_slider)
 
+        self.render_delivery_action.triggered.connect(self.request_delivery_render.emit)
+
         self.published_entity_widget.itemSelectionChanged.connect(self.request_shot_meta.emit)
         self.published_entity_widget.itemSelectionChanged.connect(self.request_context_update.emit)
 
@@ -2874,6 +2918,180 @@ class MAIN_Shot_Mode_Widgets(QtWidgets.QWidget):
 
     def update_slider(self, f_end):
         self.media_timeline_slider.setRange(0, f_end)
+
+
+
+class Resolver_Render_Dialog(QtWidgets.QDialog):
+    def __init__(self, mode_context:dataclass):
+        super(Resolver_Render_Dialog, self).__init__()
+
+        self.mode_context = mode_context
+        self.RESOLVER_RENDERS = deadline_hou_submitter.Resolver_Renders(self.mode_context)
+
+        app_icon = QtGui.QIcon("C:\\Fireflies\\Fireflies\\softs_logo\\quick_previz.png")
+        self.setWindowIcon(app_icon)
+
+        self.setWindowTitle("Render Delivery")
+        self.setMinimumSize(500, 200)
+
+        self.create_widgets()
+        self.create_layout()
+        self.create_connections()
+
+        self.load_target_parms()
+
+
+    def create_widgets(self):
+        self.render_btn = QtWidgets.QPushButton("Generate Scene and Render")
+
+
+    def create_layout(self):
+        parms_widget = QtWidgets.QGroupBox("Render Settings Settings")
+        self.parms_layout = QtWidgets.QFormLayout(parms_widget)
+
+        self.main_layout = QtWidgets.QVBoxLayout(self)
+        self.main_layout.addWidget(parms_widget)
+        self.main_layout.addWidget(self.render_btn)
+
+
+    def create_connections(self):
+        self.render_btn.clicked.connect(self.submit_delivery_job)
+
+
+
+    def load_target_parms(self): 
+        render_parms = self.RESOLVER_RENDERS.rm_render_parms_main
+        self.out_parms = {}
+
+        cameras = self.find_cams(self.mode_context.current_validate_path)
+
+        for parm_name, info in render_parms.items(): 
+            label_name = info['name']
+            default_value = info['value']
+            
+            parm_type = info.get('type', 'string')
+
+            curr_widget = None
+
+            if parm_type == 'int': 
+                curr_widget = QtWidgets.QSpinBox()
+                curr_widget.setRange(0, 9999)
+                curr_widget.setValue(int(default_value))
+
+
+            elif parm_type == 'float': 
+                curr_widget = QtWidgets.QDoubleSpinBox()
+                curr_widget.setRange(0, 9999)
+                curr_widget.setDecimals(4)
+
+                curr_widget.setValue(float(default_value))
+
+
+            elif parm_type == 'menu': 
+                curr_widget = QtWidgets.QComboBox()
+                for value, label in info.get('choices', []): 
+                    curr_widget.addItem(label, int(value))
+                    curr_widget.setCurrentIndex(1)
+
+            elif parm_type == 'camera': 
+                curr_widget = QtWidgets.QComboBox()
+                curr_widget.addItems(cameras)
+
+
+            elif parm_type == 'str': 
+                curr_widget = QtWidgets.QLineEdit()
+                curr_widget.setText(default_value)
+
+
+            self.parms_layout.addRow(f"{label_name}:", curr_widget)
+
+            self.out_parms[parm_name] = (curr_widget, parm_type)
+
+
+    def get_render_settings(self) -> dict:
+        render_settings = {}
+
+        for parm_name, (curr_widget, parm_type) in self.out_parms.items(): 
+            if parm_type == 'int': 
+                render_settings[parm_name] = int(curr_widget.value())
+
+            elif parm_type == 'float': 
+                render_settings[parm_name] = float(curr_widget.value())
+
+
+            elif parm_type == 'menu': 
+                render_settings[parm_name] = curr_widget.currentData()
+
+            elif parm_type == 'str': 
+                render_settings[parm_name] = curr_widget.text()
+
+            else: 
+                render_settings[parm_name] = curr_widget.currentText()
+
+
+        print(render_settings)
+
+        return render_settings
+
+
+
+    def find_cams(self, stage_path:str):
+        stage = Usd.Stage.Open(stage_path)
+
+        out_cams = []
+
+        for prim in stage.Traverse():
+            # print(prim.GetPath())
+            camera = UsdGeom.Camera(prim)
+            
+            if camera: 
+                out_cams.append(str(camera.GetPath()))
+
+        print("### FOUND CAMERAS: {} ###".format(out_cams))
+
+        return out_cams
+
+
+
+    def submit_delivery_job(self):
+        render_settings = self.get_render_settings()
+        # print(render_settings)
+        
+        curr_validate_path = self.mode_context.current_validate_path
+
+        shot_dir, sep, _ = curr_validate_path.partition('validate')
+        validate_dir = shot_dir + sep
+        print(validate_dir)
+
+        hou_scene_path = os.path.join(validate_dir, 'delivery_render.hipnc').replace('\\', '/')
+        render_dir = os.path.join(validate_dir, 'render_delivery')
+
+        if not os.path.exists(render_dir):
+            os.makedirs(render_dir)
+
+        render_path = os.path.join(render_dir, 'delivery_$F4.exr').replace('\\', '/')
+
+        print(hou_scene_path)
+        print(render_path)
+
+        locked_parms = self.RESOLVER_RENDERS.rm_render_parms_locked
+
+        locked_parms['output'] = render_path
+
+        out_render_settings = render_settings.copy()
+        out_render_settings.update(locked_parms)
+
+        print(out_render_settings)
+
+        settings_path = os.path.join(validate_dir, 'render_settings.json')
+        
+        with open(settings_path, 'w') as f: 
+            json.dump(out_render_settings, f, indent=4)
+
+
+        self.RESOLVER_RENDERS.submit_delivery(hou_scene_path, settings_path, curr_validate_path)
+
+        self.accept()
 
 
 
