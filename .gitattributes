@@ -1,2 +1,7 @@
 **/Makefile* linguist-detectable=false
 **/Makefile* linguist-vendored
+
+
+Deadline/* linguist-vendored
+Common/* linguist-vendored
+Fireflies_BIN/usd_build_local/* linguist-vendored
