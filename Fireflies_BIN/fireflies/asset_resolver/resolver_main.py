@@ -965,16 +965,16 @@ class manage_validate_callbacks():
         #     return
 
 
-        for layer in to_valid_layers:
-            layer_path = layer[2]
-            layer_dir = os.path.dirname(layer_path)
+        target_path = task_path
 
-            current_task = ASSET_FINDER.find_current_task(layer_dir)
+        stage_path = valid_path if not update_assembly else assembly_path
 
-            if current_task == task:
-                target_path = layer_path
-                break
-        
+        if os.path.isabs(target_path): 
+            target_path = os.path.relpath(
+                target_path, os.path.dirname(stage_path)
+            ).replace('\\', '/')
+
+
         if not target_path:
             print("### Couldn't find the targeted task in the to validate given path ###")
             return
