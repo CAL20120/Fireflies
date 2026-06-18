@@ -1694,7 +1694,7 @@ class MAIN_Asset_Mode_Scheme(Resolver_Mode_Methods):
 
             if check_same:
                 print(Fore.YELLOW + "### This version of {} is already set to be validated - Ignoring ###".format(task) + Fore.RESET)
-                return
+
 
             task_path = asset_versions[version][task]['path']
 
