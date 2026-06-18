@@ -62,13 +62,15 @@ class CollectMayaGeometry(pyblish.api.ContextPlugin):
         for asset in target_assets:
             print(asset)
 
+            asset_name = asset.split('|')[-1]
+
             # asset_name = cmds.listRelatives(asset, children=True)
 
             if cmds.nodeType(asset) != "transform":
                 continue
 
-            instance = context.create_instance(asset)
-            instance.data["asset_name"] = asset
+            instance = context.create_instance(asset_name)
+            instance.data["asset_name"] = asset_name
 
             instance.append("asset_name")
             instance.data["family"] = "assets"

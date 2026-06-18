@@ -38,7 +38,7 @@ def get_export_path(asset_name, is_rig:bool=False):
 
     versions_dir = os.path.join(publish_dir, asset_name)
 
-    export_dir = versions_dir
+    export_dir = os.path.normpath(versions_dir).replace('\\', '/')
 
     target_versions = sorted(
         [d for d in os.listdir(export_dir) if os.path.isdir(os.path.join(export_dir, d))]
