@@ -29,6 +29,7 @@ hou.session.dialog.show()]]></script>
     <memberTool name="quick_preview0"/>
     <memberTool name="texture_linker"/>
     <memberTool name="hip_importer0"/>
+    <memberTool name="hip_recursive"/>
     <memberTool name="fireflies_snapshots"/>
     <memberTool name="kitsu_frame_range"/>
     <memberTool name="kt_preview"/>

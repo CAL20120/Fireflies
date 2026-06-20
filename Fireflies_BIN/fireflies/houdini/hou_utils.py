@@ -584,6 +584,67 @@ def load_preset(node_path:str, import_path:str):
 
 
 
+def force_hips(node_path):
+    """
+    Looks recursively in a node to find every filepaths parms, and create relative paths
+    """
+
+    UTILS = hou_usd()
+
+    parm_keys = {
+        'sublayer': 'filepath1',
+        'usdimport': 'filepath1', 
+        'reference': 'filepath1',
+        'assetreference': 'filepath',
+        'pxrtexture::3.0': 'filename',
+        'file': 'file'
+    }
+
+    node = hou.node(node_path)
+    print(node)
+
+
+    node_children = node.allSubChildren()
+
+    if node_children and not node.isLockedHDA():
+        for child in node_children: 
+            target_parm = None
+            child_type = child.type().name()
+
+            if child_type not in parm_keys.keys():
+                continue
+
+            target_parm = child.parm(parm_keys[child_type])
+
+            if not target_parm:
+                continue
+
+            if len(target_parm.keyframes()) > 0: 
+                continue
+                
+            current_path = target_parm.unexpandedString()
+            
+            if os.path.isabs(current_path): 
+                    current_path = UTILS.path_converter(current_path)
+                    target_parm.set(current_path)
+
+        print("### Relative path set for: {} ###".format(child))
+
+
+    else: 
+        node_type = node.type().name()
+        target_parm = node.parm(parm_keys[node_type])
+
+        current_path = target_parm.unexpandedString()
+            
+        if os.path.isabs(current_path): 
+                current_path = UTILS.path_converter(current_path)
+                target_parm.set(current_path)
+
+        print("### Relative path set for: {} ###".format(node))
+
+
+
 
 if __name__ == "__main__":
     pass
