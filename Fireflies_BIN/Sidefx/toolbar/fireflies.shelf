@@ -120,4 +120,20 @@ scene_path = hou.hipFile.path()
 
 ab.batch_kt_preview(scene_path)]]></script>
   </tool>
+
+  <tool name="hip_recursive" label="Force HIPS" icon="C:/Fireflies/Fireflies_BIN/fireflies/logos/force_hips.png">
+    <script scriptType="python"><![CDATA[from fireflies.houdini import hou_utils
+import sys
+
+sel = hou.selectedNodes()
+if not sel: 
+    sys.exit(0)
+
+current_node = sel[0]
+
+if current_node:
+    node_path = current_node.path()
+
+    hou_utils.force_hips(node_path)]]></script>
+  </tool>
 </shelfDocument>
