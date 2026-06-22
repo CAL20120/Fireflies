@@ -214,11 +214,40 @@ class hou_publish():
         f_start, f_end = hou.playbar.playbackRange()
         
         asset_name = str(root_prim.GetName())
+        export_dir, export_path = self.get_last_version(asset_name=asset_name)
 
-        export_dir, _ = self.get_last_version(asset_name=asset_name)
+        publish_node_path = node.path().rsplit('/', 1)[0]
+        publish_node = hou.node(publish_node_path)
 
-        # export_path = "{}/{}.usd".format(self.export_dir, asset_name:04d)
+        if not publish_node.isEditable():
+            publish_node.allowEditingOfContents()
 
+
+        target_rop = hou.node(f"{publish_node_path}/WRITE_PUBLISH")
+
+        if not target_rop:
+            raise RuntimeError("### Couldn't find the animation rop ###")
+            
+
+        target_rop.parm('lopoutput').set(export_path)
+        target_rop.parm('trange').set(1)
+
+        target_rop.parm('f1').set(f_start)
+        target_rop.parm('f2').set(f_end)
+
+        target_rop.parm('savestyle').set("flattenimplicit")
+
+        target_rop.parm('flattenfilelayers').set(1)
+        target_rop.parm('flattensoplayers').set(1)
+
+        target_rop.parm('fileperframe').set(1)
+
+        target_rop.render()
+
+        print("### Exported animation to: {} ###".format(export_path))
+            
+
+        """
         for frame in range(int(f_start), int(f_end) + 1):
             hou.setFrame(frame)
             stage = node.stage()
@@ -226,6 +255,9 @@ class hou_publish():
             export_path = f"{export_dir}/{asset_name}_{frame}.usd"
             # print(export_path)
             stage.Export(export_path)
+        """
+
+        return export_path
 
 
 

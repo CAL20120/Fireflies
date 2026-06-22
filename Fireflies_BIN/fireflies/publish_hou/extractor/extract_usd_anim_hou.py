@@ -18,9 +18,16 @@ class Usd_Extractor_Anim(pyblish.api.InstancePlugin):
     def process(self, instance):
         prim = instance.data.get('prim')
 
+        publish_node = instance.data.get('node')
 
         self.abstract_publish = abstract_hou_publish.hou_publish()
         
         node = instance.data.get('node')
 
-        self.abstract_publish.extract_animation(root_prim=prim, node=node)
+        try:
+            stage_local_path = self.abstract_publish.extract_animation(root_prim=prim, node=node)
+            instance.data['stage_local_path'] = stage_local_path
+        
+        except pyblish.api.ValidationError: 
+            return
+        
