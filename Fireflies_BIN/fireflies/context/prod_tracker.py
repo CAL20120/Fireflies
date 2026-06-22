@@ -4,13 +4,22 @@ import re
 
 from functools import cache
 
+import concurrent
+
+
 import shutil
 from datetime import datetime
 
 import pathlib
 
+from dataclasses import dataclass
+
 import gazu
 
+try:
+    from pxr import Usd
+except:
+    pass
 
 # NAS_DB_PATH = "Z:\\PRODS\\fireflies_tracker\\tracker_db.xml"
 
@@ -68,6 +77,7 @@ SHOT_TASKS = [
     "comp", 
     # "env", 
     "fx", 
+    "cfx",
     "previz", 
     "anim", 
     "validate", 
@@ -84,6 +94,7 @@ get_icon_path = lambda name: os.path.join(task_icon_dir, name)
 SHOT_TASKS_ICONS = {
     'light': get_icon_path("light_task.png"),
     'fx': get_icon_path("fx_task.png"), 
+    'cfx': get_icon_path('groom_task.png'), 
     'layout': get_icon_path("layout_task.png"), 
     'comp': get_icon_path("comp_task.png"), 
     'anim': get_icon_path("anim_task.png"),
@@ -98,7 +109,7 @@ ASSET_TASKS_ICONS = {
 }
 
 
-shot_layers_order = ['fx', 'anim', 'light', 'layout']
+shot_layers_order = ['cfx', 'fx', 'anim', 'light', 'layout']
 asset_layers_order = ['model', 'groom', 'lookdev']
 
 
@@ -711,7 +722,373 @@ class manage_context():
 
 
 
+@dataclass
+class Shot_Builder_Context: 
+    scene_path:str = None
+    kt_context:dict = None
+
+    prod_name:str = None
+    shot_name:str = None
+    task_name:str = None
+
+    current_hou_context:str = None
+
+    shot_vars:dict = None
+    current_shot_data:dict = None
+
+
+class Shot_Builder(): 
+    def __init__(self):
+        from fireflies.houdini import hou_utils
+        from fireflies.fireflies_utils.usd import usd_asset_importer_hou
+
+        self.builder_context = Shot_Builder_Context()
+        self._HOU_UTILS = hou_utils.hou_usd()
+        self.CONTEXT = manage_context()
+
+        self._ASSET_FINDER = usd_asset_importer_hou.import_usd_asset()
+
+
+        self.task_dependencies = {
+            "light": ["layout", "fx", "anim"], 
+            "fx": ["layout", "anim"]
+        }
+
+
+        self.downstream_dependencies = {
+            "layout": ["fx", "cfx", "light"], 
+            "cfx": ["fx", "light"], 
+            "fx": ["light"],
+            "anim": ["fx", "cfx", "light"]
+        }
+
+
+        self.dependencies_templates = {
+            "fx": "Fireflies::fireflies_fx_template",
+            "light": "Fireflies::fireflies_light_template"
+        }
+
+
+
+        self.update_context()
+
+        self._hda_template_name = f"_SHOT_TEMPLATE_{self.builder_context.task_name.upper()}"
+
+
+
+    def update_context(self):
+        """
+        Updates the linked dataclass (context) with the correct values.
+        """
+
+        current_scene_path = get_scene_path()
+        self.builder_context.scene_path = current_scene_path
+        
+        CT_PATH = manage_paths(path=current_scene_path, is_asset=False)
+        prod_name = CT_PATH.ct_prod
+        seq_name = CT_PATH.ct_seq
+        shot_name = CT_PATH.ct_shot
+        task_name = CT_PATH.ct_task
+
+        if not any([prod_name, shot_name, task_name]): 
+            raise ValueError("### Please set a shot context ###")
+        
+
+        self.builder_context.prod_name = prod_name
+        self.builder_context.task_name = task_name
+        self.builder_context.shot_name = shot_name
+
+        local_prod_dir = get_local_prod_path()
+        self.prod_path = os.path.join(local_prod_dir, prod_name)
+
+        kt_infos = self.CONTEXT.get_full_ct(current_scene_path, asset=False)
+        self.builder_context.kt_context = kt_infos
+
+        _, shot_vars = self._ASSET_FINDER.find_asset(shot_filter=True)
+        self.builder_context.asset_vars = shot_vars
+
+        shot_finder_name = f"_{seq_name}_{shot_name}_SHOT"
+
+        current_shot_data = shot_vars.get(shot_finder_name, {})
+        self.builder_context.current_shot_data = current_shot_data
+
+
+    def get_dependencies(self, target_task:str=None) -> dict:
+        """
+        Get the correct tasks and versions related to the current main task.
+        """
+
+        task_name = self.builder_context.task_name if not target_task else target_task
+        shot_data = self.builder_context.current_shot_data
+
+        print(task_name)
+        print(shot_data)
+
+        dependant_tasks = self.task_dependencies.get(task_name, [])
+        print(dependant_tasks)
+
+        out_dependencies = {}
+
+        if not shot_data: 
+            print("### No published entities found for this shot ###")
+            return
+        
+        for task in dependant_tasks: 
+            last_version = None
+            last_path = None
+
+            for version in sorted(shot_data.keys()): 
+                print(version)
+
+                if task in shot_data[version].keys(): 
+                    last_path = shot_data[version][task]['path']
+                    last_version = version
+
+            if last_path: 
+                out_dependencies[task] = {
+                    "path": last_path, 
+                    "version": last_version
+                }
+
+        return out_dependencies
+
+
+
+    def check_target_template(self, curr_network, template_name): 
+        network_path = curr_network.path()
+
+        hda_node = hou.node(f"{network_path}/{self._hda_template_name}")
+
+        if not hda_node: 
+            hda_node = curr_network.createNode(template_name, self._hda_template_name)
+            hda_node.moveToGoodPosition()
+            
+            print("### Create template: {} ###".format(hda_node.path()))
+
+        return hda_node
+
+
+
+    def build_input_streams(self, curr_network, hda_node, target_dependencies):
+        task_name = self.builder_context.task_name
+        ordered_task = self.task_dependencies.get(task_name, [])
+
+        task_color = {
+            "fx": hou.Color((0.8, 0.2, 0.2)),
+            "anim": hou.Color((0.3, 0.7, 0.3)), 
+            "layout": hou.Color((0.5, 0.5, 0.5)), 
+            "cfx": hou.Color((0.2, 0.4, 0.8))
+        }
+
+        # for idx, task in enumerate(ordered_task): 
+        #     if task not in target_dependencies: 
+        #         continue
+            
+        sop_name = f"SOP_{task_name.upper()}"
+        sop_node = hou.node(f"{curr_network.path()}/{sop_name}")
+        
+        if not sop_node: 
+            sop_node = curr_network.createNode('sopimport', sop_name)
+            self.net_box.addItem(sop_node)
+
+
+        null_name = f"IN_{task_name.upper()}"
+        null_node = hou.node(f"{curr_network.path()}/{null_name}")
+
+        if not null_node: 
+            null_node = curr_network.createNode('null', null_name)
+            self.net_box.addItem(null_node)
+
+            null_node.setColor(task_color.get(task_name, hou.Color((0.8, 0.8, 0.8))))
+
+        publish_name = f"PUBLISH_{task_name}_SHOT"
+        publish_node = hou.node(f"{curr_network.path()}/{publish_name}")
+
+        if not publish_node: 
+            publish_node = curr_network.createNode('Fireflies::publish_work::1.0', publish_name)
+            self.net_box.addItem(publish_node)
+
+
+        null_node.setInput(0, sop_node)
+        hda_node.setInput(0, null_node)
+        null_node.setPosition(sop_node.position() + hou.Vector2(0, -1.5))
+        publish_node.setInput(0, hda_node)
+
+        hda_pos = hda_node.position()
+
+        sop_node.setPosition(hda_pos + hou.Vector2(0, 3))
+        null_node.setPosition(hda_pos + hou.Vector2(0, 1.5))
+        publish_node.setPosition(hda_pos - hou.Vector2(0, 1.5))
+
+
+
+
+    def update_hda_refs(self, hda_node):
+        task_name = self.builder_context.task_name
+
+        current_dir = os.path.dirname(self.builder_context.scene_path)
+        layerStack_path = f"{current_dir}/working_stack/layerstack_{task_name}.usd".replace('\\', '/')
+
+        if not hda_node.isEditable():
+            hda_node.allowEditingOfContents()
+
+        sublayer_node = hou.node(f"{hda_node.path()}/INPUT_LAYERS")
+        
+        if not sublayer_node:
+            print("### Couldn't find the internal reference LOP node for the template ###")
+            return
+        
+
+        if os.path.isabs(layerStack_path):
+            layerStack_path = self._HOU_UTILS.path_converter(layerStack_path)
+
+        sublayer_node.parm('num_files').set(1)
+        sublayer_node.parm('filepath1').set(layerStack_path)
+
+        print("### Refs checks done ###")
+
+
+
+    def check_net_box(self, curr_network, box_name):
+        target_net_box = None
+
+        for net_box in curr_network.networkBoxes(): 
+            if net_box.comment() == box_name: 
+                target_net_box = net_box
+                return
+            
+        if not target_net_box: 
+            target_net_box = curr_network.createNetworkBox(box_name)
+            target_net_box.setComment(box_name)
+
+        return target_net_box
+
+
+
+    def build_node_hierarchy(self):
+        task_name = self.builder_context.task_name
+        template_name = self.dependencies_templates.get(task_name)
+
+        if not template_name: 
+            print("### Couldn't find a template for this task ###")
+            return
+        
+        target_dependencies = self.get_dependencies()
+
+        if not target_dependencies: 
+            print("### Couldn't find any dependencies published for this task ###")
+            return
+        
+        curr_network = self._HOU_UTILS.get_current_context()
+        network_path = curr_network.path()
+
+        box_name = f"{task_name.upper()}_TEMPLATE"
+        self.net_box = self.check_net_box(curr_network, box_name)
+
+        hda_node = self.check_target_template(curr_network, template_name)
+        self.net_box.addItem(hda_node)
+
+        self.build_input_streams(curr_network, hda_node, target_dependencies)
+
+        self.update_hda_refs(hda_node)
+
+        self.net_box.fitAroundContents()
+        hda_node.setDisplayFlag(True)
+
+        print("### Template Updated ###")
+
+
+
+    def get_layer_order_key(self, path):
+        task = next((task for task in SHOT_TASKS if task in path), None) 
+        tracker_position = shot_layers_order
+
+        try:
+            index = tracker_position.index(task)
+            return index
+        
+        except ValueError:
+            return 
+
+
+
+    def build_dependencies_stack(self, published_path:str):
+        current_task = self.builder_context.task_name
+        target_tasks = self.downstream_dependencies.get(current_task, [])
+
+        if not target_tasks: 
+            print("### No dependencies found for this task ###")
+            return
+        
+        published_path = os.path.normpath(published_path)
+        print(published_path)
+
+        try: 
+            shot_root = published_path.split(f"\\{current_task}\\")[0]
+            print(shot_root)
+
+        except IndexError: 
+            print("### Could not find shot root ###")
+            return
+        
+
+        def update_single_layer(task):
+            target_dir = f"{shot_root}/{task}"
+            print(target_dir)
+
+            layerStack_path = f"{target_dir}/working_stack/layerstack_{task}.usd"
+
+            if not os.path.exists(layerStack_path):
+                stage = Usd.Stage.CreateNew(layerStack_path)
+
+            else:
+                stage = Usd.Stage.Open(layerStack_path)
+
+            root_layer = stage.GetRootLayer()
+
+            sublayers = list(root_layer.subLayerPaths)
+            sublayers = [path.strip('@') for path in sublayers]
+
+
+            if os.path.isabs(published_path):
+                rel_path = os.path.relpath(
+                    published_path, os.path.dirname(layerStack_path)
+                ).replace('\\', '/')
+
+
+            if sublayers:
+                found = False
+                for idx, path in enumerate(sublayers): 
+                    sub_task = next((task for task in SHOT_TASKS if task in path), None) 
+
+                    if current_task == sub_task:
+                        sublayers[idx] = rel_path
+                        found = True
+                        break
+
+                if not found:
+                    sublayers.append(rel_path)
+
+
+            else:
+                sublayers = [rel_path]
+
+
+            sublayers = sorted(sublayers, key=self.get_layer_order_key)
+            print(sublayers)
+
+            root_layer.subLayerPaths = sublayers
+            root_layer.Save()
+            
+            print("### Path set for working stack: {} | {} ###".format(task, published_path))
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=len(target_tasks)) as executor: 
+            outputs = [executor.submit(update_single_layer, task) for task in target_tasks]
+            for future in concurrent.futures.as_completed(outputs):
+                print(future.result())
+
+
+
 if __name__ == "__main__":
-    path = "R:/Christopher_LUCAS/PRODS/test_dev_02/001/01/to_validate/usd_published/_001_01_SHOT/_001_01_SHOT_001/_001_01_SHOT.usd"
-    x = manage_paths(path, is_asset=True)
-    print(x.ct_version)
+    pass
+

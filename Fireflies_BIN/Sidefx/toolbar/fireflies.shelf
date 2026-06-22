@@ -33,6 +33,7 @@ hou.session.dialog.show()]]></script>
     <memberTool name="fireflies_snapshots"/>
     <memberTool name="kitsu_frame_range"/>
     <memberTool name="kt_preview"/>
+    <memberTool name="build_shot"/>
     <memberTool name="pyblish_houdini"/>
   </toolshelf>
 
@@ -135,5 +136,17 @@ if current_node:
     node_path = current_node.path()
 
     hou_utils.force_hips(node_path)]]></script>
+  </tool>
+
+  <tool name="build_shot" label="Shot Builder" icon="C:/Fireflies/Fireflies_BIN/fireflies/logos/shot_builder.png">
+    <script scriptType="python"><![CDATA[import importlib
+
+from fireflies.context import prod_tracker
+
+importlib.reload(prod_tracker)
+
+SB = prod_tracker.Shot_Builder()
+
+SB.build_node_hierarchy()]]></script>
   </tool>
 </shelfDocument>
