@@ -751,7 +751,8 @@ class Shot_Builder():
 
         self.task_dependencies = {
             "light": ["layout", "fx", "anim"], 
-            "fx": ["layout", "anim"]
+            "fx": ["layout", "anim"],
+            "cfx": ["layout", "anim", "fx"]
         }
 
 
@@ -765,7 +766,8 @@ class Shot_Builder():
 
         self.dependencies_templates = {
             "fx": "Fireflies::fireflies_fx_template",
-            "light": "Fireflies::fireflies_light_template"
+            "light": "Fireflies::fireflies_light_template", 
+            "cfx": "Fireflies::fireflies_cfx_template"
         }
 
 
