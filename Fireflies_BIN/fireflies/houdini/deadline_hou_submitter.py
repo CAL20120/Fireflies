@@ -218,8 +218,8 @@ class hou_deadline_submitter():
         return out
 
 
-    def hou_render_plugin_info(self, usd_file:str, out_images) -> str:
-        args = f'-R HdPrmanXpuLoaderRendererPlugin -V 1 -s /Render/rendersettings -o {out_images} {usd_file} --frame <STARTFRAME>'
+    def hou_render_plugin_info(self, usd_file:str, out_images:str, render_delegate:str) -> str:
+        args = f'-R {render_delegate} -V 3 -s /Render/rendersettings -o {out_images} {usd_file} --frame <STARTFRAME>'
 
         plugin_txt = 'Executable={}\n' \
                     'Arguments={}\n' \
@@ -250,6 +250,9 @@ class hou_deadline_submitter():
         departement, machine_sel, f_start, f_end, new_scene) = self.get_job_info(target_node.path(), scene_path)
 
         print(out_images)
+
+        rm_delegates = ['HdPrmanXpuLoaderRendererPlugin', 'HdPrmanLoaderRendererPlugin']
+        render_delegate = rm_delegates[target_node.evalParm('rm_delegate')]
 
 
         target_dir = os.path.dirname(out_images)
@@ -355,7 +358,7 @@ class hou_deadline_submitter():
 
         render_job = self.hou_render_job_info(job_name, dl_priority, dl_frames, usd_job_id,
                                               departement, dl_comment, machine_sel, export_dir)
-        render_plugin = self.hou_render_plugin_info(usd_file=husk_render_input, out_images=husk_out_images)
+        render_plugin = self.hou_render_plugin_info(usd_file=husk_render_input, out_images=husk_out_images, render_delegate=render_delegate)
 
         render_job_cmd = [self.deadline_ex, render_job, render_plugin]
 
