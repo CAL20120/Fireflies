@@ -146,7 +146,7 @@ def export_usd(scene_path:str, node_path:hou, export_path:str,
 
     try:
         shutil.copytree(src=os.path.dirname(local_usd_path),  dst=os.path.dirname(nas_export_path),
-                        dirs_exist_ok=True)
+                        dirs_exist_ok=True, copy_function=shutil.copy)
 
     except: 
         raise FileExistsError("Couldn't copy the usd files to the server")
