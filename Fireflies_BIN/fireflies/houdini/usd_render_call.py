@@ -47,7 +47,7 @@ def export_usd(scene_path:str, node_path:hou, export_path:str,
     print(render_path_stem)
 
     local_usd_path = os.path.normpath(
-        os.path.join(local_prod_dir, render_path_stem, '__render__.$F4.usdc')
+        os.path.join(local_prod_dir, render_path_stem, '__render__.$F4.usd')
     ).replace('\\', '/')
 
 
