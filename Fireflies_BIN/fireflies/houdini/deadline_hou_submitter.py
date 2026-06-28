@@ -201,10 +201,9 @@ class hou_deadline_submitter():
                     'Frames={}\n' \
                     'ChunkSize=1\n' \
                     'JobDependency0={}\n' \
-                    'PreTaskScript={}\n' \
                     'EnvironmentKeyValue0=NAS_USD_DIR={}\n'.format(job_name, job_name, comment,
                                                                    priority, department, frames,
-                                                                   id, raidrive_pre_script, nas_usd_dir)
+                                                                   id, nas_usd_dir)
         
 
         if machine_sel:
@@ -219,12 +218,23 @@ class hou_deadline_submitter():
 
 
     def hou_render_plugin_info(self, usd_file:str, out_images:str, render_delegate:str) -> str:
-        args = f'-R {render_delegate} -V 3 -s /Render/rendersettings -o {out_images} {usd_file} --frame <STARTFRAME>'
+        render_script = "C:\\Fireflies\\Fireflies_BIN\\fireflies\\houdini\\usd_render_call.py"
+        # args = f'-R {render_delegate} -V 3 --exrmode 1 -s /Render/rendersettings -o {out_images} {usd_file} --frame <STARTFRAME>'
+
+        args = (
+            f'{render_script}'
+            f' -mode render'
+            f' -delegate {render_delegate}'
+            f' -usd_path {usd_file}'
+            f' -out_images {out_images}'
+            f' -frame <STARTFRAME>'
+            f' -husk_path {self.husk_ex}'
+        )
 
         plugin_txt = 'Executable={}\n' \
                     'Arguments={}\n' \
                     'StartupDirectory=\n' \
-                    'SingleFramesOnly=False'.format(self.husk_ex, args)
+                    'SingleFramesOnly=False'.format(self.deadline_hython, args)
         
         target_path = os.path.join(self.tmp_dir, 'render_plugin_info.job')
 
@@ -371,25 +381,9 @@ class hou_deadline_submitter():
         out_usd_dir = os.path.dirname(export_path)
         target_dir = os.path.basename(out_usd_dir)
         
-        #in case there is an issue with the permissions on the server and the folder couldn't be created
-        # if not os.path.exists(out_usd_dir):
-        #     tmp_usd_dir = os.path.join(self.tmp_dir, target_dir)
-
-        #     try:
-        #         os.makedirs(tmp_usd_dir)
-        #         shutil.copy2(tmp_usd_dir, out_usd_dir)
-
-        #         os.remove(tmp_usd_dir)
-
-        #     except:
-        #         print("Couldn't reach / fix deadline_usd export dir -- Exiting")
 
 
-
-
-
-
-        #### HOUDINI CACHES ####
+    #### HOUDINI CACHES ####
 
     def hou_cache_job(self, job_name, comment, priority, frames, machine_sel) -> str:
         info_txt = 'Plugin=CommandLine\n' \

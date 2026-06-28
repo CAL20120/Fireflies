@@ -1,6 +1,7 @@
 import argparse
 import os
 import sys
+import subprocess
 
 import shutil
 import time
@@ -24,10 +25,10 @@ def export_usd(scene_path:str, node_path:hou, export_path:str,
     norm_scene = os.path.normpath(scene_path)
 
     norm_dir = os.path.dirname(norm_scene)
-    os.startfile(norm_dir)
+    # os.startfile(norm_dir)
 
     export_dir = os.path.dirname(export_path).replace('\\', '/')
-    os.startfile(export_dir)
+    # os.startfile(export_dir)
 
 
     local_scene_path = os.path.join(local_prod_dir, scene_path.split('PRODS')[-1].lstrip('/'))
@@ -144,22 +145,60 @@ def export_usd(scene_path:str, node_path:hou, export_path:str,
     master_node.destroy()
     seq_rop.destroy()
 
-    try:
-        shutil.copytree(src=os.path.dirname(local_usd_path),  dst=os.path.dirname(nas_export_path),
-                        dirs_exist_ok=True, copy_function=shutil.copy)
+    # try:
+    #     shutil.copytree(src=os.path.dirname(local_usd_path),  dst=os.path.dirname(nas_export_path),
+    #                     dirs_exist_ok=True, copy_function=shutil.copy)
 
-    except: 
-        raise FileExistsError("Couldn't copy the usd files to the server")
+    # except: 
+    #     raise FileExistsError("Couldn't copy the usd files to the server")
 
 
-    local_usd_dir = os.path.dirname(local_usd_path)
+    # local_usd_dir = os.path.dirname(local_usd_path)
 
-    for file in os.listdir(local_usd_dir):
-        if file.endswith('.usdc'):
-            os.remove(os.path.join(local_usd_dir, file))
+    # for file in os.listdir(local_usd_dir):
+    #     if file.endswith('.usdc'):
+    #         os.remove(os.path.join(local_usd_dir, file))
 
 
     print("### Fireflies - USD FILES EXPORTED SUCCESSFULLY ###")
+
+
+
+def render_usd_local(usd_path, out_images, delegate:str, frame:str, husk_path:str):
+    local_prod_dir = prod_tracker.get_local_prod_path().replace('\\', '/')
+
+    rel_path = usd_path.split('PRODS', 1)[-1].lstrip('/\\')
+    local_usd = os.path.join(local_prod_dir, rel_path).replace('\\', '/')
+
+    print("### LOCAL USD: {} ###".format(local_usd))
+
+
+    elapsed = 0
+    wait_interval = 10
+
+    while not os.path.exists(local_usd):
+        if elapsed >= 500:
+            print("### Couldn't find the USDC render file - TIMEOUT ###")
+            sys.exit(1)
+
+        print("### Waiting for usdc render file... ###")
+        time.sleep(wait_interval)
+        elapsed += wait_interval
+
+    print("### USDC FILE FOUND ###")
+
+
+    args = f'{husk_path} -R {delegate} -V 3 --exrmode 1 -s /Render/rendersettings -o {out_images} {local_usd} --frame {str(frame)}'
+
+    proc = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    stdout, stderr = proc.communicate()
+    print(stdout, stderr)
+
+    if proc.returncode != 0: 
+        sys.exit(proc.returncode)
+
+
 
 
 def main():
@@ -173,10 +212,25 @@ def main():
     parser.add_argument('-f_start', type=int)
     parser.add_argument('-f_end', type=int)
 
+
+    parser.add_argument('-mode', default='export', choices=['export', 'render'])
+    parser.add_argument('-usd_path')
+    parser.add_argument('-out_images')
+    parser.add_argument('-delegate')
+    parser.add_argument('-frame')
+    parser.add_argument('-husk_path')
+
     args = parser.parse_args()
 
-    export_usd(args.scene_path, args.node_path, args.export_path,
-               args.f_start, args.f_end)
+
+    if args.mode == 'export':
+        export_usd(args.scene_path, args.node_path, args.export_path,
+                   args.f_start, args.f_end)
+
+
+    elif args.mode == 'render':
+        render_usd_local(args.usd_path, args.out_images,
+                         args.delegate, args.frame, args.husk_path)
 
 
 main()
