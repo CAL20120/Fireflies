@@ -6,8 +6,6 @@ import subprocess
 import shutil
 import time
 
-import hou
-
 from datetime import datetime
 
 from fireflies.context import prod_tracker
@@ -16,6 +14,7 @@ from fireflies.context import prod_tracker
 def export_usd(scene_path:str, node_path:hou, export_path:str,
                f_start:int, f_end:int):
     
+    import hou
 
     local_prod_dir = prod_tracker.get_local_prod_path()
     print("### LOCAL PROD DIR {} ###".format(local_prod_dir))
@@ -145,18 +144,18 @@ def export_usd(scene_path:str, node_path:hou, export_path:str,
     master_node.destroy()
     seq_rop.destroy()
 
-    # try:
-    #     shutil.copytree(src=os.path.dirname(local_usd_path),  dst=os.path.dirname(nas_export_path),
-    #                     dirs_exist_ok=True, copy_function=shutil.copy)
+    try:
+        shutil.copytree(src=os.path.dirname(local_usd_path),  dst=os.path.dirname(nas_export_path),
+                        dirs_exist_ok=True, copy_function=shutil.copy)
 
-    # except: 
-    #     raise FileExistsError("Couldn't copy the usd files to the server")
+    except: 
+        raise FileExistsError("Couldn't copy the usd files to the server")
 
 
     # local_usd_dir = os.path.dirname(local_usd_path)
 
     # for file in os.listdir(local_usd_dir):
-    #     if file.endswith('.usdc'):
+    #     if file.endswith('.USD'):
     #         os.remove(os.path.join(local_usd_dir, file))
 
 
@@ -165,7 +164,11 @@ def export_usd(scene_path:str, node_path:hou, export_path:str,
 
 
 def render_usd_local(usd_path, out_images, delegate:str, frame:str, husk_path:str):
+    usd_path = usd_path.replace('\\', '/')
+
     local_prod_dir = prod_tracker.get_local_prod_path().replace('\\', '/')
+
+    nas_usd_dir = os.path.dirname(usd_path)
 
     rel_path = usd_path.split('PRODS', 1)[-1].lstrip('/\\')
     local_usd = os.path.join(local_prod_dir, rel_path).replace('\\', '/')
@@ -173,22 +176,39 @@ def render_usd_local(usd_path, out_images, delegate:str, frame:str, husk_path:st
     print("### LOCAL USD: {} ###".format(local_usd))
 
 
+    """
     elapsed = 0
     wait_interval = 10
 
     while not os.path.exists(local_usd):
         if elapsed >= 500:
-            print("### Couldn't find the USDC render file - TIMEOUT ###")
+            print("### Couldn't find the USD render file - TIMEOUT ###")
             sys.exit(1)
 
-        print("### Waiting for usdc render file... ###")
+        print("### Waiting for USD render file... ###")
         time.sleep(wait_interval)
         elapsed += wait_interval
+    """
+    
+    nas_write_time = os.path.getmtime(usd_path)
+    is_outdated = not os.path.exists(local_usd) or os.path.getmtime(local_usd) < nas_write_time
 
-    print("### USDC FILE FOUND ###")
+    if is_outdated:
+        print("### Couldn't find the target usd file / old version found, copying from NAS ###")
+
+        try:
+            shutil.copytree(src=nas_usd_dir, dst=os.path.dirname(local_usd),
+                            copy_function=shutil.copy, dirs_exist_ok=True)
+
+        except Exception as e: 
+            print("### Couldn't copy the usd files locally: {} ###".format(e))
+            sys.exit(1)
 
 
-    args = f'{husk_path} -R {delegate} -V 3 --exrmode 1 -s /Render/rendersettings -o {out_images} {local_usd} --frame {str(frame)}'
+    print("### USD FILE FOUND ###")
+
+
+    args = f'{husk_path} -R {delegate} -V 6 --exrmode 1 -s /Render/rendersettings -o {out_images} {local_usd} --frame {str(frame)}'
 
     proc = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
