@@ -193,22 +193,70 @@ def render_usd_local(usd_path, out_images, delegate:str, frame:str, husk_path:st
     nas_write_time = os.path.getmtime(usd_path)
     is_outdated = not os.path.exists(local_usd) or os.path.getmtime(local_usd) < nas_write_time
 
-    if is_outdated:
-        print("### Couldn't find the target usd file / old version found, copying from NAS ###")
 
-        try:
-            shutil.copytree(src=nas_usd_dir, dst=os.path.dirname(local_usd),
-                            copy_function=shutil.copy, dirs_exist_ok=True)
+    worker_name = os.environ.get('COMPUTERNAME')
+    if not worker_name:
+        print("### Couldn't find the targeted worker name ###")
+        return
+    
+    dl_command = r"C:\Fireflies\Deadline\bin\deadlinecommand.exe"
+    cmd = [dl_command, "GetSlaveSetting", worker_name, 'Pools']
 
-        except Exception as e: 
-            print("### Couldn't copy the usd files locally: {} ###".format(e))
-            sys.exit(1)
+    try: 
+        out = subprocess.check_output(cmd, text=True, stderr=subprocess.STDOUT).strip()
+
+        if not out: 
+            print("### Error while trying to get the worker pool ###")
+            return
+        
+        pool = [p.strip() for p in out.split(',')][0]
+        print(pool)
+
+    except subprocess.CalledProcessError as e: 
+        print(e)
+
+
+    dl_pool = pool
+
+    if not dl_pool:
+        raise Exception("### Couldn't fetch the current rendering pool ###")
+    
+
+    local_render = False
+    nas_render = False
+
+    target_usd = None
+
+    if dl_pool == 'local_render': 
+        print("### RENDERING LOCALLY ###")
+        local_render = True
+        target_usd = local_usd
+
+    elif dl_pool == 'nas_render': 
+        print("### RENDERING FROM NAS ###")
+        nas_render = True
+        target_usd = usd_path
+
+        os.startfile(os.path.dirname(target_usd))
+
+
+    if local_render:
+        if is_outdated:
+            print("### Couldn't find the target usd file / old version found, copying from NAS ###")
+
+            try:
+                shutil.copytree(src=nas_usd_dir, dst=os.path.dirname(local_usd),
+                                copy_function=shutil.copy, dirs_exist_ok=True)
+
+            except Exception as e: 
+                print("### Couldn't copy the usd files locally: {} ###".format(e))
+                sys.exit(1)
 
 
     print("### USD FILE FOUND ###")
 
 
-    args = f'{husk_path} -R {delegate} -V 6 --exrmode 1 -s /Render/rendersettings -o {out_images} {local_usd} --frame {str(frame)}'
+    args = f'{husk_path} -R {delegate} -V 6 --exrmode 1 -s /Render/rendersettings -o {out_images} {target_usd} --frame {str(frame)}'
 
     proc = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
