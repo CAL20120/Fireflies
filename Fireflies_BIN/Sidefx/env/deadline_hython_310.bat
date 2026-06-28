@@ -2,7 +2,7 @@
 for /f "tokens=*" %%a in (C:\Fireflies\Fireflies_BIN\Sidefx\env\houdini_rm27.env) do set %%a
 
 
-set "RMANTREE=C:\Program Files\Pixar\RenderManProServer-27.0"
+set "RMANTREE=C:\Program Files\Pixar\RenderManProServer-27.1"
 
 set "PYTHONPATH=C:\Fireflies\Fireflies_BIN\"
 
