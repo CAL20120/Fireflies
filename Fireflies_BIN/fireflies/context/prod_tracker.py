@@ -14,8 +14,6 @@ import pathlib
 
 from dataclasses import dataclass
 
-import gazu
-
 try:
     from pxr import Usd
 except:
@@ -135,9 +133,6 @@ def read_login_prefs():
     user_mail = result[2].strip()
 
 
-read_login_prefs()
-
-
 
 def get_local_prod_path():
     target_file = r"C:\\Fireflies\\Common\\fmk_user_prefs\\user_prefs_dir.txt"
@@ -234,6 +229,10 @@ class manage_paths():
 
 class manage_context():
     def __init__(self):
+        import gazu
+
+        read_login_prefs()
+
         try:
             gazu.set_host('http://192.168.1.176:4875/api')
         
