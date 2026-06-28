@@ -66,7 +66,7 @@ def export_usd(scene_path:str, node_path:hou, export_path:str,
     local_scene_path = farm_scene_path
 
     master_path = os.path.join(
-        os.path.dirname(local_usd_path), f'master_anim_{f_start}.usdc'
+        os.path.dirname(local_usd_path), f'master_anim_{f_start}.usd'
     ).replace('\\', '/')
 
 
