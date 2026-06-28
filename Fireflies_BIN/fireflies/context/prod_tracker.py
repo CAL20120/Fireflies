@@ -227,9 +227,9 @@ class manage_paths():
 
 
 
+import gazu
 class manage_context():
     def __init__(self):
-        import gazu
 
         read_login_prefs()
 
