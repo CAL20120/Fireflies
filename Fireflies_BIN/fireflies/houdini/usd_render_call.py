@@ -226,6 +226,7 @@ def render_usd_local(usd_path, out_images, delegate:str, frame:str, husk_path:st
     nas_render = False
 
     target_usd = None
+    os.startfile(os.path.dirname(target_usd))
 
     if dl_pool == 'local_render': 
         print("### RENDERING LOCALLY ###")
@@ -237,7 +238,6 @@ def render_usd_local(usd_path, out_images, delegate:str, frame:str, husk_path:st
         nas_render = True
         target_usd = usd_path
 
-        os.startfile(os.path.dirname(target_usd))
 
 
     if local_render:
