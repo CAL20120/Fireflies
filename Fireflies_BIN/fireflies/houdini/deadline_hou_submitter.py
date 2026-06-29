@@ -329,7 +329,7 @@ class hou_deadline_submitter():
         export_dir = export_dir.replace(os.sep, '/')
 
         export_path = os.path.join(
-            export_dir, "__render__.$F4.usd"
+            export_dir, "__render__.$F4.usdc"
         ).replace("\\", '/')
 
         print("### USD EXPORT PATH: {} ###".format(export_path))
