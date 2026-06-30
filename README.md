@@ -158,6 +158,7 @@ graph LR
 A[Entity] --> B[Checks / Fixes]
 B --> C[Gather metadata and KT entity]
 C --> D[Published locally and on kitsu - USD Current Working Layer]
+D --> E[Shot Builder - Task dependencies layerStack]
 ```
 * Because users don't work on the same network, the files tracking is assured by a custom [tracking script](https://github.com/CAL20120/Fireflies/blob/c286b7d3ecd2d39b7edbbf8fa3d866596732accd/Fireflies_BIN/fireflies/fireflies_utils/usd/usd_asset_importer_hou.py)
 
@@ -261,6 +262,32 @@ For all the library related assets, there is an importer dedicated to manage thi
 </p>
 
 * The lib importer is mainly used to manage lighting ressources and assure their compatibility with RenderMan's formats.
+
+
+-------------------
+
+***Shot Management - Shot Builder*** 
+
+When a shot is published, based of the task that depend on it, the published USD file is being added to corresponding "working stacks", 
+layerStacks that contain all the needed dependencies for the artist to work on the targeted shot. 
+
+```mermaid
+graph LR
+A[Shot task published] --> B[Fetch task related dependencies]
+B --> C[Task is added or updated in the layerStack]
+```
+
+For instance, the light task in dependant of FX, CFX, ANIM. 
+So when any of these tasks are being published, the new version will be updated in the lighting working layerStack. 
+
+This allows for fluid and dynamic task flow and management. 
+
+Each shot tasks has its template, which references the targeted working stack, and the needed inputs needed. 
+
+<p align="center">
+    <img src="./images/template_fx.png">
+</p>
+
 
 -------------------
 
